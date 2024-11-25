@@ -51,108 +51,6 @@ const CAPTION_THEMES = {
   },
 };
 
-// Main container style
-const mainContainer: React.CSSProperties = {
-  display: "flex",
-  padding: "20px",
-  gap: "20px",
-  maxWidth: "1200px",
-  margin: "auto",
-  alignItems: "flex-start",
-};
-
-// Styles for the video section
-const videoSection: React.CSSProperties = {
-  flex: "1 1 60%",
-};
-
-// Styles for the controls section
-const controlsSection: React.CSSProperties = {
-  flex: "1 1 40%",
-  position: "sticky",
-  top: "20px",
-};
-
-// Styles for the video player container
-const playerContainer: React.CSSProperties = {
-  borderRadius: "18px",
-  overflow: "hidden",
-  boxShadow: "0 0 200px rgba(0, 0, 0, 0.15)",
-  backgroundColor: "#000",
-};
-
-// Styles for the video player
-const player: React.CSSProperties = {
-  width: "100%",
-};
-
-// Styles for the controls panel
-const controlsPanel: React.CSSProperties = {
-  padding: "20px",
-  backgroundColor: "#f5f5f5",
-  borderRadius: "10px",
-};
-
-const controlGroup: React.CSSProperties = {
-  marginBottom: "15px",
-};
-
-const label: React.CSSProperties = {
-  display: "block",
-  marginBottom: "5px",
-  fontWeight: "bold",
-};
-
-// Styles for theme buttons
-const themeButtonsContainer: React.CSSProperties = {
-  display: "flex",
-  gap: "10px",
-  flexWrap: "wrap",
-  marginBottom: "20px",
-};
-
-const themeButton: React.CSSProperties = {
-  padding: "8px 16px",
-  borderRadius: "5px",
-  border: "none",
-  cursor: "pointer",
-  backgroundColor: "#e0e0e0",
-  transition: "background-color 0.2s",
-};
-
-const themeButtonActive: React.CSSProperties = {
-  ...themeButton,
-  backgroundColor: "#90caf9",
-  color: "white",
-};
-
-// Styles for the upload section
-const uploadSection: React.CSSProperties = {
-  marginBottom: "20px",
-  padding: "20px",
-  borderRadius: "10px",
-  backgroundColor: "#fff",
-  border: "2px dashed #ccc",
-  textAlign: "center",
-};
-
-const uploadButton: React.CSSProperties = {
-  padding: "10px 20px",
-  backgroundColor: "#2196f3",
-  color: "white",
-  border: "none",
-  borderRadius: "5px",
-  cursor: "pointer",
-  marginTop: "10px",
-};
-
-const processingMessage: React.CSSProperties = {
-  padding: "10px",
-  backgroundColor: "#e3f2fd",
-  borderRadius: "5px",
-  marginTop: "10px",
-};
-
 const Home: NextPage = () => {
   // Video states
   const [videoSrc, setVideoSrc] = useState<string>("/sample-video.mp4");
@@ -283,58 +181,43 @@ const Home: NextPage = () => {
   }), [videoSrc, fontSize, fontColor, strokeColor, strokeWidth, highlightColor, wordsPerCaption]);
 
   return (
-    <div style={mainContainer}>
+    <div className="container mx-auto p-6 flex flex-col md:flex-row gap-6">
       {/* Video Section */}
-      <div style={videoSection}>
+      <div className="flex-1">
         {/* Upload Section */}
-        <div style={uploadSection}>
-          <h3>Upload Video</h3>
-          <p>Upload your video to generate captions</p>
+        <div className="mb-6 p-6 border-2 border-dashed border-gray-300 rounded-lg bg-white">
+          <h3 className="text-lg font-semibold mb-2">Upload Video</h3>
+          <p className="text-gray-600 mb-4">Upload your video to generate captions</p>
           <input
             type="file"
             accept="video/*"
             onChange={handleVideoUpload}
             disabled={isProcessing}
+            className="block w-full text-sm text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-md file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-blue-700
+              hover:file:bg-blue-100
+              disabled:opacity-50 disabled:cursor-not-allowed"
           />
           {isProcessing && (
-            <div style={{ 
-              marginTop: '20px',
-              padding: '20px',
-              backgroundColor: '#f0f9ff',
-              borderRadius: '8px',
-              textAlign: 'center'
-            }}>
-              <p style={{ 
-                fontSize: '16px',
-                color: '#0369a1',
-                marginBottom: '10px'
-              }}>
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <p className="text-blue-700 font-medium mb-2">
                 Processing video and generating captions...
               </p>
-              <p style={{ 
-                fontSize: '14px',
-                color: '#64748b'
-              }}>
+              <p className="text-sm text-blue-600">
                 This may take a few moments depending on the video length.
               </p>
             </div>
           )}
           {error && (
-            <p style={{ 
-              color: '#dc2626',
-              padding: '10px',
-              backgroundColor: '#fef2f2',
-              borderRadius: '6px',
-              marginTop: '10px'
-            }}>
+            <p className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg">
               {error}
             </p>
           )}
           {uploadedFileName && !isProcessing && (
-            <p style={{ 
-              color: '#059669',
-              marginTop: '10px'
-            }}>
+            <p className="mt-4 text-green-600">
               Selected: {uploadedFileName}
             </p>
           )}
@@ -342,7 +225,7 @@ const Home: NextPage = () => {
 
         {/* Video Player */}
         {isReady ? (
-          <div style={playerContainer}>
+          <div className="rounded-2xl overflow-hidden shadow-2xl bg-black">
             <Player
               component={CaptionedVideo}
               inputProps={captionedVideoProps}
@@ -350,34 +233,19 @@ const Home: NextPage = () => {
               fps={VIDEO_FPS}
               compositionHeight={VIDEO_HEIGHT}
               compositionWidth={VIDEO_WIDTH}
-              style={player}
+              className="w-full"
               controls
               autoPlay
               loop
             />
           </div>
         ) : (
-          <div style={{
-            ...playerContainer,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#f8fafc',
-            minHeight: '400px',
-          }}>
-            <div style={{
-              textAlign: 'center',
-              padding: '20px'
-            }}>
-              <h3 style={{
-                color: '#0f172a',
-                marginBottom: '10px'
-              }}>
+          <div className="rounded-2xl bg-gray-50 min-h-[400px] flex items-center justify-center">
+            <div className="text-center p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Preparing Your Video
               </h3>
-              <p style={{
-                color: '#64748b'
-              }}>
+              <p className="text-gray-600">
                 Please wait while we process your video and generate captions...
               </p>
             </div>
@@ -386,19 +254,20 @@ const Home: NextPage = () => {
       </div>
 
       {/* Controls Section */}
-      <div style={controlsSection}>
-        <div style={controlsPanel}>
+      <div className="md:w-[400px] sticky top-6">
+        <div className="bg-white rounded-lg shadow-lg p-6">
           {/* Theme Selection */}
-          <div style={controlGroup}>
-            <label style={label}>Theme</label>
-            <div style={themeButtonsContainer}>
+          <div className="mb-6">
+            <label className="block font-medium mb-2">Theme</label>
+            <div className="flex flex-wrap gap-2">
               {Object.keys(CAPTION_THEMES).map((theme) => (
                 <button
                   key={theme}
                   onClick={() => handleThemeChange(theme)}
-                  style={
-                    theme === activeTheme ? themeButtonActive : themeButton
-                  }
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
+                    ${theme === activeTheme 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                 >
                   {theme.charAt(0).toUpperCase() + theme.slice(1)}
                 </button>
@@ -407,9 +276,9 @@ const Home: NextPage = () => {
           </div>
 
           {/* Words Per Caption Control */}
-          <div style={controlGroup}>
-            <label style={label}>Words Per Caption</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="mb-6">
+            <label className="block font-medium mb-2">Words Per Caption</label>
+            <div className="flex items-center gap-4">
               <input
                 type="range"
                 min="1"
@@ -420,86 +289,98 @@ const Home: NextPage = () => {
                   setWordsPerCaption(Number(e.target.value));
                   setActiveTheme("custom");
                 }}
-                style={{ 
-                  flex: 1,
-                  accentColor: highlightColor,
-                  cursor: 'pointer',
-                }}
+                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:w-4
+                  [&::-webkit-slider-thumb]:h-4
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-blue-500"
+                style={{ accentColor: highlightColor }}
               />
-              <span style={{ 
-                minWidth: '80px',
-                color: 'var(--foreground)',
-              }}>
+              <span className="min-w-[80px] text-gray-700">
                 {wordsPerCaption} word{wordsPerCaption !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
 
           {/* Custom Controls */}
-          <div style={controlGroup}>
-            <label style={label}>Font Size</label>
-            <input
-              type="range"
-              min="60"
-              max="200"
-              value={fontSize}
-              onChange={(e) => {
-                setFontSize(Number(e.target.value));
-                setActiveTheme("custom");
-              }}
-            />
-            <span>{fontSize}px</span>
-          </div>
+          <div className="space-y-6">
+            <div>
+              <label className="block font-medium mb-2">Font Size</label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="60"
+                  max="200"
+                  value={fontSize}
+                  onChange={(e) => {
+                    setFontSize(Number(e.target.value));
+                    setActiveTheme("custom");
+                  }}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  style={{ accentColor: highlightColor }}
+                />
+                <span className="min-w-[60px] text-gray-700">{fontSize}px</span>
+              </div>
+            </div>
 
-          <div style={controlGroup}>
-            <label style={label}>Font Color</label>
-            <input
-              type="color"
-              value={fontColor}
-              onChange={(e) => {
-                setFontColor(e.target.value);
-                setActiveTheme("custom");
-              }}
-            />
-          </div>
+            <div>
+              <label className="block font-medium mb-2">Font Color</label>
+              <input
+                type="color"
+                value={fontColor}
+                onChange={(e) => {
+                  setFontColor(e.target.value);
+                  setActiveTheme("custom");
+                }}
+                className="w-full h-10 rounded cursor-pointer"
+              />
+            </div>
 
-          <div style={controlGroup}>
-            <label style={label}>Stroke Color</label>
-            <input
-              type="color"
-              value={strokeColor}
-              onChange={(e) => {
-                setStrokeColor(e.target.value);
-                setActiveTheme("custom");
-              }}
-            />
-          </div>
+            <div>
+              <label className="block font-medium mb-2">Stroke Color</label>
+              <input
+                type="color"
+                value={strokeColor}
+                onChange={(e) => {
+                  setStrokeColor(e.target.value);
+                  setActiveTheme("custom");
+                }}
+                className="w-full h-10 rounded cursor-pointer"
+              />
+            </div>
 
-          <div style={controlGroup}>
-            <label style={label}>Stroke Width</label>
-            <input
-              type="range"
-              min="0"
-              max="40"
-              value={strokeWidth}
-              onChange={(e) => {
-                setStrokeWidth(Number(e.target.value));
-                setActiveTheme("custom");
-              }}
-            />
-            <span>{strokeWidth}px</span>
-          </div>
+            <div>
+              <label className="block font-medium mb-2">Stroke Width</label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="0"
+                  max="40"
+                  value={strokeWidth}
+                  onChange={(e) => {
+                    setStrokeWidth(Number(e.target.value));
+                    setActiveTheme("custom");
+                  }}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  style={{ accentColor: highlightColor }}
+                />
+                <span className="min-w-[60px] text-gray-700">{strokeWidth}px</span>
+              </div>
+            </div>
 
-          <div style={controlGroup}>
-            <label style={label}>Highlight Color</label>
-            <input
-              type="color"
-              value={highlightColor}
-              onChange={(e) => {
-                setHighlightColor(e.target.value);
-                setActiveTheme("custom");
-              }}
-            />
+            <div>
+              <label className="block font-medium mb-2">Highlight Color</label>
+              <input
+                type="color"
+                value={highlightColor}
+                onChange={(e) => {
+                  setHighlightColor(e.target.value);
+                  setActiveTheme("custom");
+                }}
+                className="w-full h-10 rounded cursor-pointer"
+              />
+            </div>
           </div>
         </div>
       </div>
