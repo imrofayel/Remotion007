@@ -1,0 +1,1206 @@
+[
+  {
+    "text": "Why",
+    "startMs": 50,
+    "endMs": 170,
+    "timestampMs": 200,
+    "confidence": 0.854755
+  },
+  {
+    "text": " doesn't",
+    "startMs": 170,
+    "endMs": 590,
+    "timestampMs": 340,
+    "confidence": 0.95217
+  },
+  {
+    "text": " Spider-Man's",
+    "startMs": 590,
+    "endMs": 1230,
+    "timestampMs": 620,
+    "confidence": 0.981207
+  },
+  {
+    "text": " nanosuit",
+    "startMs": 1230,
+    "endMs": 1740,
+    "timestampMs": 1200,
+    "confidence": 0.546731
+  },
+  {
+    "text": " have",
+    "startMs": 1740,
+    "endMs": 1900,
+    "timestampMs": 1820,
+    "confidence": 0.985443
+  },
+  {
+    "text": " an",
+    "startMs": 1900,
+    "endMs": 2010,
+    "timestampMs": 1920,
+    "confidence": 0.973459
+  },
+  {
+    "text": " arc",
+    "startMs": 2010,
+    "endMs": 2180,
+    "timestampMs": 2060,
+    "confidence": 0.644231
+  },
+  {
+    "text": " reactor",
+    "startMs": 2180,
+    "endMs": 2570,
+    "timestampMs": 2300,
+    "confidence": 0.945873
+  },
+  {
+    "text": " on",
+    "startMs": 2570,
+    "endMs": 2680,
+    "timestampMs": 2700,
+    "confidence": 0.988804
+  },
+  {
+    "text": " its",
+    "startMs": 2680,
+    "endMs": 2890,
+    "timestampMs": 2800,
+    "confidence": 0.865075
+  },
+  {
+    "text": " chest,",
+    "startMs": 2890,
+    "endMs": 3270,
+    "timestampMs": 3020,
+    "confidence": 0.99598
+  },
+  {
+    "text": " but",
+    "startMs": 3270,
+    "endMs": 3390,
+    "timestampMs": 3280,
+    "confidence": 0.83501
+  },
+  {
+    "text": " instead",
+    "startMs": 3390,
+    "endMs": 3710,
+    "timestampMs": 3520,
+    "confidence": 0.979326
+  },
+  {
+    "text": " uses",
+    "startMs": 3710,
+    "endMs": 4120,
+    "timestampMs": 3940,
+    "confidence": 0.745033
+  },
+  {
+    "text": " a",
+    "startMs": 4120,
+    "endMs": 4170,
+    "timestampMs": 4200,
+    "confidence": 0.994465
+  },
+  {
+    "text": " charging",
+    "startMs": 4170,
+    "endMs": 4610,
+    "timestampMs": 4440,
+    "confidence": 0.99748
+  },
+  {
+    "text": " system",
+    "startMs": 4610,
+    "endMs": 4940,
+    "timestampMs": 4880,
+    "confidence": 0.990596
+  },
+  {
+    "text": " for",
+    "startMs": 4940,
+    "endMs": 5130,
+    "timestampMs": 5060,
+    "confidence": 0.996326
+  },
+  {
+    "text": " power?",
+    "startMs": 5130,
+    "endMs": 5580,
+    "timestampMs": 5300,
+    "confidence": 0.998544
+  },
+  {
+    "text": " Tony's",
+    "startMs": 5580,
+    "endMs": 5890,
+    "timestampMs": 5660,
+    "confidence": 0.966881
+  },
+  {
+    "text": " armor",
+    "startMs": 5890,
+    "endMs": 6150,
+    "timestampMs": 5980,
+    "confidence": 0.890306
+  },
+  {
+    "text": " relies",
+    "startMs": 6150,
+    "endMs": 6470,
+    "timestampMs": 6380,
+    "confidence": 0.997697
+  },
+  {
+    "text": " heavily",
+    "startMs": 6470,
+    "endMs": 6840,
+    "timestampMs": 6720,
+    "confidence": 0.998885
+  },
+  {
+    "text": " on",
+    "startMs": 6840,
+    "endMs": 6940,
+    "timestampMs": 7100,
+    "confidence": 0.997413
+  },
+  {
+    "text": " the",
+    "startMs": 6940,
+    "endMs": 7100,
+    "timestampMs": 7220,
+    "confidence": 0.99481
+  },
+  {
+    "text": " arc",
+    "startMs": 7100,
+    "endMs": 7260,
+    "timestampMs": 7360,
+    "confidence": 0.962151
+  },
+  {
+    "text": " reactor,",
+    "startMs": 7260,
+    "endMs": 7770,
+    "timestampMs": 7620,
+    "confidence": 0.996411
+  },
+  {
+    "text": " and",
+    "startMs": 7770,
+    "endMs": 7970,
+    "timestampMs": 8020,
+    "confidence": 0.988169
+  },
+  {
+    "text": " even",
+    "startMs": 7970,
+    "endMs": 8120,
+    "timestampMs": 8260,
+    "confidence": 0.997563
+  },
+  {
+    "text": " the",
+    "startMs": 8120,
+    "endMs": 8260,
+    "timestampMs": 8380,
+    "confidence": 0.991962
+  },
+  {
+    "text": " suit",
+    "startMs": 8260,
+    "endMs": 8470,
+    "timestampMs": 8560,
+    "confidence": 0.995753
+  },
+  {
+    "text": " he",
+    "startMs": 8470,
+    "endMs": 8570,
+    "timestampMs": 8720,
+    "confidence": 0.989021
+  },
+  {
+    "text": " gifted",
+    "startMs": 8570,
+    "endMs": 8880,
+    "timestampMs": 8920,
+    "confidence": 0.988003
+  },
+  {
+    "text": " Pepper",
+    "startMs": 8880,
+    "endMs": 9280,
+    "timestampMs": 9200,
+    "confidence": 0.767474
+  },
+  {
+    "text": " has",
+    "startMs": 9280,
+    "endMs": 9640,
+    "timestampMs": 9440,
+    "confidence": 0.871045
+  },
+  {
+    "text": " won,",
+    "startMs": 9640,
+    "endMs": 9960,
+    "timestampMs": 9680,
+    "confidence": 0.788017
+  },
+  {
+    "text": " so",
+    "startMs": 9960,
+    "endMs": 10060,
+    "timestampMs": 9960,
+    "confidence": 0.996689
+  },
+  {
+    "text": " why",
+    "startMs": 10060,
+    "endMs": 10240,
+    "timestampMs": 10160,
+    "confidence": 0.989464
+  },
+  {
+    "text": " didn't",
+    "startMs": 10240,
+    "endMs": 10510,
+    "timestampMs": 10300,
+    "confidence": 0.953806
+  },
+  {
+    "text": " Tony",
+    "startMs": 10510,
+    "endMs": 10710,
+    "timestampMs": 10540,
+    "confidence": 0.997326
+  },
+  {
+    "text": " equip",
+    "startMs": 10710,
+    "endMs": 10960,
+    "timestampMs": 10860,
+    "confidence": 0.979598
+  },
+  {
+    "text": " Spider-Man",
+    "startMs": 10960,
+    "endMs": 11470,
+    "timestampMs": 11200,
+    "confidence": 0.993657
+  },
+  {
+    "text": " with",
+    "startMs": 11470,
+    "endMs": 11670,
+    "timestampMs": 11680,
+    "confidence": 0.987865
+  },
+  {
+    "text": " the",
+    "startMs": 11670,
+    "endMs": 11820,
+    "timestampMs": 11800,
+    "confidence": 0.992415
+  },
+  {
+    "text": " same",
+    "startMs": 11820,
+    "endMs": 12020,
+    "timestampMs": 11980,
+    "confidence": 0.998955
+  },
+  {
+    "text": " feature?",
+    "startMs": 12020,
+    "endMs": 12600,
+    "timestampMs": 12180,
+    "confidence": 0.976662
+  },
+  {
+    "text": " First,",
+    "startMs": 12600,
+    "endMs": 12980,
+    "timestampMs": 12740,
+    "confidence": 0.988357
+  },
+  {
+    "text": " Spider-Man's",
+    "startMs": 12980,
+    "endMs": 13570,
+    "timestampMs": 13080,
+    "confidence": 0.997328
+  },
+  {
+    "text": " fighting",
+    "startMs": 13570,
+    "endMs": 14020,
+    "timestampMs": 13520,
+    "confidence": 0.988625
+  },
+  {
+    "text": " style",
+    "startMs": 14020,
+    "endMs": 14240,
+    "timestampMs": 13860,
+    "confidence": 0.992532
+  },
+  {
+    "text": " involves",
+    "startMs": 14240,
+    "endMs": 14650,
+    "timestampMs": 14140,
+    "confidence": 0.989868
+  },
+  {
+    "text": " relying",
+    "startMs": 14650,
+    "endMs": 15010,
+    "timestampMs": 14620,
+    "confidence": 0.994478
+  },
+  {
+    "text": " on",
+    "startMs": 15010,
+    "endMs": 15130,
+    "timestampMs": 14940,
+    "confidence": 0.99698
+  },
+  {
+    "text": " his",
+    "startMs": 15130,
+    "endMs": 15260,
+    "timestampMs": 15080,
+    "confidence": 0.991057
+  },
+  {
+    "text": " enhanced",
+    "startMs": 15260,
+    "endMs": 15680,
+    "timestampMs": 15380,
+    "confidence": 0.997674
+  },
+  {
+    "text": " Spidey",
+    "startMs": 15680,
+    "endMs": 15970,
+    "timestampMs": 15680,
+    "confidence": 0.625421
+  },
+  {
+    "text": " sense",
+    "startMs": 15970,
+    "endMs": 16230,
+    "timestampMs": 16060,
+    "confidence": 0.771349
+  },
+  {
+    "text": " to",
+    "startMs": 16230,
+    "endMs": 16420,
+    "timestampMs": 16260,
+    "confidence": 0.977189
+  },
+  {
+    "text": " outmaneuver",
+    "startMs": 16420,
+    "endMs": 16920,
+    "timestampMs": 16520,
+    "confidence": 0.922222
+  },
+  {
+    "text": " opponents,",
+    "startMs": 16920,
+    "endMs": 17430,
+    "timestampMs": 17120,
+    "confidence": 0.998435
+  },
+  {
+    "text": " and",
+    "startMs": 17430,
+    "endMs": 17570,
+    "timestampMs": 17480,
+    "confidence": 0.995097
+  },
+  {
+    "text": " he",
+    "startMs": 17570,
+    "endMs": 17720,
+    "timestampMs": 17600,
+    "confidence": 0.991497
+  },
+  {
+    "text": " frequently",
+    "startMs": 17720,
+    "endMs": 18130,
+    "timestampMs": 17840,
+    "confidence": 0.996451
+  },
+  {
+    "text": " swings",
+    "startMs": 18130,
+    "endMs": 18420,
+    "timestampMs": 18200,
+    "confidence": 0.998393
+  },
+  {
+    "text": " between",
+    "startMs": 18420,
+    "endMs": 18740,
+    "timestampMs": 18520,
+    "confidence": 0.992589
+  },
+  {
+    "text": " buildings",
+    "startMs": 18740,
+    "endMs": 19160,
+    "timestampMs": 18880,
+    "confidence": 0.995646
+  },
+  {
+    "text": " during",
+    "startMs": 19160,
+    "endMs": 19430,
+    "timestampMs": 19200,
+    "confidence": 0.993225
+  },
+  {
+    "text": " patrols.",
+    "startMs": 19430,
+    "endMs": 19960,
+    "timestampMs": 19380,
+    "confidence": 0.997913
+  },
+  {
+    "text": " As",
+    "startMs": 19960,
+    "endMs": 20050,
+    "timestampMs": 19940,
+    "confidence": 0.997379
+  },
+  {
+    "text": " a",
+    "startMs": 20050,
+    "endMs": 20090,
+    "timestampMs": 20040,
+    "confidence": 0.999771
+  },
+  {
+    "text": " result,",
+    "startMs": 20090,
+    "endMs": 20460,
+    "timestampMs": 20320,
+    "confidence": 0.999897
+  },
+  {
+    "text": " his",
+    "startMs": 20460,
+    "endMs": 20610,
+    "timestampMs": 20580,
+    "confidence": 0.997398
+  },
+  {
+    "text": " suit",
+    "startMs": 20610,
+    "endMs": 20800,
+    "timestampMs": 20820,
+    "confidence": 0.995173
+  },
+  {
+    "text": " needs",
+    "startMs": 20800,
+    "endMs": 21040,
+    "timestampMs": 21000,
+    "confidence": 0.990106
+  },
+  {
+    "text": " to",
+    "startMs": 21040,
+    "endMs": 21150,
+    "timestampMs": 21200,
+    "confidence": 0.997172
+  },
+  {
+    "text": " remain",
+    "startMs": 21150,
+    "endMs": 21420,
+    "timestampMs": 21380,
+    "confidence": 0.998889
+  },
+  {
+    "text": " lightweight.",
+    "startMs": 21420,
+    "endMs": 22160,
+    "timestampMs": 21700,
+    "confidence": 0.974756
+  },
+  {
+    "text": " In",
+    "startMs": 22160,
+    "endMs": 22270,
+    "timestampMs": 22140,
+    "confidence": 0.999279
+  },
+  {
+    "text": " contrast,",
+    "startMs": 22270,
+    "endMs": 22820,
+    "timestampMs": 22480,
+    "confidence": 0.999161
+  },
+  {
+    "text": " Iron",
+    "startMs": 22820,
+    "endMs": 23040,
+    "timestampMs": 22900,
+    "confidence": 0.978172
+  },
+  {
+    "text": " Man's",
+    "startMs": 23040,
+    "endMs": 23310,
+    "timestampMs": 23100,
+    "confidence": 0.894128
+  },
+  {
+    "text": " nanosuit",
+    "startMs": 23310,
+    "endMs": 23740,
+    "timestampMs": 23360,
+    "confidence": 0.978301
+  },
+  {
+    "text": " is",
+    "startMs": 23740,
+    "endMs": 23850,
+    "timestampMs": 23880,
+    "confidence": 0.994383
+  },
+  {
+    "text": " much",
+    "startMs": 23850,
+    "endMs": 24070,
+    "timestampMs": 24100,
+    "confidence": 0.992695
+  },
+  {
+    "text": " heavier",
+    "startMs": 24070,
+    "endMs": 24460,
+    "timestampMs": 24360,
+    "confidence": 0.998567
+  },
+  {
+    "text": " you",
+    "startMs": 24460,
+    "endMs": 24620,
+    "timestampMs": 24640,
+    "confidence": 0.737579
+  },
+  {
+    "text": " can",
+    "startMs": 24620,
+    "endMs": 24780,
+    "timestampMs": 24800,
+    "confidence": 0.991127
+  },
+  {
+    "text": " even",
+    "startMs": 24780,
+    "endMs": 25000,
+    "timestampMs": 25020,
+    "confidence": 0.975718
+  },
+  {
+    "text": " see",
+    "startMs": 25000,
+    "endMs": 25160,
+    "timestampMs": 25280,
+    "confidence": 0.998134
+  },
+  {
+    "text": " the",
+    "startMs": 25160,
+    "endMs": 25320,
+    "timestampMs": 25380,
+    "confidence": 0.992915
+  },
+  {
+    "text": " ground",
+    "startMs": 25320,
+    "endMs": 25650,
+    "timestampMs": 25600,
+    "confidence": 0.972737
+  },
+  {
+    "text": " shake",
+    "startMs": 25650,
+    "endMs": 26040,
+    "timestampMs": 25880,
+    "confidence": 0.980475
+  },
+  {
+    "text": " whenever",
+    "startMs": 26040,
+    "endMs": 26570,
+    "timestampMs": 26140,
+    "confidence": 0.935326
+  },
+  {
+    "text": " he",
+    "startMs": 26570,
+    "endMs": 26700,
+    "timestampMs": 26520,
+    "confidence": 0.998313
+  },
+  {
+    "text": " lands.",
+    "startMs": 26700,
+    "endMs": 27240,
+    "timestampMs": 26720,
+    "confidence": 0.996159
+  },
+  {
+    "text": " Second,",
+    "startMs": 27240,
+    "endMs": 27620,
+    "timestampMs": 27200,
+    "confidence": 0.610362
+  },
+  {
+    "text": " Spider-Man",
+    "startMs": 27620,
+    "endMs": 28090,
+    "timestampMs": 27660,
+    "confidence": 0.994084
+  },
+  {
+    "text": " already",
+    "startMs": 28090,
+    "endMs": 28430,
+    "timestampMs": 28200,
+    "confidence": 0.996662
+  },
+  {
+    "text": " possesses",
+    "startMs": 28430,
+    "endMs": 28870,
+    "timestampMs": 28560,
+    "confidence": 0.99048
+  },
+  {
+    "text": " incredible",
+    "startMs": 28870,
+    "endMs": 29350,
+    "timestampMs": 29120,
+    "confidence": 0.995932
+  },
+  {
+    "text": " strength,",
+    "startMs": 29350,
+    "endMs": 29880,
+    "timestampMs": 29540,
+    "confidence": 0.99538
+  },
+  {
+    "text": " so",
+    "startMs": 29880,
+    "endMs": 29940,
+    "timestampMs": 29940,
+    "confidence": 0.633761
+  },
+  {
+    "text": " he'll",
+    "startMs": 29940,
+    "endMs": 29940,
+    "timestampMs": 29940,
+    "confidence": 0.661669
+  },
+  {
+    "text": " continue",
+    "startMs": 29940,
+    "endMs": 29940,
+    "timestampMs": 29940,
+    "confidence": 0.00654669
+  },
+  {
+    "text": " to",
+    "startMs": 29940,
+    "endMs": 29940,
+    "timestampMs": 29940,
+    "confidence": 0.77148
+  },
+  {
+    "text": " do",
+    "startMs": 29940,
+    "endMs": 29940,
+    "timestampMs": 29940,
+    "confidence": 0.0231505
+  },
+  {
+    "text": " it.",
+    "startMs": 29940,
+    "endMs": 29960,
+    "timestampMs": 29940,
+    "confidence": 0.195555
+  },
+  {
+    "text": " His",
+    "startMs": 29960,
+    "endMs": 30120,
+    "timestampMs": 30060,
+    "confidence": 0.744998
+  },
+  {
+    "text": " suit's",
+    "startMs": 30120,
+    "endMs": 30470,
+    "timestampMs": 30280,
+    "confidence": 0.960818
+  },
+  {
+    "text": " primary",
+    "startMs": 30470,
+    "endMs": 30840,
+    "timestampMs": 30620,
+    "confidence": 0.998673
+  },
+  {
+    "text": " function",
+    "startMs": 30840,
+    "endMs": 31330,
+    "timestampMs": 31120,
+    "confidence": 0.991543
+  },
+  {
+    "text": " is",
+    "startMs": 31330,
+    "endMs": 31390,
+    "timestampMs": 31380,
+    "confidence": 0.997668
+  },
+  {
+    "text": " to",
+    "startMs": 31390,
+    "endMs": 31500,
+    "timestampMs": 31500,
+    "confidence": 0.995944
+  },
+  {
+    "text": " enhance",
+    "startMs": 31500,
+    "endMs": 31890,
+    "timestampMs": 31760,
+    "confidence": 0.995015
+  },
+  {
+    "text": " defense",
+    "startMs": 31890,
+    "endMs": 32280,
+    "timestampMs": 32220,
+    "confidence": 0.939678
+  },
+  {
+    "text": " rather",
+    "startMs": 32280,
+    "endMs": 32610,
+    "timestampMs": 32580,
+    "confidence": 0.937196
+  },
+  {
+    "text": " than",
+    "startMs": 32610,
+    "endMs": 32830,
+    "timestampMs": 32880,
+    "confidence": 0.997333
+  },
+  {
+    "text": " boost",
+    "startMs": 32830,
+    "endMs": 33120,
+    "timestampMs": 33040,
+    "confidence": 0.995122
+  },
+  {
+    "text": " power.",
+    "startMs": 33120,
+    "endMs": 33600,
+    "timestampMs": 33360,
+    "confidence": 0.999098
+  },
+  {
+    "text": " In",
+    "startMs": 33600,
+    "endMs": 33740,
+    "timestampMs": 33640,
+    "confidence": 0.996805
+  },
+  {
+    "text": " fact,",
+    "startMs": 33740,
+    "endMs": 34000,
+    "timestampMs": 33860,
+    "confidence": 0.999028
+  },
+  {
+    "text": " on",
+    "startMs": 34000,
+    "endMs": 34100,
+    "timestampMs": 34140,
+    "confidence": 0.355883
+  },
+  {
+    "text": " less",
+    "startMs": 34100,
+    "endMs": 34300,
+    "timestampMs": 34300,
+    "confidence": 0.992428
+  },
+  {
+    "text": " fighting",
+    "startMs": 34300,
+    "endMs": 34740,
+    "timestampMs": 34580,
+    "confidence": 0.986474
+  },
+  {
+    "text": " in",
+    "startMs": 34740,
+    "endMs": 34800,
+    "timestampMs": 34780,
+    "confidence": 0.994607
+  },
+  {
+    "text": " extreme",
+    "startMs": 34800,
+    "endMs": 35150,
+    "timestampMs": 35040,
+    "confidence": 0.986668
+  },
+  {
+    "text": " environments",
+    "startMs": 35150,
+    "endMs": 35750,
+    "timestampMs": 35660,
+    "confidence": 0.994507
+  },
+  {
+    "text": " like",
+    "startMs": 35750,
+    "endMs": 36040,
+    "timestampMs": 35920,
+    "confidence": 0.922208
+  },
+  {
+    "text": " outer",
+    "startMs": 36040,
+    "endMs": 36200,
+    "timestampMs": 36140,
+    "confidence": 0.937966
+  },
+  {
+    "text": " space,",
+    "startMs": 36200,
+    "endMs": 36590,
+    "timestampMs": 36460,
+    "confidence": 0.990652
+  },
+  {
+    "text": " Spider-Man",
+    "startMs": 36590,
+    "endMs": 37050,
+    "timestampMs": 36960,
+    "confidence": 0.99686
+  },
+  {
+    "text": " could",
+    "startMs": 37050,
+    "endMs": 37300,
+    "timestampMs": 37340,
+    "confidence": 0.969559
+  },
+  {
+    "text": " perform",
+    "startMs": 37300,
+    "endMs": 37720,
+    "timestampMs": 37580,
+    "confidence": 0.992138
+  },
+  {
+    "text": " just",
+    "startMs": 37720,
+    "endMs": 37920,
+    "timestampMs": 37880,
+    "confidence": 0.996099
+  },
+  {
+    "text": " fine",
+    "startMs": 37920,
+    "endMs": 38120,
+    "timestampMs": 38120,
+    "confidence": 0.998951
+  },
+  {
+    "text": " without",
+    "startMs": 38120,
+    "endMs": 38480,
+    "timestampMs": 38360,
+    "confidence": 0.986523
+  },
+  {
+    "text": " a",
+    "startMs": 38480,
+    "endMs": 38530,
+    "timestampMs": 38500,
+    "confidence": 0.905471
+  },
+  {
+    "text": " suit.",
+    "startMs": 38530,
+    "endMs": 38920,
+    "timestampMs": 38680,
+    "confidence": 0.99763
+  },
+  {
+    "text": " That",
+    "startMs": 38920,
+    "endMs": 39150,
+    "timestampMs": 39060,
+    "confidence": 0.985195
+  },
+  {
+    "text": " said,",
+    "startMs": 39150,
+    "endMs": 39460,
+    "timestampMs": 39320,
+    "confidence": 0.991821
+  },
+  {
+    "text": " the",
+    "startMs": 39460,
+    "endMs": 39570,
+    "timestampMs": 39520,
+    "confidence": 0.98122
+  },
+  {
+    "text": " suit's",
+    "startMs": 39570,
+    "endMs": 39890,
+    "timestampMs": 39700,
+    "confidence": 0.975638
+  },
+  {
+    "text": " instant",
+    "startMs": 39890,
+    "endMs": 40230,
+    "timestampMs": 40080,
+    "confidence": 0.965946
+  },
+  {
+    "text": " kill",
+    "startMs": 40230,
+    "endMs": 40430,
+    "timestampMs": 40280,
+    "confidence": 0.539064
+  },
+  {
+    "text": " mode",
+    "startMs": 40430,
+    "endMs": 40690,
+    "timestampMs": 40520,
+    "confidence": 0.993978
+  },
+  {
+    "text": " is",
+    "startMs": 40690,
+    "endMs": 40730,
+    "timestampMs": 40740,
+    "confidence": 0.997647
+  },
+  {
+    "text": " incredibly",
+    "startMs": 40730,
+    "endMs": 41290,
+    "timestampMs": 41060,
+    "confidence": 0.996639
+  },
+  {
+    "text": " effective",
+    "startMs": 41290,
+    "endMs": 41750,
+    "timestampMs": 41820,
+    "confidence": 0.999117
+  },
+  {
+    "text": " when",
+    "startMs": 41750,
+    "endMs": 41980,
+    "timestampMs": 42060,
+    "confidence": 0.986391
+  },
+  {
+    "text": " surrounded",
+    "startMs": 41980,
+    "endMs": 42440,
+    "timestampMs": 42220,
+    "confidence": 0.997936
+  },
+  {
+    "text": " by",
+    "startMs": 42440,
+    "endMs": 42640,
+    "timestampMs": 42640,
+    "confidence": 0.993131
+  },
+  {
+    "text": " enemies.",
+    "startMs": 42640,
+    "endMs": 43480,
+    "timestampMs": 42880,
+    "confidence": 0.366996
+  },
+  {
+    "text": " Combined",
+    "startMs": 43480,
+    "endMs": 44020,
+    "timestampMs": 43540,
+    "confidence": 0.993176
+  },
+  {
+    "text": " with",
+    "startMs": 44020,
+    "endMs": 44220,
+    "timestampMs": 43760,
+    "confidence": 0.999216
+  },
+  {
+    "text": " its",
+    "startMs": 44220,
+    "endMs": 44380,
+    "timestampMs": 43880,
+    "confidence": 0.980389
+  },
+  {
+    "text": " 576",
+    "startMs": 44380,
+    "endMs": 44920,
+    "timestampMs": 44180,
+    "confidence": 0.935412
+  },
+  {
+    "text": " web",
+    "startMs": 44920,
+    "endMs": 45100,
+    "timestampMs": 45300,
+    "confidence": 0.860462
+  },
+  {
+    "text": " shooting",
+    "startMs": 45100,
+    "endMs": 45580,
+    "timestampMs": 45460,
+    "confidence": 0.547201
+  },
+  {
+    "text": " variations,",
+    "startMs": 45580,
+    "endMs": 46300,
+    "timestampMs": 46060,
+    "confidence": 0.965659
+  },
+  {
+    "text": " the",
+    "startMs": 46300,
+    "endMs": 46480,
+    "timestampMs": 46440,
+    "confidence": 0.985644
+  },
+  {
+    "text": " nanosuit",
+    "startMs": 46480,
+    "endMs": 46960,
+    "timestampMs": 46600,
+    "confidence": 0.638559
+  },
+  {
+    "text": " is",
+    "startMs": 46960,
+    "endMs": 47080,
+    "timestampMs": 47420,
+    "confidence": 0.82818
+  },
+  {
+    "text": " the",
+    "startMs": 47080,
+    "endMs": 47260,
+    "timestampMs": 47560,
+    "confidence": 0.988781
+  },
+  {
+    "text": " perfect",
+    "startMs": 47260,
+    "endMs": 47670,
+    "timestampMs": 47860,
+    "confidence": 0.998437
+  },
+  {
+    "text": " blend",
+    "startMs": 47670,
+    "endMs": 47980,
+    "timestampMs": 48140,
+    "confidence": 0.999144
+  },
+  {
+    "text": " of",
+    "startMs": 47980,
+    "endMs": 48100,
+    "timestampMs": 48340,
+    "confidence": 0.990998
+  },
+  {
+    "text": " cutting",
+    "startMs": 48100,
+    "endMs": 48600,
+    "timestampMs": 48500,
+    "confidence": 0.99846
+  },
+  {
+    "text": " edge",
+    "startMs": 48600,
+    "endMs": 48840,
+    "timestampMs": 48760,
+    "confidence": 0.989719
+  },
+  {
+    "text": " technology",
+    "startMs": 48840,
+    "endMs": 49410,
+    "timestampMs": 49220,
+    "confidence": 0.993267
+  },
+  {
+    "text": " and",
+    "startMs": 49410,
+    "endMs": 49530,
+    "timestampMs": 49460,
+    "confidence": 0.887405
+  },
+  {
+    "text": " biological",
+    "startMs": 49530,
+    "endMs": 50100,
+    "timestampMs": 49760,
+    "confidence": 0.751054
+  },
+  {
+    "text": " mutation.",
+    "startMs": 50100,
+    "endMs": 50720,
+    "timestampMs": 50500,
+    "confidence": 0.954664
+  }
+]
