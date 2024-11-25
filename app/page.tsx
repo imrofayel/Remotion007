@@ -51,6 +51,15 @@ const CAPTION_THEMES = {
   },
 };
 
+// Predefined aspect ratios with max dimensions for quality
+const ASPECT_RATIOS = {
+  "16:9": { width: 1920, height: 1080, label: "Landscape (16:9)" },
+  "9:16": { width: 1080, height: 1920, label: "Portrait (9:16)" },
+  "4:5": { width: 1080, height: 1350, label: "Instagram (4:5)" },
+  "1:1": { width: 1080, height: 1080, label: "Square (1:1)" },
+  "4:3": { width: 1440, height: 1080, label: "Classic (4:3)" },
+};
+
 const Home: NextPage = () => {
   // Video states
   const [videoSrc, setVideoSrc] = useState<string>("/sample-video.mp4");
@@ -79,6 +88,17 @@ const Home: NextPage = () => {
     CAPTION_THEMES.default.highlightColor,
   );
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(2);
+  const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("16:9");
+
+  // Calculate container dimensions while maintaining aspect ratio
+  const getContainerStyle = (ratio: keyof typeof ASPECT_RATIOS) => {
+    const { width, height } = ASPECT_RATIOS[ratio];
+    return {
+      aspectRatio: `${width} / ${height}`,
+      maxWidth: '100%',
+      maxHeight: 'calc(100vh - 200px)', // Leave space for controls
+    };
+  };
 
   // Handle video upload
   const handleVideoUpload = async (
@@ -206,7 +226,7 @@ const Home: NextPage = () => {
   return (
     <div className="container mx-auto p-6 flex flex-col gap-6">
       {/* Upload Section */}
-      <div className="mb-6 p-6 border-2 border-dashed border-gray-300 rounded-lg bg-white">
+      <div className="mb-6 p-6 border-2 border-dashed border-gray-300 rounded-lg bg-white shadow-sm hover:border-gray-400 transition-colors">
         <h3 className="text-lg font-semibold mb-2">Upload Video</h3>
         <input
           type="file"
@@ -214,12 +234,13 @@ const Home: NextPage = () => {
           onChange={handleVideoUpload}
           disabled={isProcessing}
           className="block w-full text-sm text-gray-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-md file:border-0
-              file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100
-              disabled:opacity-50 disabled:cursor-not-allowed"
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-md file:border-0
+            file:text-sm file:font-semibold
+            file:bg-blue-50 file:text-blue-700
+            hover:file:bg-blue-100
+            disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all"
         />
         {isProcessing && (
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
@@ -239,10 +260,71 @@ const Home: NextPage = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Video Player Section */}
+        <div className="bg-white rounded-3xl border p-6 order-2 lg:order-1">
+          {/* Aspect Ratio Selector */}
+          <div className="mb-6">
+            <label className="block font-medium mb-2">Video Aspect Ratio</label>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(ASPECT_RATIOS).map(([ratio, { label }]) => (
+                <button
+                  key={ratio}
+                  onClick={() => setAspectRatio(ratio as keyof typeof ASPECT_RATIOS)}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
+                    ${ratio === aspectRatio
+                      ? "bg-blue-500 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Video Player */}
+          {isReady ? (
+            <div className="rounded-3xl shadow-xl bg-black overflow-hidden">
+              <div 
+                className="relative w-full"
+                style={getContainerStyle(aspectRatio)}
+              >
+                <Player
+                  component={CaptionedVideo}
+                  inputProps={captionedVideoProps}
+                  durationInFrames={videoDuration}
+                  fps={VIDEO_FPS}
+                  compositionHeight={ASPECT_RATIOS[aspectRatio].height}
+                  compositionWidth={ASPECT_RATIOS[aspectRatio].width}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain'
+                  }}
+                  controls
+                  autoPlay
+                  loop
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-3xl bg-gray-50 min-h-[400px] flex items-center justify-center">
+              <div className="text-center p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Preparing Your Video
+                </h3>
+                <p className="text-gray-600">
+                  Please wait while we process your video and generate captions...
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Controls Section */}
-        <div className="w-full">
-          <div className="bg-white rounded-3xl border p-6">
+        <div className="order-1 lg:order-2">
+          <div className="bg-white rounded-3xl border p-6 sticky top-6">
             {/* Theme Selection */}
             <div className="mb-6">
               <label className="block font-medium mb-2">Theme</label>
@@ -380,38 +462,6 @@ const Home: NextPage = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Video Player */}
-        <div className="bg-white rounded-3xl border p-6">
-
-        {isReady ? (
-          <div className="rounded-3xl shadow-2xl bg-black">
-            <Player
-              component={CaptionedVideo}
-              inputProps={captionedVideoProps}
-              durationInFrames={videoDuration}
-              fps={VIDEO_FPS}
-              compositionHeight={VIDEO_HEIGHT}
-              compositionWidth={VIDEO_WIDTH}
-              controls
-              autoPlay
-              loop
-            />
-          </div>
-        ) : (
-          <div className="rounded-2xl bg-gray-50 min-h-[400px] flex items-center justify-center">
-            <div className="text-center p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Preparing Your Video
-              </h3>
-              <p className="text-gray-600">
-                Please wait while we process your video and generate captions...
-              </p>
-            </div>
-          </div>
-        )}
-
         </div>
       </div>
     </div>
