@@ -27,6 +27,8 @@ export const captionedVideoSchema = z.object({
   strokeColor: z.string().optional(),
   strokeWidth: z.number().optional(),
   highlightColor: z.string().optional(),
+  wordsPerCaption: z.number().optional(),
+  captionSwitchSpeed: z.number().optional(),
 });
 
 export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
@@ -41,7 +43,7 @@ export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
   };
 };
 
-const SWITCH_CAPTIONS_EVERY_MS = 200;
+const BASE_SWITCH_SPEED = 150;
 
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   src,
@@ -49,11 +51,18 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   fontColor = "white",
   strokeColor = "black",
   strokeWidth = 20,
-  highlightColor = "#39E508"
+  highlightColor = "#39E508",
+  wordsPerCaption = 2,
+  captionSwitchSpeed,
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
   const [handle] = useState(() => delayRender());
   const { fps } = useVideoConfig();
+
+  const captionSwitchSpeedValue = useMemo(() => 
+    captionSwitchSpeed ?? BASE_SWITCH_SPEED * wordsPerCaption, 
+    [wordsPerCaption, captionSwitchSpeed]
+  );
 
   const subtitlesFile = src
     .replace(/.mp4$/, ".json")
@@ -83,10 +92,10 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
 
   const { pages } = useMemo(() => {
     return createTikTokStyleCaptions({
-      combineTokensWithinMilliseconds: SWITCH_CAPTIONS_EVERY_MS,
+      combineTokensWithinMilliseconds: captionSwitchSpeedValue,
       captions: subtitles ?? [],
     });
-  }, [subtitles]);
+  }, [subtitles, wordsPerCaption, captionSwitchSpeedValue]);
 
   return (
     <AbsoluteFill>
@@ -105,7 +114,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
         const subtitleStartFrame = Math.floor((page.startMs / 1000) * fps);
         const subtitleEndFrame = Math.min(
           nextPage ? Math.floor((nextPage.startMs / 1000) * fps) : Infinity,
-          subtitleStartFrame + Math.floor((SWITCH_CAPTIONS_EVERY_MS / 1000) * fps)
+          subtitleStartFrame + Math.floor((captionSwitchSpeedValue / 1000) * fps)
         );
         const durationInFrames = subtitleEndFrame - subtitleStartFrame;
         if (durationInFrames <= 0) {

@@ -27,18 +27,29 @@ interface PageProps {
   highlightColor?: string;
 }
 
-export const Page: React.FC<PageProps> = ({ 
-  enterProgress, 
+export const Page: React.FC<PageProps> = ({
+  enterProgress,
   page,
   fontSize = 120,
   fontColor = "white",
   strokeColor = "black",
   strokeWidth = 20,
-  highlightColor = "#39E508"
+  highlightColor = "#39E508",
 }) => {
   const frame = useCurrentFrame();
   const { width, fps } = useVideoConfig();
   const timeInMs = (frame / fps) * 1000;
+
+  // Add floating animation
+  const floatingY = interpolate(
+    Math.sin(frame / 30),
+    [-1, 1],
+    [-5, 5],
+    {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    }
+  );
 
   const fittedText = fitText({
     fontFamily: 'Inter',
@@ -56,7 +67,7 @@ export const Page: React.FC<PageProps> = ({
           fontSize: finalFontSize,
           transform: makeTransform([
             scale(enterProgress),
-            translateY(enterProgress * -30),
+            translateY(enterProgress * -30 + floatingY),
           ]),
           fontFamily: "Inter",
           textTransform: "uppercase",
@@ -72,8 +83,8 @@ export const Page: React.FC<PageProps> = ({
         {page.tokens.map((token, index) => {
           const startRelativeToSequence = token.fromMs - page.startMs;
           const endRelativeToSequence = token.toMs - page.startMs;
-          const active = 
-            startRelativeToSequence <= timeInMs && 
+          const active =
+            startRelativeToSequence <= timeInMs &&
             endRelativeToSequence > timeInMs;
 
           return (

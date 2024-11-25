@@ -169,6 +169,7 @@ const Home: NextPage = () => {
   const [strokeColor, setStrokeColor] = useState<string>(CAPTION_THEMES.default.strokeColor);
   const [strokeWidth, setStrokeWidth] = useState<number>(CAPTION_THEMES.default.strokeWidth);
   const [highlightColor, setHighlightColor] = useState<string>(CAPTION_THEMES.default.highlightColor);
+  const [wordsPerCaption, setWordsPerCaption] = useState<number>(2);
 
   // Handle video upload
   const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -270,56 +271,7 @@ const Home: NextPage = () => {
     setHighlightColor(theme.highlightColor);
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setIsLoading(true);
-    setIsReady(false);
-
-    try {
-      // Upload video
-      const formData = new FormData();
-      formData.append('video', file);
-
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) throw new Error('Video upload failed');
-      
-      const { videoUrl } = await uploadResponse.json();
-      setVideoSrc(videoUrl);
-
-      // Generate captions
-      const captionsResponse = await fetch('/api/generate-captions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ videoUrl }),
-      });
-
-      if (!captionsResponse.ok) throw new Error('Caption generation failed');
-      
-      const { captions: generatedCaptions } = await captionsResponse.json();
-      setCaptions(generatedCaptions);
-
-      // Get video metadata
-      const metadata = await getVideoMetadata(videoUrl);
-      setVideoDuration(Math.floor(metadata.durationInSeconds * VIDEO_FPS));
-
-      setIsReady(true);
-    } catch (error) {
-      console.error('Error processing video:', error);
-      alert('Failed to process video. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Props for the CaptionedVideo component
+  // Video props memoization
   const captionedVideoProps = useMemo(() => ({
     src: videoSrc,
     fontSize,
@@ -327,7 +279,8 @@ const Home: NextPage = () => {
     strokeColor,
     strokeWidth,
     highlightColor,
-  }), [videoSrc, fontSize, fontColor, strokeColor, strokeWidth, highlightColor]);
+    wordsPerCaption,
+  }), [videoSrc, fontSize, fontColor, strokeColor, strokeWidth, highlightColor, wordsPerCaption]);
 
   return (
     <div style={mainContainer}>
@@ -435,75 +388,107 @@ const Home: NextPage = () => {
       {/* Controls Section */}
       <div style={controlsSection}>
         <div style={controlsPanel}>
-          {/* Theme Buttons */}
+          {/* Theme Selection */}
           <div style={controlGroup}>
-            <label style={label}>Preset Themes</label>
+            <label style={label}>Theme</label>
             <div style={themeButtonsContainer}>
-              {Object.keys(CAPTION_THEMES).map((themeName) => (
+              {Object.keys(CAPTION_THEMES).map((theme) => (
                 <button
-                  key={themeName}
-                  style={themeName === activeTheme ? themeButtonActive : themeButton}
-                  onClick={() => handleThemeChange(themeName)}
+                  key={theme}
+                  onClick={() => handleThemeChange(theme)}
+                  style={
+                    theme === activeTheme ? themeButtonActive : themeButton
+                  }
                 >
-                  {themeName.charAt(0).toUpperCase() + themeName.slice(1)}
+                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
                 </button>
               ))}
             </div>
           </div>
 
-              <div style={controlGroup}>
-                <label style={label}>Font Size</label>
-                <input
-                  type="range"
-                  min="60"
-                  max="200"
-                  value={fontSize}
-                  onChange={(e) => {
-                    setFontSize(Number(e.target.value));
-                    setActiveTheme("custom");
-                  }}
-                />
-                <span>{fontSize}px</span>
-              </div>
+          {/* Words Per Caption Control */}
+          <div style={controlGroup}>
+            <label style={label}>Words Per Caption</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input
+                type="range"
+                min="1"
+                max="5"
+                step="1"
+                value={wordsPerCaption}
+                onChange={(e) => {
+                  setWordsPerCaption(Number(e.target.value));
+                  setActiveTheme("custom");
+                }}
+                style={{ 
+                  flex: 1,
+                  accentColor: highlightColor,
+                  cursor: 'pointer',
+                }}
+              />
+              <span style={{ 
+                minWidth: '80px',
+                color: 'var(--foreground)',
+              }}>
+                {wordsPerCaption} word{wordsPerCaption !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
 
-              <div style={controlGroup}>
-                <label style={label}>Font Color</label>
-                <input
-                  type="color"
-                  value={fontColor}
-                  onChange={(e) => {
-                    setFontColor(e.target.value);
-                    setActiveTheme("custom");
-                  }}
-                />
-              </div>
+          {/* Custom Controls */}
+          <div style={controlGroup}>
+            <label style={label}>Font Size</label>
+            <input
+              type="range"
+              min="60"
+              max="200"
+              value={fontSize}
+              onChange={(e) => {
+                setFontSize(Number(e.target.value));
+                setActiveTheme("custom");
+              }}
+            />
+            <span>{fontSize}px</span>
+          </div>
 
-              <div style={controlGroup}>
-                <label style={label}>Stroke Color</label>
-                <input
-                  type="color"
-                  value={strokeColor}
-                  onChange={(e) => {
-                    setStrokeColor(e.target.value);
-                    setActiveTheme("custom");
-                  }}
-                />
-              </div>
+          <div style={controlGroup}>
+            <label style={label}>Font Color</label>
+            <input
+              type="color"
+              value={fontColor}
+              onChange={(e) => {
+                setFontColor(e.target.value);
+                setActiveTheme("custom");
+              }}
+            />
+          </div>
 
-              <div style={controlGroup}>
-                <label style={label}>Stroke Width</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="40"
-                  value={strokeWidth}
-                  onChange={(e) => {
-                    setStrokeWidth(Number(e.target.value));
-                    setActiveTheme("custom");
-                  }}
-                />
-                <span>{strokeWidth}px</span>
-              </div>
+          <div style={controlGroup}>
+            <label style={label}>Stroke Color</label>
+            <input
+              type="color"
+              value={strokeColor}
+              onChange={(e) => {
+                setStrokeColor(e.target.value);
+                setActiveTheme("custom");
+              }}
+            />
+          </div>
+
+          <div style={controlGroup}>
+            <label style={label}>Stroke Width</label>
+            <input
+              type="range"
+              min="0"
+              max="40"
+              value={strokeWidth}
+              onChange={(e) => {
+                setStrokeWidth(Number(e.target.value));
+                setActiveTheme("custom");
+              }}
+            />
+            <span>{strokeWidth}px</span>
+          </div>
 
           <div style={controlGroup}>
             <label style={label}>Highlight Color</label>
