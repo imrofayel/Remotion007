@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+    font-family: 'Inter';
+}
 :root {
     --background: #fff;
     --foreground: #000;
