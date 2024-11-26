@@ -73,12 +73,12 @@ const ASPECT_RATIOS = {
 const Home: NextPage = () => {
   // Video states
   const [videoSrc, setVideoSrc] = useState<string>("/sample-video.mp4");
-  const [videoDuration, setVideoDuration] =
-    useState<number>(DURATION_IN_FRAMES);
+  const [videoDuration, setVideoDuration] = useState<number>(DURATION_IN_FRAMES);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isReady, setIsReady] = useState(true); // Initially true for sample video
+  const [captionYPosition, setCaptionYPosition] = useState<number>(350); // Default Y position
 
   // Caption styling states with default theme
   const [activeTheme, setActiveTheme] = useState<string>("default");
@@ -98,8 +98,7 @@ const Home: NextPage = () => {
     CAPTION_THEMES.default.highlightColor,
   );
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(2);
-  const [aspectRatio, setAspectRatio] =
-    useState<keyof typeof ASPECT_RATIOS>("9:16");
+  const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
 
   // Calculate container dimensions while maintaining aspect ratio
   const getContainerStyle = (ratio: keyof typeof ASPECT_RATIOS) => {
@@ -109,6 +108,32 @@ const Home: NextPage = () => {
       maxWidth: "100%",
       maxHeight: "calc(100vh - 100px)", // Leave space for controls
     };
+  };
+
+  const getVideoHeight = (ratio: string) => {
+    switch (ratio) {
+      case "16:9":
+        return 1080;
+      case "9:16":
+        return 1920;
+      case "4:5":
+        return 1350;
+      case "1:1":
+        return 1080;
+      default:
+        return 1080;
+    }
+  };
+
+  const handleAspectRatioChange = (newRatio: string) => {
+    setAspectRatio(newRatio);
+    const height = getVideoHeight(newRatio);
+    setCaptionYPosition(height / 2); // Set to middle by default
+  };
+
+  const handleYPositionChange = (newPosition: number) => {
+    const height = getVideoHeight(aspectRatio);
+    setCaptionYPosition(Math.max(0, Math.min(newPosition, height)));
   };
 
   // Handle video upload
@@ -222,6 +247,8 @@ const Home: NextPage = () => {
       strokeWidth,
       highlightColor,
       wordsPerCaption,
+      yPosition: captionYPosition,
+      aspectRatio,
     }),
     [
       videoSrc,
@@ -231,6 +258,8 @@ const Home: NextPage = () => {
       strokeWidth,
       highlightColor,
       wordsPerCaption,
+      captionYPosition,
+      aspectRatio,
     ],
   );
 
@@ -257,25 +286,25 @@ const Home: NextPage = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="rounded-2xl text-gray-600 shadow-gray-100 border-gray-100">
             <DropdownMenuItem
-              onClick={() => setAspectRatio("16:9")}
+              onClick={() => handleAspectRatioChange("16:9")}
               className="rounded-lg"
             >
               16:9 Landscape
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setAspectRatio("9:16")}
+              onClick={() => handleAspectRatioChange("9:16")}
               className="rounded-lg"
             >
               9:16 Portrait
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setAspectRatio("1:1")}
+              onClick={() => handleAspectRatioChange("1:1")}
               className="rounded-lg"
             >
               1:1 Square
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setAspectRatio("4:5")}
+              onClick={() => handleAspectRatioChange("4:5")}
               className="rounded-lg"
             >
               4:5 Instagram
@@ -491,6 +520,18 @@ const Home: NextPage = () => {
                   [&::-webkit-slider-thumb]:bg-gray-800"
                 />
               </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Caption Y Position</label>
+              <input
+                type="range"
+                min="0"
+                max={getVideoHeight(aspectRatio)}
+                value={captionYPosition}
+                onChange={(e) => handleYPositionChange(Number(e.target.value))}
+                className="w-full"
+              />
             </div>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  AbsoluteFill,
   spring,
   useCurrentFrame,
   useVideoConfig,
@@ -8,22 +7,26 @@ import {
 import { Page } from "./Page";
 import { TikTokPage } from "@remotion/captions";
 
-interface SubtitlePageProps {
+interface Props {
   page: TikTokPage;
   fontSize?: number;
   fontColor?: string;
   strokeColor?: string;
   strokeWidth?: number;
   highlightColor?: string;
+  yPosition?: number;
+  aspectRatio?: string;
 }
 
-const SubtitlePage: React.FC<SubtitlePageProps> = ({ 
+const SubtitlePage: React.FC<Props> = ({
   page,
   fontSize,
   fontColor,
   strokeColor,
   strokeWidth,
-  highlightColor
+  highlightColor,
+  yPosition,
+  aspectRatio,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -38,17 +41,17 @@ const SubtitlePage: React.FC<SubtitlePageProps> = ({
   });
 
   return (
-    <AbsoluteFill>
-      <Page 
-        enterProgress={enter} 
-        page={page}
-        fontSize={fontSize}
-        fontColor={fontColor}
-        strokeColor={strokeColor}
-        strokeWidth={strokeWidth}
-        highlightColor={highlightColor}
-      />
-    </AbsoluteFill>
+    <Page
+      enterProgress={enter}
+      page={page}
+      fontSize={fontSize}
+      fontColor={fontColor}
+      strokeColor={strokeColor}
+      strokeWidth={strokeWidth}
+      highlightColor={highlightColor}
+      yPosition={yPosition}
+      aspectRatio={aspectRatio}
+    />
   );
 };
 

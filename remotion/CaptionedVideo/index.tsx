@@ -27,6 +27,8 @@ export const captionedVideoSchema = z.object({
   highlightColor: z.string().optional(),
   wordsPerCaption: z.number().optional(),
   captionSwitchSpeed: z.number().optional(),
+  yPosition: z.number().optional(),
+  aspectRatio: z.string().optional(),
 });
 
 export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
@@ -53,13 +55,15 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   highlightColor = "#39E508",
   wordsPerCaption = 2,
   captionSwitchSpeed,
+  yPosition = 350,
+  aspectRatio = "9:16",
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
   const [handle] = useState(() => delayRender());
   const { fps } = useVideoConfig();
 
-  const captionSwitchSpeedValue = useMemo(() => 
-    captionSwitchSpeed ?? BASE_SWITCH_SPEED * wordsPerCaption, 
+  const captionSwitchSpeedValue = useMemo(() =>
+    captionSwitchSpeed ?? BASE_SWITCH_SPEED * wordsPerCaption,
     [wordsPerCaption, captionSwitchSpeed]
   );
 
@@ -134,6 +138,8 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
               strokeColor={strokeColor}
               strokeWidth={strokeWidth}
               highlightColor={highlightColor}
+              yPosition={yPosition}
+              aspectRatio={aspectRatio}
             />
           </Sequence>
         );

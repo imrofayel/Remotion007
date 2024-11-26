@@ -12,7 +12,7 @@ const container: React.CSSProperties = {
   justifyContent: "center",
   alignItems: "center",
   top: undefined,
-  bottom: 350,
+  bottom: undefined,
   height: 150,
 };
 
@@ -24,6 +24,8 @@ interface PageProps {
   strokeColor?: string;
   strokeWidth?: number;
   highlightColor?: string;
+  yPosition?: number;
+  aspectRatio?: string;
 }
 
 export const Page: React.FC<PageProps> = ({
@@ -34,6 +36,8 @@ export const Page: React.FC<PageProps> = ({
   strokeColor = "black",
   strokeWidth = 20,
   highlightColor = "#39E508",
+  yPosition = 350,
+  aspectRatio = "16:9",
 }) => {
   const frame = useCurrentFrame();
   const { width, fps } = useVideoConfig();
@@ -53,9 +57,31 @@ export const Page: React.FC<PageProps> = ({
   });
 
   const finalFontSize = Math.min(fontSize, fittedText.fontSize);
+  
+  // Calculate video dimensions based on aspect ratio
+  const videoHeight = aspectRatio === "16:9" ? 1080 : 
+                     aspectRatio === "9:16" ? 1920 :
+                     aspectRatio === "4:5" ? 1350 : 1080;
+
+  // Calculate the position as a percentage of video height
+  const positionPercentage = (yPosition / (videoHeight - (videoHeight/20))) * 100;
+  const clampedPercentage = Math.max(0, Math.min(positionPercentage, 100));
+  
+  // Calculate actual position relative to container
+  const actualPosition = (clampedPercentage / 100) * videoHeight - (videoHeight / 2);
 
   return (
-    <AbsoluteFill style={container}>
+    <AbsoluteFill style={{
+      position: "absolute",
+      top: "5%",
+      bottom: "5%",
+      left: 0,
+      right: 0,
+      transform: `translateY(${actualPosition}px)`,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}>
       <div
         style={{
           fontSize: finalFontSize,
