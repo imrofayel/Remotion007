@@ -336,13 +336,9 @@ const Home: NextPage = () => {
           ) : (
             <div className="rounded-3xl bg-gray-50 min-h-[400px] flex items-center justify-center">
               <div className="text-center p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-2xl font-semibold text-gray-300 mb-2">
                   Preparing Your Video
                 </h3>
-                <p className="text-gray-600">
-                  Please wait while we process your video and generate
-                  captions...
-                </p>
               </div>
             </div>
           )}
