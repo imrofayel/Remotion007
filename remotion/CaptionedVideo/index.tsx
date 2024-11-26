@@ -41,6 +41,7 @@ export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
   };
 };
 
+// Caption Speed
 const BASE_SWITCH_SPEED = 300;
 
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({

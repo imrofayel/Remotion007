@@ -107,7 +107,7 @@ const Home: NextPage = () => {
     return {
       aspectRatio: `${width} / ${height}`,
       maxWidth: "100%",
-      maxHeight: "calc(100vh - 200px)", // Leave space for controls
+      maxHeight: "calc(100vh - 100px)", // Leave space for controls
     };
   };
 
