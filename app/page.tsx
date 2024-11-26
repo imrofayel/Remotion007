@@ -20,8 +20,6 @@ import {
 import { Button } from "../components/ui/button";
 import {
   GalleryVerticalEndIcon,
-  Icon,
-  Upload,
   UploadCloud,
 } from "lucide-react";
 

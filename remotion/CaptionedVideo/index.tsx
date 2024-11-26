@@ -2,10 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AbsoluteFill,
   CalculateMetadataFunction,
-  cancelRender,
   continueRender,
   delayRender,
-  OffthreadVideo,
   Sequence,
   useVideoConfig,
   Video,
@@ -43,7 +41,7 @@ export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
   };
 };
 
-const BASE_SWITCH_SPEED = 150;
+const BASE_SWITCH_SPEED = 300;
 
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   src,
@@ -95,7 +93,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
       combineTokensWithinMilliseconds: captionSwitchSpeedValue,
       captions: subtitles ?? [],
     });
-  }, [subtitles, wordsPerCaption, captionSwitchSpeedValue]);
+  }, [subtitles, captionSwitchSpeedValue]);
 
   return (
     <AbsoluteFill>
