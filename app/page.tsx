@@ -3,7 +3,7 @@
 import { Player } from "@remotion/player";
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { NextPage } from "next";
-import React, { useMemo, useState } from "react";
+import React, { SetStateAction, useMemo, useState } from "react";
 import {
   DURATION_IN_FRAMES,
   VIDEO_FPS,
@@ -78,7 +78,7 @@ const Home: NextPage = () => {
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isReady, setIsReady] = useState(true); // Initially true for sample video
-  const [captionYPosition, setCaptionYPosition] = useState<number>(350); // Default Y position
+  const [captionYPosition, setCaptionYPosition] = useState<number>(1280); // Default Y position
 
   // Caption styling states with default theme
   const [activeTheme, setActiveTheme] = useState<string>("default");
@@ -125,9 +125,9 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleAspectRatioChange = (newRatio: string) => {
+  const handleAspectRatioChange = (newRatio: SetStateAction<"16:9" | "9:16" | "4:5" | "1:1">) => {
     setAspectRatio(newRatio);
-    const height = getVideoHeight(newRatio);
+    const height = getVideoHeight(newRatio as string);
     setCaptionYPosition(height / 2); // Set to middle by default
   };
 
@@ -523,14 +523,21 @@ const Home: NextPage = () => {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Caption Y Position</label>
+            <label className="block font-medium text-lg text-gray-300 mb-2">
+                Position Y
+              </label>
               <input
                 type="range"
                 min="0"
                 max={getVideoHeight(aspectRatio)}
                 value={captionYPosition}
                 onChange={(e) => handleYPositionChange(Number(e.target.value))}
-                className="w-full"
+                className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:w-4
+                  [&::-webkit-slider-thumb]:h-4
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-gray-800"
               />
             </div>
           </div>
