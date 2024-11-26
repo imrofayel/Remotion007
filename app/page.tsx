@@ -7,10 +7,23 @@ import React, { useMemo, useState } from "react";
 import {
   DURATION_IN_FRAMES,
   VIDEO_FPS,
-  VIDEO_HEIGHT,
-  VIDEO_WIDTH,
+  // VIDEO_HEIGHT,
+  // VIDEO_WIDTH,
 } from "../types/constants";
 import { CaptionedVideo } from "../remotion/CaptionedVideo";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import { Button } from "../components/ui/button";
+import {
+  GalleryVerticalEndIcon,
+  Icon,
+  Upload,
+  UploadCloud,
+} from "lucide-react";
 
 // Predefined themes for captions
 const CAPTION_THEMES = {
@@ -57,7 +70,6 @@ const ASPECT_RATIOS = {
   "9:16": { width: 1080, height: 1920, label: "Portrait (9:16)" },
   "4:5": { width: 1080, height: 1350, label: "Instagram (4:5)" },
   "1:1": { width: 1080, height: 1080, label: "Square (1:1)" },
-  "4:3": { width: 1440, height: 1080, label: "Classic (4:3)" },
 };
 
 const Home: NextPage = () => {
@@ -88,15 +100,16 @@ const Home: NextPage = () => {
     CAPTION_THEMES.default.highlightColor,
   );
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(2);
-  const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("16:9");
+  const [aspectRatio, setAspectRatio] =
+    useState<keyof typeof ASPECT_RATIOS>("9:16");
 
   // Calculate container dimensions while maintaining aspect ratio
   const getContainerStyle = (ratio: keyof typeof ASPECT_RATIOS) => {
     const { width, height } = ASPECT_RATIOS[ratio];
     return {
       aspectRatio: `${width} / ${height}`,
-      maxWidth: '100%',
-      maxHeight: 'calc(100vh - 200px)', // Leave space for controls
+      maxWidth: "100%",
+      maxHeight: "calc(100vh - 200px)", // Leave space for controls
     };
   };
 
@@ -224,89 +237,101 @@ const Home: NextPage = () => {
   );
 
   return (
-    <div className="container mx-auto p-6 flex flex-col gap-6">
+    <div className="p-6 items-center justify-center align-middle grid gap-6 text-gray-600">
       {/* Upload Section */}
-      <div className="mb-6 p-6 border-2 border-dashed border-gray-300 rounded-lg bg-white shadow-sm hover:border-gray-400 transition-colors">
-        <h3 className="text-lg font-semibold mb-2">Upload Video</h3>
-        <input
-          type="file"
-          accept="video/*"
-          onChange={handleVideoUpload}
-          disabled={isProcessing}
-          className="block w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-md file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100
-            disabled:opacity-50 disabled:cursor-not-allowed
-            transition-all"
-        />
-        {isProcessing && (
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <p className="text-blue-700 font-medium mb-2">
-              Processing video and generating captions...
-            </p>
-            <p className="text-sm text-blue-600">
-              This may take a few moments depending on the video length.
-            </p>
-          </div>
-        )}
-        {error && (
-          <p className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg">{error}</p>
-        )}
-        {uploadedFileName && !isProcessing && (
-          <p className="mt-4 text-green-600">Selected: {uploadedFileName}</p>
-        )}
+      <div className="w-full justify-between flex flex-row-reverse">
+        <div className="cursor-pointer max-w-fit bg-gray-100/60 p-3 rounded-2xl">
+          <UploadCloud
+            size={22}
+            onClick={() => document.getElementById("video-upload")?.click()}
+          />
+        </div>
+        {/* Aspect Ratio Selector */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="text-lg rounded-2xl p-3 bg-gray-100/60"
+            >
+              <GalleryVerticalEndIcon className="h-6 w-6 scale-[1.2] text-muted sm:mr-1" />
+              <span className="capitalize">{aspectRatio}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="rounded-2xl text-gray-600 shadow-gray-100 border-gray-100">
+            <DropdownMenuItem
+              onClick={() => setAspectRatio("16:9")}
+              className="rounded-lg"
+            >
+              16:9 Landscape
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setAspectRatio("9:16")}
+              className="rounded-lg"
+            >
+              9:16 Portrait
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setAspectRatio("1:1")}
+              className="rounded-lg"
+            >
+              1:1 Square
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setAspectRatio("4:5")}
+              className="rounded-lg"
+            >
+              4:5 Instagram
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+      <input
+        id="video-upload"
+        type="file"
+        accept="video/*"
+        onChange={(e) => {
+          handleVideoUpload(e);
+          if (isProcessing) {
+            console.log("Processing video and generating captions...");
+            console.log(
+              "This may take a few moments depending on the video length.",
+            );
+          }
+          if (error) {
+            console.error(error);
+          }
+          if (uploadedFileName && !isProcessing) {
+            console.log("Selected:", uploadedFileName);
+          }
+        }}
+        disabled={isProcessing}
+        className="hidden"
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Video Player Section */}
-        <div className="bg-white rounded-3xl border p-6 order-2 lg:order-1">
-          {/* Aspect Ratio Selector */}
-          <div className="mb-6">
-            <label className="block font-medium mb-2">Video Aspect Ratio</label>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(ASPECT_RATIOS).map(([ratio, { label }]) => (
-                <button
-                  key={ratio}
-                  onClick={() => setAspectRatio(ratio as keyof typeof ASPECT_RATIOS)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
-                    ${ratio === aspectRatio
-                      ? "bg-blue-500 text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
+      <div className="w-full flex justify-center">
+        <div className="w-full max-w-4xl">
           {/* Video Player */}
           {isReady ? (
-            <div className="rounded-3xl shadow-xl bg-black overflow-hidden">
-              <div 
-                className="relative w-full"
-                style={getContainerStyle(aspectRatio)}
-              >
-                <Player
-                  component={CaptionedVideo}
-                  inputProps={captionedVideoProps}
-                  durationInFrames={videoDuration}
-                  fps={VIDEO_FPS}
-                  compositionHeight={ASPECT_RATIOS[aspectRatio].height}
-                  compositionWidth={ASPECT_RATIOS[aspectRatio].width}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain'
-                  }}
-                  controls
-                  autoPlay
-                  loop
-                />
-              </div>
+            <div
+              className="relative mx-auto"
+              style={getContainerStyle(aspectRatio)}
+            >
+              <Player
+                component={CaptionedVideo}
+                inputProps={captionedVideoProps}
+                durationInFrames={videoDuration}
+                fps={VIDEO_FPS}
+                compositionHeight={ASPECT_RATIOS[aspectRatio].height}
+                compositionWidth={ASPECT_RATIOS[aspectRatio].width}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                className="drop-shadow-2xl object-contain"
+                controls
+                autoPlay
+                loop
+              />
             </div>
           ) : (
             <div className="rounded-3xl bg-gray-50 min-h-[400px] flex items-center justify-center">
@@ -315,92 +340,99 @@ const Home: NextPage = () => {
                   Preparing Your Video
                 </h3>
                 <p className="text-gray-600">
-                  Please wait while we process your video and generate captions...
+                  Please wait while we process your video and generate
+                  captions...
                 </p>
               </div>
             </div>
           )}
         </div>
+      </div>
 
-        {/* Controls Section */}
-        <div className="order-1 lg:order-2">
-          <div className="bg-white rounded-3xl border p-6 sticky top-6">
-            {/* Theme Selection */}
-            <div className="mb-6">
-              <label className="block font-medium mb-2">Theme</label>
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(CAPTION_THEMES).map((theme) => (
-                  <button
-                    key={theme}
-                    onClick={() => handleThemeChange(theme)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
+      {/* Controls Section */}
+      <div>
+        <div className="bg-white  border-b-2 border-gray-200/60 rounded-3xl border p-6 sticky top-6">
+          {/* Theme Selection */}
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(CAPTION_THEMES).map((theme) => (
+                <button
+                  key={theme}
+                  onClick={() => handleThemeChange(theme)}
+                  className={`px-4 py-2 rounded-2xl font-medium transition-colors
                     ${
                       theme === activeTheme
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-100/60 text-gray-600 hover:bg-gray-200"
                     }`}
-                  >
-                    {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                  </button>
-                ))}
-              </div>
+                >
+                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Words Per Caption Control */}
-            <div className="mb-6">
-              <label className="block font-medium mb-2">
-                Words Per Caption
-              </label>
-              <div className="flex items-center gap-4">
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  step="1"
-                  value={wordsPerCaption}
-                  onChange={(e) => {
-                    setWordsPerCaption(Number(e.target.value));
-                    setActiveTheme("custom");
-                  }}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
+          {/* Words Per Caption Control */}
+          <div className="mb-6 space-y-4">
+            <label className="block font-medium text-lg text-gray-300 mb-2">
+              Display Words
+            </label>
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min="1"
+                max="5"
+                step="1"
+                value={wordsPerCaption}
+                onChange={(e) => {
+                  setWordsPerCaption(Number(e.target.value));
+                  setActiveTheme("custom");
+                }}
+                className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
                   [&::-webkit-slider-thumb]:appearance-none
                   [&::-webkit-slider-thumb]:w-4
                   [&::-webkit-slider-thumb]:h-4
                   [&::-webkit-slider-thumb]:rounded-full
-                  [&::-webkit-slider-thumb]:bg-blue-500"
+                  [&::-webkit-slider-thumb]:bg-gray-800"
+              />
+              <span className="p-2 py-1 font-medium text-lg text-gray-600 bg-gray-100/60 rounded-2xl">
+                0{wordsPerCaption}
+              </span>
+            </div>
+          </div>
+
+          {/* Custom Controls */}
+          <div className="space-y-6">
+            <div>
+              <label className="block font-medium text-lg text-gray-300 mb-2">
+                Size {fontSize}px
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="60"
+                  max="200"
+                  value={fontSize}
+                  onChange={(e) => {
+                    setFontSize(Number(e.target.value));
+                    setActiveTheme("custom");
+                  }}
+                  className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:w-4
+                  [&::-webkit-slider-thumb]:h-4
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-gray-800"
                   style={{ accentColor: highlightColor }}
                 />
-                <span className="min-w-[80px] text-gray-700">
-                  {wordsPerCaption} word{wordsPerCaption !== 1 ? "s" : ""}
-                </span>
               </div>
             </div>
 
-            {/* Custom Controls */}
-            <div className="space-y-6">
+            <div className="flex space-x-2 justify-between">
               <div>
-                <label className="block font-medium mb-2">Font Size</label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min="60"
-                    max="200"
-                    value={fontSize}
-                    onChange={(e) => {
-                      setFontSize(Number(e.target.value));
-                      setActiveTheme("custom");
-                    }}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    style={{ accentColor: highlightColor }}
-                  />
-                  <span className="min-w-[60px] text-gray-700">
-                    {fontSize}px
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium mb-2">Font Color</label>
+                <label className="block font-medium text-lg text-gray-300 mb-2">
+                  Color
+                </label>{" "}
                 <input
                   type="color"
                   value={fontColor}
@@ -408,46 +440,12 @@ const Home: NextPage = () => {
                     setFontColor(e.target.value);
                     setActiveTheme("custom");
                   }}
-                  className="w-full h-10 rounded cursor-pointer"
+                  className="h-10 rounded border-none cursor-pointer bg-transparent"
                 />
               </div>
 
               <div>
-                <label className="block font-medium mb-2">Stroke Color</label>
-                <input
-                  type="color"
-                  value={strokeColor}
-                  onChange={(e) => {
-                    setStrokeColor(e.target.value);
-                    setActiveTheme("custom");
-                  }}
-                  className="w-full h-10 rounded cursor-pointer"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium mb-2">Stroke Width</label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min="0"
-                    max="40"
-                    value={strokeWidth}
-                    onChange={(e) => {
-                      setStrokeWidth(Number(e.target.value));
-                      setActiveTheme("custom");
-                    }}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    style={{ accentColor: highlightColor }}
-                  />
-                  <span className="min-w-[60px] text-gray-700">
-                    {strokeWidth}px
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium mb-2">
+                <label className="block font-medium text-lg text-gray-300 mb-2">
                   Highlight Color
                 </label>
                 <input
@@ -457,7 +455,46 @@ const Home: NextPage = () => {
                     setHighlightColor(e.target.value);
                     setActiveTheme("custom");
                   }}
-                  className="w-full h-10 rounded cursor-pointer"
+                  className="h-10 rounded border-none cursor-pointer bg-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium text-lg text-gray-300 mb-2">
+                  Stroke
+                </label>
+                <input
+                  type="color"
+                  value={strokeColor}
+                  onChange={(e) => {
+                    setStrokeColor(e.target.value);
+                    setActiveTheme("custom");
+                  }}
+                  className="h-10 rounded border-none cursor-pointer bg-transparent"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-medium text-lg text-gray-300 mb-2">
+                Stroke {strokeWidth}px
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="0"
+                  max="40"
+                  value={strokeWidth}
+                  onChange={(e) => {
+                    setStrokeWidth(Number(e.target.value));
+                    setActiveTheme("custom");
+                  }}
+                  className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:w-4
+                  [&::-webkit-slider-thumb]:h-4
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-gray-800"
                 />
               </div>
             </div>

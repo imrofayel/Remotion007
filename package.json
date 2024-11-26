@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
     "@remotion/animation-utils": "^4.0.231",
     "@remotion/bundler": "4.0.231",
     "@remotion/captions": "^4.0.231",
