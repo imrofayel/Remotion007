@@ -64,7 +64,7 @@ export const Page: React.FC<PageProps> = ({
                      aspectRatio === "4:5" ? 1350 : 1080;
 
   // Calculate the position as a percentage of video height
-  const positionPercentage = (yPosition / (videoHeight - (videoHeight/20))) * 100;
+  const positionPercentage = (yPosition / (videoHeight)) * 100;
   const clampedPercentage = Math.max(0, Math.min(positionPercentage, 100));
   
   // Calculate actual position relative to container
