@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AbsoluteFill,
-  interpolate,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -40,22 +39,16 @@ export const Page: React.FC<PageProps> = ({
   const { width, fps } = useVideoConfig();
   const timeInMs = (frame / fps) * 1000;
 
-  // Add floating animation
-  const floatingY = interpolate(
-    Math.sin(frame / 30),
-    [-1, 1],
-    [-5, 5],
-    {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp',
-    }
-  );
+  // Refined floating animation
+  const floatAmplitude = 15; // Maximum vertical movement in pixels
+  const floatFrequency = 1.5; // Oscillation frequency (higher = faster oscillations)
+  const floatingY =
+    Math.sin((frame / fps) * floatFrequency * 2 * Math.PI) * floatAmplitude;
 
   const fittedText = fitText({
-    fontFamily: 'Inter',
+    fontFamily: "Inter",
     text: page.text,
     withinWidth: width * 0.9,
-    // Uppercase Feature
     textTransform: "uppercase",
   });
 
@@ -68,7 +61,7 @@ export const Page: React.FC<PageProps> = ({
           fontSize: finalFontSize,
           transform: makeTransform([
             scale(enterProgress),
-            translateY(enterProgress * -30 + floatingY),
+            translateY(-30 + floatingY), // Applied floating effect
           ]),
           fontFamily: "Inter",
           textTransform: "uppercase",
@@ -78,7 +71,7 @@ export const Page: React.FC<PageProps> = ({
           fontWeight: "bold",
           WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
           paintOrder: "stroke",
-          textShadow: `${strokeWidth/2}px ${strokeWidth/2}px ${strokeWidth}px rgba(0,0,0,0.3)`,
+          textShadow: `${strokeWidth / 2}px ${strokeWidth / 2}px ${strokeWidth}px rgba(0,0,0,0.3)`,
         }}
       >
         {page.tokens.map((token, index) => {
