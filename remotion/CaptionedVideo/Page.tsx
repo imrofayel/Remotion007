@@ -55,6 +55,7 @@ export const Page: React.FC<PageProps> = ({
     fontFamily: 'Inter',
     text: page.text,
     withinWidth: width * 0.9,
+    // Uppercase Feature
     textTransform: "uppercase",
   });
 
