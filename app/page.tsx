@@ -524,7 +524,7 @@ const Home: NextPage = () => {
 
             <div className="flex flex-col gap-2">
             <label className="block font-medium text-lg text-gray-300 mb-2">
-                Position Y
+                Position Y {captionYPosition}px
               </label>
               <input
                 type="range"

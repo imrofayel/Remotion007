@@ -12,6 +12,7 @@ import { z } from "zod";
 import SubtitlePage from "./SubtitlePage";
 import { getVideoMetadata } from "@remotion/media-utils";
 import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
+import { DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
 
 export type SubtitleProp = {
   startInSeconds: number;
@@ -29,18 +30,29 @@ export const captionedVideoSchema = z.object({
   captionSwitchSpeed: z.number().optional(),
   yPosition: z.number().optional(),
   aspectRatio: z.string().optional(),
+  onError: z.function().optional(),
 });
 
 export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
   z.infer<typeof captionedVideoSchema>
 > = async ({ props }) => {
-  const fps = 60;
-  const metadata = await getVideoMetadata(props.src);
-
-  return {
-    fps,
-    durationInFrames: Math.floor(metadata.durationInSeconds * fps),
-  };
+  try {
+    const metadata = await getVideoMetadata(props.src);
+    return {
+      fps: VIDEO_FPS,
+      durationInFrames: Math.floor(metadata.durationInSeconds * VIDEO_FPS),
+      width: VIDEO_WIDTH,
+      height: VIDEO_HEIGHT,
+    };
+  } catch (error) {
+    console.error('Error calculating metadata:', error);
+    return {
+      fps: VIDEO_FPS,
+      durationInFrames: DURATION_IN_FRAMES,
+      width: VIDEO_WIDTH,
+      height: VIDEO_HEIGHT,
+    };
+  }
 };
 
 // Caption Speed
@@ -48,15 +60,16 @@ const BASE_SWITCH_SPEED = 300;
 
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   src,
-  fontSize = 120,
+  fontSize = 80,
   fontColor = "white",
   strokeColor = "black",
-  strokeWidth = 20,
+  strokeWidth = 4,
   highlightColor = "#39E508",
   wordsPerCaption = 2,
   captionSwitchSpeed,
-  yPosition = 350,
+  yPosition = 1000,
   aspectRatio = "9:16",
+  onError,
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
   const [handle] = useState(() => delayRender());
@@ -68,11 +81,11 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   );
 
   const subtitlesFile = src
-    .replace(/.mp4$/, ".json")
-    .replace(/.mkv$/, ".json")
-    .replace(/.mov$/, ".json")
-    .replace(/.webm$/, ".json")
-    .replace("uploads", "subs");
+    .replace("sample-video.mp4", "sample-video.json")
+    .replace(/\.mp4$/, ".json")
+    .replace(/\.mkv$/, ".json")
+    .replace(/\.mov$/, ".json")
+    .replace(/\.webm$/, ".json");
 
   const fetchSubtitles = useCallback(async () => {
     try {
@@ -102,13 +115,25 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
 
   return (
     <AbsoluteFill>
-      <AbsoluteFill>
+      <AbsoluteFill style={{
+        backgroundColor: 'black',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+      }}>
         <Video
           src={src}
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
+            objectFit: 'contain',
+          }}
+          onError={(err) => {
+            console.error('Video playback error:', err);
+            if (onError) {
+              onError(err);
+            }
           }}
         />
       </AbsoluteFill>
