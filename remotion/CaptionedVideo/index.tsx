@@ -72,7 +72,12 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   onError,
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
-  const [handle] = useState(() => delayRender());
+  const [handle] = useState(() => delayRender(
+    `Loading video with src="${src}"`,
+    {
+      timeoutInMilliseconds: 60000 // Increase timeout to 60 seconds
+    }
+  ));
   const { fps } = useVideoConfig();
 
   const captionSwitchSpeedValue = useMemo(() =>
@@ -129,9 +134,13 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
           }}
           onError={(err) => {
             console.error('Video playback error:', err);
+            continueRender(handle); // Continue render even if video fails
             if (onError) {
               onError(err);
             }
+          }}
+          onLoad={() => {
+            continueRender(handle); // Continue render once video is loaded
           }}
         />
       </AbsoluteFill>

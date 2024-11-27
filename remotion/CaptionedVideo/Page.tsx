@@ -8,14 +8,6 @@ import { fitText } from "@remotion/layout-utils";
 import { makeTransform, scale, translateY } from "@remotion/animation-utils";
 import { TikTokPage } from "@remotion/captions";
 
-const container: React.CSSProperties = {
-  justifyContent: "center",
-  alignItems: "center",
-  top: undefined,
-  bottom: undefined,
-  height: 150,
-};
-
 interface PageProps {
   enterProgress: number;
   page: TikTokPage;
