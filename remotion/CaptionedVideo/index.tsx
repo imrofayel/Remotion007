@@ -81,14 +81,12 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   );
 
   const subtitlesFile = src
-    .replace("sample-video.mp4", "sample-video.json")
-    .replace(/\.mp4$/, ".json")
-    .replace(/\.mkv$/, ".json")
-    .replace(/\.mov$/, ".json")
-    .replace(/\.webm$/, ".json");
+    .replace(/^\/uploads\//, '/subs/')
+    .replace(/\.(mp4|mkv|mov|webm)$/, '.json');
 
   const fetchSubtitles = useCallback(async () => {
     try {
+      console.log('Fetching subtitles from:', subtitlesFile);
       const res = await fetch(subtitlesFile);
       if (!res.ok) {
         throw new Error(`Failed to fetch subtitles: ${res.statusText}`);
