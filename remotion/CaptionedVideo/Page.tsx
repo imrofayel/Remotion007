@@ -5,17 +5,23 @@ import {
   useVideoConfig,
 } from "remotion";
 import { fitText } from "@remotion/layout-utils";
-import { makeTransform, scale, translateY } from "@remotion/animation-utils";
+import { makeTransform } from "@remotion/animation-utils";
 import { TikTokPage } from "@remotion/captions";
+import { cn } from "../../lib/utils";
 
 interface PageProps {
   enterProgress: number;
   page: TikTokPage;
-  fontSize?: number;
-  fontColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-  highlightColor?: string;
+
+  // Theming
+  fontSize: number;
+  fontColor: string;
+  strokeColor: string;
+  strokeWidth: number;
+  highlightColor: string;
+  backgroundColor: string;
+  rounded: "md" | "lg";
+
   yPosition?: number;
   aspectRatio?: string;
 }
@@ -30,16 +36,12 @@ export const Page: React.FC<PageProps> = ({
   highlightColor = "#39E508",
   yPosition = 350,
   aspectRatio = "16:9",
+  rounded = "md",
+  backgroundColor = "transparent",
 }) => {
   const frame = useCurrentFrame();
   const { width, fps } = useVideoConfig();
   const timeInMs = (frame / fps) * 1000;
-
-  // Refined floating animation
-  const floatAmplitude = 15; // Maximum vertical movement in pixels
-  const floatFrequency = 1.5; // Oscillation frequency (higher = faster oscillations)
-  const floatingY =
-    Math.sin((frame / fps) * floatFrequency * 2 * Math.PI) * floatAmplitude;
 
   const fittedText = fitText({
     fontFamily: "Inter",
@@ -78,11 +80,10 @@ export const Page: React.FC<PageProps> = ({
         style={{
           fontSize: finalFontSize,
           transform: makeTransform([
-            scale(enterProgress),
-            translateY(-30 + floatingY), // Applied floating effect
+            // FOR ANIMATION
           ]),
           fontFamily: "Inter",
-          textTransform: "uppercase",
+          textTransform: "lowercase",
           textAlign: "center",
           width: "100%",
           lineHeight: 1,
@@ -90,8 +91,16 @@ export const Page: React.FC<PageProps> = ({
           WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
           paintOrder: "stroke",
           textShadow: `${strokeWidth / 2}px ${strokeWidth / 2}px ${strokeWidth}px rgba(0,0,0,0.3)`,
+          backgroundColor: backgroundColor,
+          borderRadius: rounded === "md" ? "10px" : rounded === "lg" ? "90px" : "30px",
+          padding: "20px 40px",
+          WebkitBorderRadius: rounded === "md" ? "10px" : rounded === "lg" ? "90px" : "30px",
         }}
-      >
+
+        className={cn(
+          rounded === 'md' ? 'rounded-lg' : 'rounded-full',
+          'max-w-fit',)}>
+
         {page.tokens.map((token, index) => {
           const startRelativeToSequence = token.fromMs - page.startMs;
           const endRelativeToSequence = token.toMs - page.startMs;
@@ -106,7 +115,7 @@ export const Page: React.FC<PageProps> = ({
                 color: active ? highlightColor : fontColor,
                 display: "inline",
                 whiteSpace: "pre",
-                transition: "color 0.1s ease-in-out",
+                transition: "color 0.4s ease-in-out",
               }}
             >
               {token.text}

@@ -23,7 +23,6 @@ import {
   UploadCloud,
 } from "lucide-react";
 
-// Predefined themes for captions
 const CAPTION_THEMES = {
   default: {
     fontSize: 120,
@@ -31,6 +30,8 @@ const CAPTION_THEMES = {
     strokeColor: "#000000",
     strokeWidth: 20,
     highlightColor: "#39E508",
+    backgroundColor: "transparent", // Add this
+    rounded: "lg", // Add this
   },
   neon: {
     fontSize: 130,
@@ -38,6 +39,8 @@ const CAPTION_THEMES = {
     strokeColor: "#FF00FF",
     strokeWidth: 15,
     highlightColor: "#FFFF00",
+    backgroundColor: "rgba(0,0,0,0.3)", // Add this
+    rounded: "lg", // Add this
   },
   minimal: {
     fontSize: 100,
@@ -45,6 +48,8 @@ const CAPTION_THEMES = {
     strokeColor: "#000000",
     strokeWidth: 10,
     highlightColor: "#FF4444",
+    backgroundColor: "transparent", // Add this
+    rounded: "md", // Add this
   },
   bold: {
     fontSize: 140,
@@ -52,13 +57,17 @@ const CAPTION_THEMES = {
     strokeColor: "#000000",
     strokeWidth: 25,
     highlightColor: "#FF4500",
+    backgroundColor: "rgba(0,0,0,0.2)", // Add this
+    rounded: "lg", // Add this
   },
   subtle: {
-    fontSize: 110,
-    fontColor: "#E0E0E0",
+    fontSize: 90,
+    fontColor: "#a4a4a5",
     strokeColor: "#333333",
-    strokeWidth: 15,
-    highlightColor: "#90CAF9",
+    strokeWidth: 0,
+    highlightColor: "#1c1e1d",
+    backgroundColor: "#e7e5e7", // Add this
+    rounded: "lg", // Add this
   },
 };
 
@@ -97,6 +106,10 @@ const Home: NextPage = () => {
   const [highlightColor, setHighlightColor] = useState<string>(
     CAPTION_THEMES.default.highlightColor,
   );
+
+  const [backgroundColor, setBackgroundColor] = useState<string>(CAPTION_THEMES.default.backgroundColor);
+const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
+
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(2);
   const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
 
@@ -235,6 +248,8 @@ const Home: NextPage = () => {
     setStrokeColor(theme.strokeColor);
     setStrokeWidth(theme.strokeWidth);
     setHighlightColor(theme.highlightColor);
+    setBackgroundColor(theme.backgroundColor);
+    setRounded(theme.rounded);
   };
 
   // Video props memoization
@@ -246,6 +261,8 @@ const Home: NextPage = () => {
       strokeColor,
       strokeWidth,
       highlightColor,
+      backgroundColor,
+      rounded,
       wordsPerCaption,
       yPosition: captionYPosition,
       aspectRatio,
@@ -257,6 +274,8 @@ const Home: NextPage = () => {
       strokeColor,
       strokeWidth,
       highlightColor,
+      backgroundColor,
+      rounded,
       wordsPerCaption,
       captionYPosition,
       aspectRatio,
@@ -344,7 +363,7 @@ const Home: NextPage = () => {
               style={getContainerStyle(aspectRatio)}
             >
               <Player
-                component={CaptionedVideo}
+                component={CaptionedVideo as any}
                 inputProps={captionedVideoProps}
                 durationInFrames={videoDuration}
                 fps={VIDEO_FPS}

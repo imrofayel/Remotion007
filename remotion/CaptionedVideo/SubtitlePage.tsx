@@ -9,11 +9,13 @@ import { TikTokPage } from "@remotion/captions";
 
 interface Props {
   page: TikTokPage;
-  fontSize?: number;
-  fontColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-  highlightColor?: string;
+  fontSize: number;
+  fontColor: string;
+  strokeColor: string;
+  strokeWidth: number;
+  highlightColor: string;
+  backgroundColor: string;
+  rounded: "md" | "lg";
   yPosition?: number;
   aspectRatio?: string;
 }
@@ -25,6 +27,8 @@ const SubtitlePage: React.FC<Props> = ({
   strokeColor,
   strokeWidth,
   highlightColor,
+  backgroundColor,
+  rounded,
   yPosition,
   aspectRatio,
 }) => {
@@ -49,6 +53,8 @@ const SubtitlePage: React.FC<Props> = ({
       strokeColor={strokeColor}
       strokeWidth={strokeWidth}
       highlightColor={highlightColor}
+      backgroundColor={backgroundColor}
+      rounded={rounded}
       yPosition={yPosition}
       aspectRatio={aspectRatio}
     />
