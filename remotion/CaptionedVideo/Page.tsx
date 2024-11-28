@@ -67,38 +67,27 @@ export const Page: React.FC<PageProps> = ({
 
   return (
     <AbsoluteFill style={{
-      position: "absolute",
-      top: "5%",
-      bottom: "5%",
-      left: 0,
-      right: 0,
       transform: `translateY(${actualPosition}px)`,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    }}>
+    }}
+    
+    className={cn('top-[5%] bottom-[5%] absolute left-0 right-0 flex justify-center items-center')}
+    >
       <div
         style={{
           fontSize: finalFontSize,
           transform: makeTransform([
-            // FOR ANIMATION
+            // animation transformation
           ]),
           fontFamily: "Inter",
-          textTransform: "uppercase",
-          textAlign: "center",
-          width: "100%",
           lineHeight: 1,
-          fontWeight: "bold",
           WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
           paintOrder: "stroke",
-          textShadow: `${strokeWidth / 2}px ${strokeWidth / 2}px ${strokeWidth}px rgba(0,0,0,0.3)`,
+          textShadow: `${strokeWidth / 2}px ${strokeWidth / 2}px ${strokeWidth}px black`,
           backgroundColor: backgroundColor,
-          borderRadius: rounded === "md" ? "10px" : rounded === "lg" ? "90px" : "30px",
-          padding: "20px 40px",
-          WebkitBorderRadius: rounded === "md" ? "10px" : rounded === "lg" ? "90px" : "30px",
         }}
 
-        className='max-w-fit shadow-2xl'>
+        
+        className={cn(rounded === "md" ? "rounded-lg" : "rounded-full", 'max-w-fit p-5 px-10 font-bold w-full text-center uppercase',)}>
 
         {page.tokens.map((token, index) => {
           const startRelativeToSequence = token.fromMs - page.startMs;
@@ -113,11 +102,12 @@ export const Page: React.FC<PageProps> = ({
               style={{
                 color: active ? highlightColor : fontColor,
                 backgroundColor: active ? highlightBg : "transparent",
-                display: "inline",
-                whiteSpace: "pre",
-                transition: "color 0.4s ease-in-out",
-                WebkitBorderRadius: rounded === "md" ? "10px" : rounded === "lg" ? "90px" : "30px"
               }}
+
+              className={cn(rounded === "md" ? "rounded-lg" : "rounded-full", 
+                
+              "drop-shadow-2xl inline whitespace-pre transition-colors duration-500 ease-in-out"
+            )}
             >
               {token.text}
             </span>
