@@ -10,18 +10,23 @@ import { useState, useMemo } from "react";
 import { CaptionedVideo } from "./CaptionedVideo";
 import { staticFile } from "remotion";
 
+import '../styles/global.css';
+
+
 export const RemotionRoot: React.FC = () => {
   // Use staticFile to correctly reference the video in public folder
   const [videoSrc,] = useState<string>(staticFile("sample-video.mp4"));
 
   const captionedVideoProps = useMemo(() => ({
     src: videoSrc,
-    fontSize: 110,
-    fontColor: "#E0E0E0",
+    fontSize: 90,
+    fontColor: "#a4a4a5",
     strokeColor: "#333333",
-    strokeWidth: 15,
-    highlightColor: "#90CAF9",
-    wordsPerCaption: 1,
+    strokeWidth: 0,
+    highlightColor: "#1c1e1d",
+    backgroundColor: "#e7e5e7", // Add this
+    rounded: "lg", // Add this
+    wordsPerCaption: 2,
     yPosition: 1330,
     aspectRatio: "9:16",
     onError: (error: Error) => {

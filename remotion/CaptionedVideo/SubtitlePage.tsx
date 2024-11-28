@@ -15,6 +15,7 @@ interface Props {
   strokeWidth: number;
   highlightColor: string;
   backgroundColor: string;
+  highlightBg: string;
   rounded: "md" | "lg";
   yPosition?: number;
   aspectRatio?: string;
@@ -28,6 +29,7 @@ const SubtitlePage: React.FC<Props> = ({
   strokeWidth,
   highlightColor,
   backgroundColor,
+  highlightBg,
   rounded,
   yPosition,
   aspectRatio,
@@ -54,9 +56,11 @@ const SubtitlePage: React.FC<Props> = ({
       strokeWidth={strokeWidth}
       highlightColor={highlightColor}
       backgroundColor={backgroundColor}
+      highlightBg={highlightBg}
       rounded={rounded}
       yPosition={yPosition}
       aspectRatio={aspectRatio}
+
     />
   );
 };

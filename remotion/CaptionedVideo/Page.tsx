@@ -19,9 +19,9 @@ interface PageProps {
   strokeColor: string;
   strokeWidth: number;
   highlightColor: string;
+  highlightBg: string;
   backgroundColor: string;
   rounded: "md" | "lg";
-
   yPosition?: number;
   aspectRatio?: string;
 }
@@ -34,6 +34,7 @@ export const Page: React.FC<PageProps> = ({
   strokeColor = "black",
   strokeWidth = 20,
   highlightColor = "#39E508",
+  highlightBg = 'transparent',
   yPosition = 350,
   aspectRatio = "16:9",
   rounded = "md",
@@ -83,7 +84,7 @@ export const Page: React.FC<PageProps> = ({
             // FOR ANIMATION
           ]),
           fontFamily: "Inter",
-          textTransform: "lowercase",
+          textTransform: "uppercase",
           textAlign: "center",
           width: "100%",
           lineHeight: 1,
@@ -97,9 +98,7 @@ export const Page: React.FC<PageProps> = ({
           WebkitBorderRadius: rounded === "md" ? "10px" : rounded === "lg" ? "90px" : "30px",
         }}
 
-        className={cn(
-          rounded === 'md' ? 'rounded-lg' : 'rounded-full',
-          'max-w-fit',)}>
+        className='max-w-fit shadow-2xl'>
 
         {page.tokens.map((token, index) => {
           const startRelativeToSequence = token.fromMs - page.startMs;
@@ -113,9 +112,11 @@ export const Page: React.FC<PageProps> = ({
               key={index}
               style={{
                 color: active ? highlightColor : fontColor,
+                backgroundColor: active ? highlightBg : "transparent",
                 display: "inline",
                 whiteSpace: "pre",
                 transition: "color 0.4s ease-in-out",
+                WebkitBorderRadius: rounded === "md" ? "10px" : rounded === "lg" ? "90px" : "30px"
               }}
             >
               {token.text}

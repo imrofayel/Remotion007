@@ -28,46 +28,32 @@ const CAPTION_THEMES = {
     fontSize: 120,
     fontColor: "#FFFFFF",
     strokeColor: "#000000",
-    strokeWidth: 20,
-    highlightColor: "#39E508",
-    backgroundColor: "transparent", // Add this
-    rounded: "lg", // Add this
-  },
-  neon: {
-    fontSize: 130,
-    fontColor: "#00FF00",
-    strokeColor: "#FF00FF",
-    strokeWidth: 15,
-    highlightColor: "#FFFF00",
-    backgroundColor: "rgba(0,0,0,0.3)", // Add this
-    rounded: "lg", // Add this
-  },
-  minimal: {
-    fontSize: 100,
-    fontColor: "#FFFFFF",
-    strokeColor: "#000000",
     strokeWidth: 10,
-    highlightColor: "#FF4444",
-    backgroundColor: "transparent", // Add this
-    rounded: "md", // Add this
+    highlightColor: "#39E508",
+    highlightBg: "transparent",
+    backgroundColor: "transparent",
+    rounded: "md",
   },
-  bold: {
-    fontSize: 140,
-    fontColor: "#FFD700",
-    strokeColor: "#000000",
-    strokeWidth: 25,
-    highlightColor: "#FF4500",
-    backgroundColor: "rgba(0,0,0,0.2)", // Add this
-    rounded: "lg", // Add this
-  },
-  subtle: {
+  ali: {
     fontSize: 90,
     fontColor: "#a4a4a5",
     strokeColor: "#333333",
     strokeWidth: 0,
     highlightColor: "#1c1e1d",
-    backgroundColor: "#e7e5e7", // Add this
-    rounded: "lg", // Add this
+    highlightBg: "transparent",
+    backgroundColor: "#e7e5e7",
+    rounded: "lg",
+  },
+
+  leon: {
+    fontSize: 90,
+    fontColor: "#FFFFFF",
+    strokeColor: "#000000",
+    strokeWidth: 8,
+    highlightColor: "#FFFFFF",
+    highlightBg: "#e84f02",
+    backgroundColor: "transparent",
+    rounded: "md",
   },
 };
 
@@ -105,6 +91,10 @@ const Home: NextPage = () => {
   );
   const [highlightColor, setHighlightColor] = useState<string>(
     CAPTION_THEMES.default.highlightColor,
+  );
+
+  const [highlightBg, setHighlightBg] = useState<string>(
+    CAPTION_THEMES.default.highlightBg,
   );
 
   const [backgroundColor, setBackgroundColor] = useState<string>(CAPTION_THEMES.default.backgroundColor);
@@ -248,6 +238,7 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
     setStrokeColor(theme.strokeColor);
     setStrokeWidth(theme.strokeWidth);
     setHighlightColor(theme.highlightColor);
+    setHighlightBg(theme.highlightBg);
     setBackgroundColor(theme.backgroundColor);
     setRounded(theme.rounded);
   };
@@ -261,6 +252,7 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
       strokeColor,
       strokeWidth,
       highlightColor,
+      highlightBg,
       backgroundColor,
       rounded,
       wordsPerCaption,
@@ -274,6 +266,7 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
       strokeColor,
       strokeWidth,
       highlightColor,
+      highlightBg,
       backgroundColor,
       rounded,
       wordsPerCaption,

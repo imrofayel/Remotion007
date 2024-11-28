@@ -26,6 +26,7 @@ export const captionedVideoSchema = z.object({
   strokeColor: z.string().optional(),
   strokeWidth: z.number().optional(),
   highlightColor: z.string().optional(),
+  highlightBg: z.string().optional(),
   backgroundColor: z.string().optional(),
   rounded: z.enum(["md", "lg"]).optional(),
   wordsPerCaption: z.number().optional(),
@@ -67,6 +68,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   strokeColor = "black",
   strokeWidth = 4,
   highlightColor = "#39E508",
+  highlightBg = 'transparent',
   backgroundColor = "gray",
   rounded = "lg",
   wordsPerCaption = 2,
@@ -174,6 +176,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
               strokeColor={strokeColor}
               strokeWidth={strokeWidth}
               highlightColor={highlightColor}
+              highlightBg={highlightBg}
               backgroundColor={backgroundColor}
               rounded={rounded}
               yPosition={yPosition}
