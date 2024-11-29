@@ -10,9 +10,9 @@
         "style": {
           "left": 20,
           "top": 57,
-          "fontSize": 26,
+          "fontSize": 90,
           "color": "#ffffff",
-          "fontFamily": "Montserrat",
+          "fontFamily": "Inter",
           "fontWeight": 900,
           "fontUppercase": true,
           "fontShadow": "m",
@@ -35,6 +35,44 @@
           "mainColor": "#2bf82a",
           "secondColor": "#fdfa14",
           "thirdColor": "#f01916"
+        }
+      }
+    },
+    {
+      "config": {
+        "className": "modern-dark",
+        "name": "Modern Dark",
+        "custom": false,
+        "default": false,
+        "categories": ["all", "minimal"],
+        "style": {
+          "left": 20,
+          "top": 57,
+          "fontSize": 32,
+          "color": "#ffffff",
+          "fontFamily": "Inter",
+          "fontWeight": 700,
+          "fontUppercase": false,
+          "fontShadow": "s",
+          "stroke": "m",
+          "strokeColor": "#000000"
+        },
+        "subs": {
+          "chunkSize": 3,
+          "chunkLineMaxLength": 8,
+          "breakLine": true,
+          "emoji": "auto",
+          "emojiAnimation": false,
+          "highLightKeywords": true,
+          "animation": "updown",
+          "isAnimationActive": true,
+          "isMotionBlurActive": false,
+          "punctuation": true
+        },
+        "highlight_style": {
+          "mainColor": "#3b82f6",
+          "secondColor": "#10b981",
+          "thirdColor": "#f43f5e"
         }
       }
     }

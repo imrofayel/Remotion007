@@ -5,6 +5,10 @@
 * {
     font-family: 'Inter';
 }
+
+body {
+    background-color: white !important;;
+}
 :root {
     --background: #fff;
     --foreground: #000;

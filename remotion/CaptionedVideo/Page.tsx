@@ -62,7 +62,7 @@ export const Page: React.FC<Props> = ({
     fontFamily,
     text: page.text,
     withinWidth: width * 0.9,
-    textTransform: fontUppercase ? "uppercase" : "none",
+    textTransform: "none",
   });
 
   const finalFontSize = Math.min(fontSize, fittedText.fontSize);
@@ -143,35 +143,17 @@ export const Page: React.FC<Props> = ({
             startRelativeToSequence <= timeInMs &&
             endRelativeToSequence > timeInMs;
 
-          // Determine highlight color based on position, randomness
-          let highlightColor = mainHighlightColor;
-
-          if (highlightKeywords && active) {
-            const position = index % 3;
-            switch (position) {
-              case 1:
-                highlightColor = secondHighlightColor;
-                break;
-              case 2:
-                highlightColor = thirdHighlightColor;
-                break;
-              default:
-                highlightColor = mainHighlightColor;
-            }
-          }
-
           return (
             <span
               key={index}
               style={{
-                color: active && highlightKeywords ? highlightColor : color,
+                color: active ? mainHighlightColor : color,
                 fontFamily,
                 fontSize: finalFontSize,
                 fontWeight,
                 WebkitTextStroke: `${getStroke()}px ${strokeColor}`,
-                // transition: "color 0.2s ease",
-
-                // Different for different themes yk
+                marginRight: "0.2em",
+                textTransform: fontUppercase ? "uppercase" : "none",
               }}
               className="inline-block"
             >
