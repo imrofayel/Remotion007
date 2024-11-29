@@ -91,16 +91,16 @@ export const Page: React.FC<Props> = ({
   };
 
   // Determine the Stroke
-  const getStroke = () => {
+  const getShadow = () => {
     switch (stroke) {
       case "s":
-        return 4;
+        return "font-shadow-s";
       case "m":
-        return 10;
+        return "font-shadow-m";
       case "l":
-        return 18;
+        return "font-shadow-l";
       default:
-        return 0;
+        return "font-shadow-none";
     }
   };
 
@@ -116,68 +116,50 @@ export const Page: React.FC<Props> = ({
         justifyContent: "center",
         position: "relative",
       }}
-      className={cn("overflow-hidden captions-title")}
     >
-      <div
+      <div 
+        className={cn(
+          "leon subtitle absolute z-20 text-center",
+          "animation-mode-rotate emoji-mode-auto",
+          "text-stroke-mode-l highlight-mode",
+          className,
+          getShadow()
+        )}
         style={{
           position: "absolute",
           top: top,
           left: "50%",
           transform: "translateX(-50%)",
           maxWidth: "90%",
-          padding: "1rem",
           width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
         }}
-        className={cn(className, 'subtitle animation-mode-rotate highlight-mode text-rotate-left"')}
       >
-        <div 
-          className="row-container" 
-          style={{ 
-            whiteSpace: "nowrap",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          {page.tokens.map((token, index) => {
-            const startRelativeToSequence = token.fromMs - page.startMs;
-            const endRelativeToSequence = token.toMs - page.startMs;
-            const active =
-              startRelativeToSequence <= timeInMs &&
-              endRelativeToSequence > timeInMs;
+        <div className="row-container">
+          <div 
+            className="row" 
+            style={{ 
+              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {page.tokens.map((token, index) => {
+              const startRelativeToSequence = token.fromMs - page.startMs;
+              const endRelativeToSequence = token.toMs - page.startMs;
+              const active =
+                startRelativeToSequence <= timeInMs &&
+                endRelativeToSequence > timeInMs;
 
-            return (
-              <span key={index} className="row" style={{ display: "inline-flex", alignItems: "center" }}>
-                <span
-                  className="relative"
-                  style={{
-                    top: 0,
-                    transform: `${animationTransform}`,
-                    display: "inline-block",
-                  }}
-                >
+              return (
+                <span key={index} className="relative">
                   <span
-                    className={cn(
-                      "sb-text-shadow-sm subtitle",
-                      "relative",
-                      "inline-flex",
-                      "wordDisplayed",
-                      "computedHighlightLineStyle",
-
-                      "sb-text-shadow-sm relative inline-flex secondColor important computedHighlightStyle computedHighlightLineStyle",
-                      {
-                        'secondColor': highlightKeywords && active,
-                        'important': active
-                      }
-                    )}
+                    className="sb-text-shadow-sm relative inline-flex wordDisplayed computedHighlightStyle"
                     style={{
+                      transform: animationTransform,
                       color: active ? mainHighlightColor : color,
                       fontFamily,
                       fontSize: finalFontSize,
                       fontWeight,
-                      WebkitTextStroke: `${getStroke()}px ${strokeColor}`,
                       textTransform: fontUppercase ? "uppercase" : "none",
                       filter: motionBlurFilter,
                       whiteSpace: "pre",
@@ -188,12 +170,9 @@ export const Page: React.FC<Props> = ({
                     {token.text}
                   </span>
                 </span>
-                {index < page.tokens.length - 1 && (
-                  <span style={{ whiteSpace: "nowrap" }}> </span>
-                )}
-              </span>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </AbsoluteFill>
