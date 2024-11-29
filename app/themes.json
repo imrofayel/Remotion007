@@ -40,21 +40,21 @@
     },
     {
       "config": {
-        "className": "modern-dark",
-        "name": "Modern Dark",
+        "className": "leon",
+        "name": "Leon",
         "custom": false,
         "default": false,
         "categories": ["all", "minimal"],
         "style": {
           "left": 20,
           "top": 57,
-          "fontSize": 32,
+          "fontSize": 70,
           "color": "#ffffff",
           "fontFamily": "Inter",
-          "fontWeight": 700,
-          "fontUppercase": false,
+          "fontWeight": 900,
+          "fontUppercase": true,
           "fontShadow": "s",
-          "stroke": "m",
+          "stroke": "s",
           "strokeColor": "#000000"
         },
         "subs": {
@@ -70,9 +70,9 @@
           "punctuation": true
         },
         "highlight_style": {
-          "mainColor": "#3b82f6",
-          "secondColor": "#10b981",
-          "thirdColor": "#f43f5e"
+          "mainColor": "#ff5700",
+          "secondColor": "#ffffff",
+          "thirdColor": "#333333"
         }
       }
     }

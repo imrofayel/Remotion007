@@ -6,7 +6,7 @@ import {
   interpolate,
 } from "remotion";
 import { fitText } from "@remotion/layout-utils";
-import { makeTransform } from "@remotion/animation-utils";
+// import { makeTransform } from "@remotion/animation-utils";
 import { TikTokPage } from "@remotion/captions";
 import { cn } from "../../lib/utils";
 
@@ -116,7 +116,7 @@ export const Page: React.FC<Props> = ({
         justifyContent: "center",
         position: "relative",
       }}
-      className={cn("overflow-hidden")}
+      className={cn("overflow-hidden captions-title")}
     >
       <div
         style={{
@@ -131,7 +131,7 @@ export const Page: React.FC<Props> = ({
           alignItems: "center",
           justifyContent: "center",
         }}
-        className={className}
+        className={cn(className, 'subtitle animation-mode-rotate highlight-mode text-rotate-left"')}
       >
         <div 
           className="row-container" 
@@ -165,6 +165,8 @@ export const Page: React.FC<Props> = ({
                       "inline-flex",
                       "wordDisplayed",
                       "computedHighlightLineStyle",
+
+                      "sb-text-shadow-sm relative inline-flex secondColor important computedHighlightStyle computedHighlightLineStyle",
                       {
                         'secondColor': highlightKeywords && active,
                         'important': active
