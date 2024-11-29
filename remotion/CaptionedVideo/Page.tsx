@@ -154,8 +154,8 @@ export const Page: React.FC<Props> = ({
                 WebkitTextStroke: `${getStroke()}px ${strokeColor}`,
                 marginRight: "0.2em",
                 textTransform: fontUppercase ? "uppercase" : "none",
+                whiteSpace: "pre",
               }}
-              className="inline-block"
             >
               {token.text}
             </span>
