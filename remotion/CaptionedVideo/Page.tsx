@@ -131,7 +131,7 @@ export const Page: React.FC<Props> = ({
           alignItems: "center",
           justifyContent: "center",
         }}
-        className='ali'
+        className={className}
       >
         <div 
           className="row-container" 
@@ -148,15 +148,13 @@ export const Page: React.FC<Props> = ({
               startRelativeToSequence <= timeInMs &&
               endRelativeToSequence > timeInMs;
 
-            const scale = enterProgress;
-
             return (
               <span key={index} className="row" style={{ display: "inline-flex", alignItems: "center" }}>
                 <span
                   className="relative"
                   style={{
                     top: 0,
-                    transform: `scale(${scale}) ${animationTransform}`,
+                    transform: `${animationTransform}`,
                     display: "inline-block",
                   }}
                 >

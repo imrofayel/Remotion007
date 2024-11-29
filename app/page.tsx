@@ -63,6 +63,8 @@ const Home: NextPage = () => {
   const [secondHighlightColor, setSecondHighlightColor] = useState<string>(defaultTheme.config.highlight_style.secondColor);
   const [thirdHighlightColor, setThirdHighlightColor] = useState<string>(defaultTheme.config.highlight_style.thirdColor);
 
+  const [className, setClassName] = useState<string>(defaultTheme.config.className);
+
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(defaultTheme.config.subs.chunkSize);
   const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
 
@@ -212,6 +214,7 @@ const Home: NextPage = () => {
     setMainHighlightColor(selectedTheme.config.highlight_style.mainColor);
     setSecondHighlightColor(selectedTheme.config.highlight_style.secondColor);
     setThirdHighlightColor(selectedTheme.config.highlight_style.thirdColor);
+    setClassName(selectedTheme.config.className);
   };
 
   // Video props memoization
@@ -234,6 +237,7 @@ const Home: NextPage = () => {
       thirdHighlightColor,
       top: captionYPosition,
       chunkSize: wordsPerCaption,
+      className: className,
     }),
     [
       videoSrc,
@@ -253,6 +257,7 @@ const Home: NextPage = () => {
       thirdHighlightColor,
       captionYPosition,
       wordsPerCaption,
+      className
     ],
   );
 
