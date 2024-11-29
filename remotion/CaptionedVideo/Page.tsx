@@ -123,44 +123,78 @@ export const Page: React.FC<Props> = ({
           position: "absolute",
           top: top,
           left: "50%",
-          transform: makeTransform([
-            "translateX(-50%)",
-            `scale(${enterProgress})`,
-            animationTransform,
-          ]),
-          filter: motionBlurFilter,
+          transform: "translateX(-50%)",
           maxWidth: "90%",
           padding: "1rem",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
-        className={cn(className,
-          "text-center transition-colors duration-200"
-        )}
+        className='ali'
       >
-        {page.tokens.map((token, index) => {
-          const startRelativeToSequence = token.fromMs - page.startMs;
-          const endRelativeToSequence = token.toMs - page.startMs;
-          const active =
-            startRelativeToSequence <= timeInMs &&
-            endRelativeToSequence > timeInMs;
+        <div 
+          className="row-container" 
+          style={{ 
+            whiteSpace: "nowrap",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {page.tokens.map((token, index) => {
+            const startRelativeToSequence = token.fromMs - page.startMs;
+            const endRelativeToSequence = token.toMs - page.startMs;
+            const active =
+              startRelativeToSequence <= timeInMs &&
+              endRelativeToSequence > timeInMs;
 
-          return (
-            <span
-              key={index}
-              style={{
-                color: active ? mainHighlightColor : color,
-                fontFamily,
-                fontSize: finalFontSize,
-                fontWeight,
-                WebkitTextStroke: `${getStroke()}px ${strokeColor}`,
-                marginRight: "0.2em",
-                textTransform: fontUppercase ? "uppercase" : "none",
-                whiteSpace: "pre",
-              }}
-            >
-              {token.text}
-            </span>
-          );
-        })}
+            const scale = enterProgress;
+
+            return (
+              <span key={index} className="row" style={{ display: "inline-flex", alignItems: "center" }}>
+                <span
+                  className="relative"
+                  style={{
+                    top: 0,
+                    transform: `scale(${scale}) ${animationTransform}`,
+                    display: "inline-block",
+                  }}
+                >
+                  <span
+                    className={cn(
+                      "sb-text-shadow-sm subtitle",
+                      "relative",
+                      "inline-flex",
+                      "wordDisplayed",
+                      "computedHighlightLineStyle",
+                      {
+                        'secondColor': highlightKeywords && active,
+                        'important': active
+                      }
+                    )}
+                    style={{
+                      color: active ? mainHighlightColor : color,
+                      fontFamily,
+                      fontSize: finalFontSize,
+                      fontWeight,
+                      WebkitTextStroke: `${getStroke()}px ${strokeColor}`,
+                      textTransform: fontUppercase ? "uppercase" : "none",
+                      filter: motionBlurFilter,
+                      whiteSpace: "pre",
+                      padding: "0 2px",
+                    }}
+                    data-text={token.text}
+                  >
+                    {token.text}
+                  </span>
+                </span>
+                {index < page.tokens.length - 1 && (
+                  <span style={{ whiteSpace: "nowrap" }}> </span>
+                )}
+              </span>
+            );
+          })}
+        </div>
       </div>
     </AbsoluteFill>
   );

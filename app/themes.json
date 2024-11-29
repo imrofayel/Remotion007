@@ -10,11 +10,11 @@
         "style": {
           "left": 20,
           "top": 57,
-          "fontSize": 90,
-          "color": "#ffffff",
-          "fontFamily": "Akira Super",
-          "fontWeight": 900,
-          "fontUppercase": true,
+          "fontSize": 70,
+          "color": "#a9a9aa",
+          "fontFamily": "Inter",
+          "fontWeight": 700,
+          "fontUppercase": false,
           "fontShadow": "m",
           "stroke": "none",
           "strokeColor": "#000000"
@@ -27,12 +27,12 @@
           "emojiAnimation": true,
           "highLightKeywords": false,
           "animation": "bounce",
-          "isAnimationActive": true,
+          "isAnimationActive": false,
           "isMotionBlurActive": false,
           "punctuation": false
         },
         "highlight_style": {
-          "mainColor": "#2bf82a",
+          "mainColor": "#1c1e1d",
           "secondColor": "#fdfa14",
           "thirdColor": "#f01916"
         }

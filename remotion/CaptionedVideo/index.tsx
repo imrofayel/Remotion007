@@ -88,7 +88,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   aspectRatio = "9:16",
   chunkSize = 2,
   left = 0,
-  className = "flowless",
+  className = "ali",
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
   const [handle] = useState(() => delayRender(
