@@ -3,91 +3,139 @@ import {
   AbsoluteFill,
   useCurrentFrame,
   useVideoConfig,
+  interpolate,
 } from "remotion";
 import { fitText } from "@remotion/layout-utils";
 import { makeTransform } from "@remotion/animation-utils";
 import { TikTokPage } from "@remotion/captions";
 import { cn } from "../../lib/utils";
 
-interface PageProps {
+interface Props {
   enterProgress: number;
   page: TikTokPage;
-
-  // Theming
   fontSize: number;
-  fontColor: string;
+  color: string;
   strokeColor: string;
-  strokeWidth: number;
-  highlightColor: string;
-  highlightBg: string;
-  backgroundColor: string;
-  rounded: "md" | "lg";
-  yPosition?: number;
-  aspectRatio?: string;
+  stroke: "none" | "s" | "m" | "l";
+  fontFamily: string;
+  fontWeight: number;
+  fontUppercase: boolean;
+  fontShadow: "none" | "s" | "m" | "l";
+  animation: string;
+  isAnimationActive: boolean;
+  isMotionBlurActive: boolean;
+  highlightKeywords: boolean;
+  mainHighlightColor: string;
+  secondHighlightColor: string;
+  thirdHighlightColor: string;
+  top: number;
+  className?: string;
 }
 
-export const Page: React.FC<PageProps> = ({
+export const Page: React.FC<Props> = ({
   enterProgress,
   page,
-  fontSize = 120,
-  fontColor = "white",
-  strokeColor = "black",
-  strokeWidth = 20,
-  highlightColor = "#39E508",
-  highlightBg = 'transparent',
-  yPosition = 350,
-  aspectRatio = "16:9",
-  rounded = "md",
-  backgroundColor = "transparent",
+  fontSize,
+  color,
+  strokeColor,
+  stroke,
+  fontFamily,
+  fontWeight,
+  fontUppercase,
+  fontShadow,
+  animation,
+  isAnimationActive,
+  isMotionBlurActive,
+  highlightKeywords,
+  mainHighlightColor,
+  secondHighlightColor,
+  thirdHighlightColor,
+  top,
+  className = "",
 }) => {
   const frame = useCurrentFrame();
   const { width, fps } = useVideoConfig();
   const timeInMs = (frame / fps) * 1000;
 
+  // Calculate fitted text size
   const fittedText = fitText({
-    fontFamily: "Inter",
+    fontFamily,
     text: page.text,
     withinWidth: width * 0.9,
-    textTransform: "uppercase",
+    textTransform: fontUppercase ? "uppercase" : "none",
   });
 
   const finalFontSize = Math.min(fontSize, fittedText.fontSize);
-  
-  // Calculate video dimensions based on aspect ratio
-  const videoHeight = aspectRatio === "16:9" ? 1080 : 
-                     aspectRatio === "9:16" ? 1920 :
-                     aspectRatio === "4:5" ? 1350 : 1080;
 
-  // Calculate the position as a percentage of video height
-  const positionPercentage = (yPosition / (videoHeight)) * 100;
-  const clampedPercentage = Math.max(0, Math.min(positionPercentage, 100));
-  
-  // Calculate actual position relative to container
-  const actualPosition = (clampedPercentage / 100) * videoHeight - (videoHeight / 2);
+  // Animation transforms
+  // We will define using CSS animations
+  const getAnimationTransform = () => {
+    if (!isAnimationActive) return "";
+
+    switch (animation) {
+      case "updown": {
+        const progress = interpolate(frame % 30, [0, 15, 30], [0, -10, 0]);
+        return `translateY(${progress}px)`;
+      }
+      case "bounce": {
+        const progress = interpolate(frame % 60, [0, 30, 60], [0, 20, 0]);
+        return `translateY(${progress}px)`;
+      }
+      case "shake": {
+        const progress = interpolate(frame % 20, [0, 5, 10, 15, 20], [-5, 5, -5, 5, -5]);
+        return `translateX(${progress}px)`;
+      }
+      default:
+        return "";
+    }
+  };
+
+  // Determine the Stroke
+  const getStroke = () => {
+    switch (stroke) {
+      case "s":
+        return 4;
+      case "m":
+        return 10;
+      case "l":
+        return 18;
+      default:
+        return 0;
+    }
+  };
+
+  const animationTransform = getAnimationTransform();
+  const motionBlurFilter = isMotionBlurActive ? 'blur(0.5px)' : 'none';
 
   return (
-    <AbsoluteFill style={{
-      transform: `translateY(${actualPosition}px)`,
-    }}
-    
-    className={cn('top-[5%] bottom-[5%] absolute left-0 right-0 flex justify-center items-center')}
+    <AbsoluteFill
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+      }}
+      className={cn("overflow-hidden")}
     >
       <div
         style={{
-          fontSize: finalFontSize,
+          position: "absolute",
+          top: top,
+          left: "50%",
           transform: makeTransform([
-            // animation transformation
+            "translateX(-50%)",
+            `scale(${enterProgress})`,
+            animationTransform,
           ]),
-          fontFamily: "Inter",
-          lineHeight: 1,
-          WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
-          paintOrder: "stroke",
-          textShadow: `${strokeWidth / 2}px ${strokeWidth / 2}px ${strokeWidth}px black`,
-          backgroundColor: backgroundColor,
+          filter: motionBlurFilter,
+          maxWidth: "90%",
+          padding: "1rem",
         }}
-        
-        className={cn(rounded === "md" ? "rounded-lg" : "rounded-full", 'max-w-fit p-5 px-10 font-bold w-full text-center uppercase',)}>
-
+        className={cn(className,
+          "text-center transition-colors duration-200"
+        )}
+      >
         {page.tokens.map((token, index) => {
           const startRelativeToSequence = token.fromMs - page.startMs;
           const endRelativeToSequence = token.toMs - page.startMs;
@@ -95,18 +143,37 @@ export const Page: React.FC<PageProps> = ({
             startRelativeToSequence <= timeInMs &&
             endRelativeToSequence > timeInMs;
 
+          // Determine highlight color based on position, randomness
+          let highlightColor = mainHighlightColor;
+
+          if (highlightKeywords && active) {
+            const position = index % 3;
+            switch (position) {
+              case 1:
+                highlightColor = secondHighlightColor;
+                break;
+              case 2:
+                highlightColor = thirdHighlightColor;
+                break;
+              default:
+                highlightColor = mainHighlightColor;
+            }
+          }
+
           return (
             <span
               key={index}
               style={{
-                color: active ? highlightColor : fontColor,
-                backgroundColor: active ? highlightBg : "transparent",
-              }}
+                color: active && highlightKeywords ? highlightColor : color,
+                fontFamily,
+                fontSize: finalFontSize,
+                fontWeight,
+                WebkitTextStroke: `${getStroke()}px ${strokeColor}`,
+                // transition: "color 0.2s ease",
 
-              className={cn(rounded === "md" ? "rounded-lg" : "rounded-full", 
-                
-              "drop-shadow-2xl inline whitespace-pre transition-colors duration-500 ease-in-out",
-            )}
+                // Different for different themes yk
+              }}
+              className="inline-block"
             >
               {token.text}
             </span>

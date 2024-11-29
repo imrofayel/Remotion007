@@ -22,42 +22,8 @@ import {
   GalleryVerticalEndIcon,
   UploadCloud,
 } from "lucide-react";
+import themesConfig from './themes.json';
 
-const CAPTION_THEMES = {
-  default: {
-    fontSize: 120,
-    fontColor: "#FFFFFF",
-    strokeColor: "#000000",
-    strokeWidth: 10,
-    highlightColor: "#39E508",
-    highlightBg: "transparent",
-    backgroundColor: "transparent",
-    rounded: "md",
-  },
-  ali: {
-    fontSize: 90,
-    fontColor: "#a4a4a5",
-    strokeColor: "#333333",
-    strokeWidth: 0,
-    highlightColor: "#1c1e1d",
-    highlightBg: "transparent",
-    backgroundColor: "#e7e5e7",
-    rounded: "lg",
-  },
-
-  leon: {
-    fontSize: 90,
-    fontColor: "#FFFFFF",
-    strokeColor: "#000000",
-    strokeWidth: 8,
-    highlightColor: "#FFFFFF",
-    highlightBg: "#e84f02",
-    backgroundColor: "transparent",
-    rounded: "md",
-  },
-};
-
-// Predefined aspect ratios with max dimensions for quality
 const ASPECT_RATIOS = {
   "16:9": { width: 1920, height: 1080, label: "Landscape (16:9)" },
   "9:16": { width: 1080, height: 1920, label: "Portrait (9:16)" },
@@ -68,39 +34,35 @@ const ASPECT_RATIOS = {
 const Home: NextPage = () => {
   // Video states
   const [videoSrc, setVideoSrc] = useState<string>("/sample-video.mp4");
+  // Change this too initiaally it get from sample-video TODO
   const [videoDuration, setVideoDuration] = useState<number>(DURATION_IN_FRAMES);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
+
   const [error, setError] = useState<string>("");
+
   const [isReady, setIsReady] = useState(true); // Initially true for sample video
   const [captionYPosition, setCaptionYPosition] = useState<number>(1280); // Default Y position
 
   // Caption styling states with default theme
   const [activeTheme, setActiveTheme] = useState<string>("default");
-  const [fontSize, setFontSize] = useState<number>(
-    CAPTION_THEMES.default.fontSize,
-  );
-  const [fontColor, setFontColor] = useState<string>(
-    CAPTION_THEMES.default.fontColor,
-  );
-  const [strokeColor, setStrokeColor] = useState<string>(
-    CAPTION_THEMES.default.strokeColor,
-  );
-  const [strokeWidth, setStrokeWidth] = useState<number>(
-    CAPTION_THEMES.default.strokeWidth,
-  );
-  const [highlightColor, setHighlightColor] = useState<string>(
-    CAPTION_THEMES.default.highlightColor,
-  );
+  const defaultTheme = themesConfig.themes.find(theme => theme.config.default) || themesConfig.themes[0];
 
-  const [highlightBg, setHighlightBg] = useState<string>(
-    CAPTION_THEMES.default.highlightBg,
-  );
+  const [fontSize, setFontSize] = useState<number>(defaultTheme.config.style.fontSize);
+  const [fontColor, setFontColor] = useState<string>(defaultTheme.config.style.color);
+  const [strokeColor, setStrokeColor] = useState<string>(defaultTheme.config.style.strokeColor);
+  const [fontFamily, setFontFamily] = useState<string>(defaultTheme.config.style.fontFamily);
+  const [fontWeight, setFontWeight] = useState<number>(defaultTheme.config.style.fontWeight);
+  const [isUppercase, setIsUppercase] = useState<boolean>(defaultTheme.config.style.fontUppercase);
+  const [animation, setAnimation] = useState<string>(defaultTheme.config.subs.animation);
+  const [isAnimationActive, setIsAnimationActive] = useState<boolean>(defaultTheme.config.subs.isAnimationActive);
+  const [isMotionBlurActive, setIsMotionBlurActive] = useState<boolean>(defaultTheme.config.subs.isMotionBlurActive);
+  const [highlightKeywords, setHighlightKeywords] = useState<boolean>(defaultTheme.config.subs.highLightKeywords);
+  const [mainHighlightColor, setMainHighlightColor] = useState<string>(defaultTheme.config.highlight_style.mainColor);
+  const [secondHighlightColor, setSecondHighlightColor] = useState<string>(defaultTheme.config.highlight_style.secondColor);
+  const [thirdHighlightColor, setThirdHighlightColor] = useState<string>(defaultTheme.config.highlight_style.thirdColor);
 
-  const [backgroundColor, setBackgroundColor] = useState<string>(CAPTION_THEMES.default.backgroundColor);
-const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
-
-  const [wordsPerCaption, setWordsPerCaption] = useState<number>(2);
+  const [wordsPerCaption, setWordsPerCaption] = useState<number>(defaultTheme.config.subs.ch);
   const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
 
   // Calculate container dimensions while maintaining aspect ratio
@@ -231,16 +193,23 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
 
   // Handle theme change
   const handleThemeChange = (themeName: string) => {
-    const theme = CAPTION_THEMES[themeName as keyof typeof CAPTION_THEMES];
-    setActiveTheme(themeName);
-    setFontSize(theme.fontSize);
-    setFontColor(theme.fontColor);
-    setStrokeColor(theme.strokeColor);
-    setStrokeWidth(theme.strokeWidth);
-    setHighlightColor(theme.highlightColor);
-    setHighlightBg(theme.highlightBg);
-    setBackgroundColor(theme.backgroundColor);
-    setRounded(theme.rounded);
+    const selectedTheme = themesConfig.themes.find(t => t.config.name === themeName);
+    if (selectedTheme) {
+      setActiveTheme(themeName);
+      setFontSize(selectedTheme.config.style.fontSize);
+      setFontColor(selectedTheme.config.style.color);
+      setStrokeColor(selectedTheme.config.style.strokeColor);
+      setFontFamily(selectedTheme.config.style.fontFamily);
+      setFontWeight(selectedTheme.config.style.fontWeight);
+      setIsUppercase(selectedTheme.config.style.fontUppercase);
+      setAnimation(selectedTheme.config.subs.animation);
+      setIsAnimationActive(selectedTheme.config.subs.isAnimationActive);
+      setIsMotionBlurActive(selectedTheme.config.subs.isMotionBlurActive);
+      setHighlightKeywords(selectedTheme.config.subs.highLightKeywords);
+      setMainHighlightColor(selectedTheme.config.highlight_style.mainColor);
+      setSecondHighlightColor(selectedTheme.config.highlight_style.secondColor);
+      setThirdHighlightColor(selectedTheme.config.highlight_style.thirdColor);
+    }
   };
 
   // Video props memoization
@@ -250,28 +219,34 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
       fontSize,
       fontColor,
       strokeColor,
-      strokeWidth,
-      highlightColor,
-      highlightBg,
-      backgroundColor,
-      rounded,
-      wordsPerCaption,
-      yPosition: captionYPosition,
-      aspectRatio,
+      fontFamily,
+      fontWeight,
+      isUppercase,
+      animation,
+      isAnimationActive,
+      isMotionBlurActive,
+      highlightKeywords,
+      mainHighlightColor,
+      secondHighlightColor,
+      thirdHighlightColor,
+      captionYPosition,
     }),
     [
       videoSrc,
       fontSize,
       fontColor,
       strokeColor,
-      strokeWidth,
-      highlightColor,
-      highlightBg,
-      backgroundColor,
-      rounded,
-      wordsPerCaption,
+      fontFamily,
+      fontWeight,
+      isUppercase,
+      animation,
+      isAnimationActive,
+      isMotionBlurActive,
+      highlightKeywords,
+      mainHighlightColor,
+      secondHighlightColor,
+      thirdHighlightColor,
       captionYPosition,
-      aspectRatio,
     ],
   );
 
@@ -388,22 +363,141 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
       <div>
         <div className="bg-white  border-b-2 border-gray-200/60 rounded-3xl border p-6 sticky top-6">
           {/* Theme Selection */}
-          <div className="mb-6">
-            <div className="flex flex-wrap gap-2">
-              {Object.keys(CAPTION_THEMES).map((theme) => (
-                <button
-                  key={theme}
-                  onClick={() => handleThemeChange(theme)}
-                  className={`px-4 py-2 rounded-2xl font-medium transition-colors
-                    ${
-                      theme === activeTheme
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-100/60 text-gray-600 hover:bg-gray-200"
-                    }`}
+          <div className="space-y-4 p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Theme</label>
+                <select
+                  value={activeTheme}
+                  onChange={(e) => {
+                    const selectedTheme = themesConfig.themes.find(t => t.config.name === e.target.value);
+                    if (selectedTheme) {
+                      setActiveTheme(e.target.value);
+                      setFontSize(selectedTheme.config.style.fontSize);
+                      setFontColor(selectedTheme.config.style.color);
+                      setStrokeColor(selectedTheme.config.style.strokeColor);
+                      setFontFamily(selectedTheme.config.style.fontFamily);
+                      setFontWeight(selectedTheme.config.style.fontWeight);
+                      setIsUppercase(selectedTheme.config.style.fontUppercase);
+                      setAnimation(selectedTheme.config.subs.animation);
+                      setIsAnimationActive(selectedTheme.config.subs.isAnimationActive);
+                      setIsMotionBlurActive(selectedTheme.config.subs.isMotionBlurActive);
+                      setHighlightKeywords(selectedTheme.config.subs.highLightKeywords);
+                      setMainHighlightColor(selectedTheme.config.highlight_style.mainColor);
+                      setSecondHighlightColor(selectedTheme.config.highlight_style.secondColor);
+                      setThirdHighlightColor(selectedTheme.config.highlight_style.thirdColor);
+                    }
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                 >
-                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                </button>
-              ))}
+                  {themesConfig.themes.map((theme) => (
+                    <option key={theme.config.name} value={theme.config.name}>
+                      {theme.config.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Font Size</label>
+                <input
+                  type="number"
+                  value={fontSize}
+                  onChange={(e) => setFontSize(Number(e.target.value))}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Font Family</label>
+                <input
+                  type="text"
+                  value={fontFamily}
+                  onChange={(e) => setFontFamily(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Animation</label>
+                <select
+                  value={animation}
+                  onChange={(e) => setAnimation(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                >
+                  <option value="none">None</option>
+                  <option value="updown">Up Down</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Main Highlight Color</label>
+                <input
+                  type="color"
+                  value={mainHighlightColor}
+                  onChange={(e) => setMainHighlightColor(e.target.value)}
+                  className="mt-1 block w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Second Highlight Color</label>
+                <input
+                  type="color"
+                  value={secondHighlightColor}
+                  onChange={(e) => setSecondHighlightColor(e.target.value)}
+                  className="mt-1 block w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Third Highlight Color</label>
+                <input
+                  type="color"
+                  value={thirdHighlightColor}
+                  onChange={(e) => setThirdHighlightColor(e.target.value)}
+                  className="mt-1 block w-full"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isAnimationActive}
+                  onChange={(e) => setIsAnimationActive(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <label className="ml-2 text-sm text-gray-700">Enable Animation</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isMotionBlurActive}
+                  onChange={(e) => setIsMotionBlurActive(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <label className="ml-2 text-sm text-gray-700">Enable Motion Blur</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isUppercase}
+                  onChange={(e) => setIsUppercase(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <label className="ml-2 text-sm text-gray-700">Uppercase Text</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={highlightKeywords}
+                  onChange={(e) => setHighlightKeywords(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <label className="ml-2 text-sm text-gray-700">Highlight Keywords</label>
+              </div>
             </div>
           </div>
 
@@ -421,7 +515,6 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
                 value={wordsPerCaption}
                 onChange={(e) => {
                   setWordsPerCaption(Number(e.target.value));
-                  setActiveTheme("custom");
                 }}
                 className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
                   [&::-webkit-slider-thumb]:appearance-none
@@ -450,7 +543,6 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
                   value={fontSize}
                   onChange={(e) => {
                     setFontSize(Number(e.target.value));
-                    setActiveTheme("custom");
                   }}
                   className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
                   [&::-webkit-slider-thumb]:appearance-none
@@ -458,7 +550,7 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
                   [&::-webkit-slider-thumb]:h-4
                   [&::-webkit-slider-thumb]:rounded-full
                   [&::-webkit-slider-thumb]:bg-gray-800"
-                  style={{ accentColor: highlightColor }}
+                  style={{ accentColor: mainHighlightColor }}
                 />
               </div>
             </div>
@@ -473,7 +565,6 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
                   value={fontColor}
                   onChange={(e) => {
                     setFontColor(e.target.value);
-                    setActiveTheme("custom");
                   }}
                   className="h-10 rounded border-none cursor-pointer bg-transparent"
                 />
@@ -485,10 +576,9 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
                 </label>
                 <input
                   type="color"
-                  value={highlightColor}
+                  value={mainHighlightColor}
                   onChange={(e) => {
-                    setHighlightColor(e.target.value);
-                    setActiveTheme("custom");
+                    setMainHighlightColor(e.target.value);
                   }}
                   className="h-10 rounded border-none cursor-pointer bg-transparent"
                 />
@@ -503,7 +593,6 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
                   value={strokeColor}
                   onChange={(e) => {
                     setStrokeColor(e.target.value);
-                    setActiveTheme("custom");
                   }}
                   className="h-10 rounded border-none cursor-pointer bg-transparent"
                 />
@@ -512,17 +601,16 @@ const [rounded, setRounded] = useState<string>(CAPTION_THEMES.default.rounded);
 
             <div>
               <label className="block font-medium text-lg text-gray-300 mb-2">
-                Stroke {strokeWidth}px
+                Stroke {fontWeight}px
               </label>
               <div className="flex items-center gap-4">
                 <input
                   type="range"
                   min="0"
                   max="40"
-                  value={strokeWidth}
+                  value={fontWeight}
                   onChange={(e) => {
-                    setStrokeWidth(Number(e.target.value));
-                    setActiveTheme("custom");
+                    setFontWeight(Number(e.target.value));
                   }}
                   className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
                   [&::-webkit-slider-thumb]:appearance-none

@@ -8,31 +8,47 @@ import { Page } from "./Page";
 import { TikTokPage } from "@remotion/captions";
 
 interface Props {
+  enterProgress: number;
   page: TikTokPage;
   fontSize: number;
-  fontColor: string;
+  color: string;
   strokeColor: string;
-  strokeWidth: number;
-  highlightColor: string;
-  backgroundColor: string;
-  highlightBg: string;
-  rounded: "md" | "lg";
-  yPosition?: number;
-  aspectRatio?: string;
+  stroke: "none" | "s" | "m" | "l";
+  fontFamily: string;
+  fontWeight: number;
+  fontUppercase: boolean;
+  fontShadow: "none" | "s" | "m" | "l";
+  animation: string;
+  isAnimationActive: boolean;
+  isMotionBlurActive: boolean;
+  highlightKeywords: boolean;
+  mainHighlightColor: string;
+  secondHighlightColor: string;
+  thirdHighlightColor: string;
+  top: number;
+  className?: string;
 }
 
 const SubtitlePage: React.FC<Props> = ({
+  enterProgress,
   page,
   fontSize,
-  fontColor,
+  color,
   strokeColor,
-  strokeWidth,
-  highlightColor,
-  backgroundColor,
-  highlightBg,
-  rounded,
-  yPosition,
-  aspectRatio,
+  stroke,
+  fontFamily,
+  fontWeight,
+  fontUppercase,
+  fontShadow,
+  animation,
+  isAnimationActive,
+  isMotionBlurActive,
+  highlightKeywords,
+  mainHighlightColor,
+  secondHighlightColor,
+  thirdHighlightColor,
+  top,
+  className = "",
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -51,16 +67,22 @@ const SubtitlePage: React.FC<Props> = ({
       enterProgress={enter}
       page={page}
       fontSize={fontSize}
-      fontColor={fontColor}
+      color={color}
       strokeColor={strokeColor}
-      strokeWidth={strokeWidth}
-      highlightColor={highlightColor}
-      backgroundColor={backgroundColor}
-      highlightBg={highlightBg}
-      rounded={rounded}
-      yPosition={yPosition}
-      aspectRatio={aspectRatio}
-
+      stroke={stroke}
+      fontFamily={fontFamily}
+      fontWeight={fontWeight}
+      fontUppercase={fontUppercase}
+      fontShadow={fontShadow}
+      animation={animation}
+      isAnimationActive={isAnimationActive}
+      isMotionBlurActive={isMotionBlurActive}
+      highlightKeywords={highlightKeywords}
+      mainHighlightColor={mainHighlightColor}
+      secondHighlightColor={secondHighlightColor}
+      thirdHighlightColor={thirdHighlightColor}
+      top={top}
+      className={className}
     />
   );
 };

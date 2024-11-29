@@ -22,18 +22,25 @@ export type SubtitleProp = {
 export const captionedVideoSchema = z.object({
   src: z.string(),
   fontSize: z.number().optional(),
-  fontColor: z.string().optional(),
+  color: z.string().optional(),
   strokeColor: z.string().optional(),
-  strokeWidth: z.number().optional(),
-  highlightColor: z.string().optional(),
-  highlightBg: z.string().optional(),
-  backgroundColor: z.string().optional(),
-  rounded: z.enum(["md", "lg"]).optional(),
-  wordsPerCaption: z.number().optional(),
-  captionSwitchSpeed: z.number().optional(),
-  yPosition: z.number().optional(),
+  stroke: z.enum(["none", "s", "m", "l"]).optional(),
+  fontFamily: z.string().optional(),
+  fontWeight: z.number().optional(),
+  fontUppercase: z.boolean().optional(),
+  fontShadow: z.enum(["none", "s", "m", "l"]).optional(),
+  animation: z.string().optional(),
+  isAnimationActive: z.boolean().optional(),
+  isMotionBlurActive: z.boolean().optional(),
+  highlightKeywords: z.boolean().optional(),
+  mainHighlightColor: z.string().optional(),
+  secondHighlightColor: z.string().optional(),
+  thirdHighlightColor: z.string().optional(),
+  top: z.number().optional(),
+  left: z.number().optional(),
   aspectRatio: z.string().optional(),
-  onError: z.function().optional(),
+  className: z.string().optional(),
+  chunkSize: z.number().optional(),
 });
 
 export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
@@ -58,37 +65,43 @@ export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
   }
 };
 
-// Caption Speed
 const BASE_SWITCH_SPEED = 300;
 
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   src,
-  fontSize = 80,
-  fontColor = "white",
+  fontSize = 120,
+  color = "white",
   strokeColor = "black",
-  strokeWidth = 4,
-  highlightColor = "#39E508",
-  highlightBg = 'transparent',
-  backgroundColor = "gray",
-  rounded = "lg",
-  wordsPerCaption = 2,
-  captionSwitchSpeed,
-  yPosition = 1000,
+  stroke = "m",
+  fontFamily = "Inter",
+  fontWeight = 700,
+  fontUppercase = false,
+  fontShadow = "s",
+  animation = "none",
+  isAnimationActive = false,
+  isMotionBlurActive = false,
+  highlightKeywords = false,
+  mainHighlightColor = "#39E508",
+  secondHighlightColor = "#fdfa14",
+  thirdHighlightColor = "#f01916",
+  top = 1000,
   aspectRatio = "9:16",
-  onError,
+  chunkSize = 2,
+  left = 0,
+  className = "flowless",
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
   const [handle] = useState(() => delayRender(
     `Loading video with src="${src}"`,
     {
-      timeoutInMilliseconds: 60000 // Increase timeout to 60 seconds
+      timeoutInMilliseconds: 60000
     }
   ));
   const { fps } = useVideoConfig();
 
   const captionSwitchSpeedValue = useMemo(() =>
-    captionSwitchSpeed ?? BASE_SWITCH_SPEED * wordsPerCaption,
-    [wordsPerCaption, captionSwitchSpeed]
+    BASE_SWITCH_SPEED * chunkSize,
+    [chunkSize]
   );
 
   const subtitlesFile = src
@@ -107,7 +120,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
       continueRender(handle);
     } catch (e) {
       console.error('Error fetching subtitles:', e);
-      continueRender(handle); // Continue render even if subtitles fail
+      continueRender(handle);
     }
   }, [handle, subtitlesFile]);
 
@@ -140,13 +153,10 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
           }}
           onError={(err) => {
             console.error('Video playback error:', err);
-            continueRender(handle); // Continue render even if video fails
-            if (onError) {
-              onError(err);
-            }
+            continueRender(handle);
           }}
           onLoad={() => {
-            continueRender(handle); // Continue render once video is loaded
+            continueRender(handle);
           }}
         />
       </AbsoluteFill>
@@ -170,17 +180,25 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
           >
             <SubtitlePage
               key={index}
+              enterProgress={subtitleStartFrame / fps}
               page={page}
               fontSize={fontSize}
-              fontColor={fontColor}
+              color={color}
               strokeColor={strokeColor}
-              strokeWidth={strokeWidth}
-              highlightColor={highlightColor}
-              highlightBg={highlightBg}
-              backgroundColor={backgroundColor}
-              rounded={rounded}
-              yPosition={yPosition}
-              aspectRatio={aspectRatio}
+              stroke={stroke}
+              fontFamily={fontFamily}
+              fontWeight={fontWeight}
+              fontUppercase={fontUppercase}
+              fontShadow={fontShadow}
+              animation={animation}
+              isAnimationActive={isAnimationActive}
+              isMotionBlurActive={isMotionBlurActive}
+              highlightKeywords={highlightKeywords}
+              mainHighlightColor={mainHighlightColor}
+              secondHighlightColor={secondHighlightColor}
+              thirdHighlightColor={thirdHighlightColor}
+              top={top}
+              className={className}
             />
           </Sequence>
         );

@@ -1,0 +1,42 @@
+{
+  "themes": [
+    {
+      "config": {
+        "className": "ali",
+        "name": "Ali",
+        "custom": false,
+        "default": false,
+        "categories": ["all", "animated"],
+        "style": {
+          "left": 20,
+          "top": 57,
+          "fontSize": 26,
+          "color": "#ffffff",
+          "fontFamily": "Montserrat",
+          "fontWeight": 900,
+          "fontUppercase": true,
+          "fontShadow": "m",
+          "stroke": "none",
+          "strokeColor": "#000000"
+        },
+        "subs": {
+          "chunkSize": 3,
+          "chunkLineMaxLength": 8,
+          "breakLine": true,
+          "emoji": "auto",
+          "emojiAnimation": true,
+          "highLightKeywords": false,
+          "animation": "bounce",
+          "isAnimationActive": true,
+          "isMotionBlurActive": false,
+          "punctuation": false
+        },
+        "highlight_style": {
+          "mainColor": "#2bf82a",
+          "secondColor": "#fdfa14",
+          "thirdColor": "#f01916"
+        }
+      }
+    }
+  ]
+}
