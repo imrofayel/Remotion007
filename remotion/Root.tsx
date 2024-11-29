@@ -19,15 +19,15 @@ export const RemotionRoot: React.FC = () => {
 
   const captionedVideoProps = useMemo(() => ({
     src: videoSrc,
-    fontSize: 90,
+    fontSize: 65,
     fontColor: "#a4a4a5",
     strokeColor: "#333333",
     strokeWidth: 0,
     highlightColor: "#1c1e1d",
     backgroundColor: "#e7e5e7", // Add this
     rounded: "lg", // Add this
-    wordsPerCaption: 2,
-    yPosition: 1330,
+    wordsPerCaption: 3,
+    yPosition: 1380,
     aspectRatio: "9:16",
     onError: (error: Error) => {
       console.error('Video error:', error);

@@ -85,7 +85,6 @@ export const Page: React.FC<PageProps> = ({
           textShadow: `${strokeWidth / 2}px ${strokeWidth / 2}px ${strokeWidth}px black`,
           backgroundColor: backgroundColor,
         }}
-
         
         className={cn(rounded === "md" ? "rounded-lg" : "rounded-full", 'max-w-fit p-5 px-10 font-bold w-full text-center uppercase',)}>
 
@@ -106,7 +105,7 @@ export const Page: React.FC<PageProps> = ({
 
               className={cn(rounded === "md" ? "rounded-lg" : "rounded-full", 
                 
-              "drop-shadow-2xl inline whitespace-pre transition-colors duration-500 ease-in-out"
+              "drop-shadow-2xl inline whitespace-pre transition-colors duration-500 ease-in-out",
             )}
             >
               {token.text}
