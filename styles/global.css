@@ -102,29 +102,26 @@ input:focus {
   
   .stroke-s {
     color: black;
-    text-shadow: 
-      -1px -1px 1px black,
-      1px -1px 1px black,
-      -1px 1px 1px black,
-      1px 1px 1px black;
+    text-shadow: none;
+    -webkit-text-stroke: 1px black;
   }
   
   .stroke-m {
-    color: black;
+    color: white;
     text-shadow: 
-      -1.5px -1.5px 1.5px black,
-      1.5px -1.5px 1.5px black,
-      -1.5px 1.5px 1.5px black,
-      1.5px 1.5px 1.5px black;
+      -1px -1px 0 #000,  
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000;
   }
   
   .stroke-l {
-    color: black;
+    color: white;
     text-shadow: 
-      -2px -2px 2px black,
-      2px -2px 2px black,
-      -2px 2px 2px black,
-      2px 2px 2px black;
+      -2px -2px 0 #000,  
+       2px -2px 0 #000,
+      -2px  2px 0 #000,
+       2px  2px 0 #000;
   }
 
   .stroke-none {
@@ -152,29 +149,26 @@ input:focus {
   
   .stroke-s {
     color: black;
-    text-shadow: 
-      -1px -1px 1px black,
-      1px -1px 1px black,
-      -1px 1px 1px black,
-      1px 1px 1px black;
+    text-shadow: none;
+    -webkit-text-stroke: 1px black;
   }
   
   .stroke-m {
-    color: black;
+    color: white;
     text-shadow: 
-      -1.5px -1.5px 1.5px black,
-      1.5px -1.5px 1.5px black,
-      -1.5px 1.5px 1.5px black,
-      1.5px 1.5px 1.5px black;
+      -1px -1px 0 #000,  
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000;
   }
   
   .stroke-l {
-    color: black;
+    color: white;
     text-shadow: 
-      -2px -2px 2px black,
-      2px -2px 2px black,
-      -2px 2px 2px black,
-      2px 2px 2px black;
+      -2px -2px 0 #000,  
+       2px -2px 0 #000,
+      -2px  2px 0 #000,
+       2px  2px 0 #000;
   }
 
   .stroke-none {

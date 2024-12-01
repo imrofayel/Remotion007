@@ -137,7 +137,7 @@ export const Page: React.FC<Props> = ({
               return (
                 <span key={index} className="relative">
                   <span
-                    className={cn("caption-word items-center px-2", active && 'highlight-word', getShadowClass(), getStrokeClass())}
+                    className={cn("caption-word sb-text-shadow-sm items-center px-2", active && 'highlight-word', getShadowClass(), getStrokeClass())}
                     style={{
                       transform: animationTransform,
                       color: active ? mainHighlightColor : color,
