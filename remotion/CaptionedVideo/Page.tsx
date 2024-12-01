@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   AbsoluteFill,
   useCurrentFrame,
@@ -90,19 +90,9 @@ export const Page: React.FC<Props> = ({
     }
   };
 
-  // Determine the Stroke
-  const getShadow = () => {
-    switch (stroke) {
-      case "s":
-        return "font-shadow-s";
-      case "m":
-        return "font-shadow-m";
-      case "l":
-        return "font-shadow-l";
-      default:
-        return "font-shadow-none";
-    }
-  };
+  const getStrokeClass = () => `stroke-${stroke}`;
+  const getShadowClass = () => `shadow-${fontShadow}`;
+  
 
   const animationTransform = getAnimationTransform();
   const motionBlurFilter = isMotionBlurActive ? 'blur(0.5px)' : 'none';
@@ -116,28 +106,22 @@ export const Page: React.FC<Props> = ({
         justifyContent: "center",
         position: "relative",
       }}
+      className={className}
     >
       <div 
         className={cn(
-          "leon subtitle absolute z-20 text-center",
-          "animation-mode-rotate emoji-mode-auto",
-          "text-stroke-mode-l highlight-mode",
-          className,
-          getShadow()
+          "absolute max-w-fit caption-container z-20 text-center",
         )}
         style={{
           position: "absolute",
           top: top,
           left: "50%",
           transform: "translateX(-50%)",
-          maxWidth: "90%",
-          width: "100%",
         }}
       >
-        <div className="row-container">
           <div 
-            className="row" 
-            style={{ 
+            className="caption-box" 
+            style={{
               whiteSpace: "nowrap",
               display: "flex",
               alignItems: "center",
@@ -153,7 +137,7 @@ export const Page: React.FC<Props> = ({
               return (
                 <span key={index} className="relative">
                   <span
-                    className="sb-text-shadow-sm relative inline-flex wordDisplayed computedHighlightStyle"
+                    className={cn("caption-word items-center px-2", active && 'highlight-word', getShadowClass(), getStrokeClass())}
                     style={{
                       transform: animationTransform,
                       color: active ? mainHighlightColor : color,
@@ -162,19 +146,17 @@ export const Page: React.FC<Props> = ({
                       fontWeight,
                       textTransform: fontUppercase ? "uppercase" : "none",
                       filter: motionBlurFilter,
-                      whiteSpace: "pre",
-                      padding: "0 2px",
+                      WebkitTextStrokeColor: strokeColor
                     }}
                     data-text={token.text}
                   >
-                    {token.text}
+                    {token.text.trim()}
                   </span>
                 </span>
               );
             })}
           </div>
         </div>
-      </div>
     </AbsoluteFill>
   );
 };
