@@ -15,7 +15,7 @@
           "fontFamily": "Inter",
           "fontWeight": 700,
           "fontUppercase": false,
-          "fontShadow": "m",
+          "fontShadow": "none",
           "stroke": "none",
           "strokeColor": "#000000"
         },

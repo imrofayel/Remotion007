@@ -4,6 +4,7 @@
 
 * {
     font-family: 'Inter';
+    @apply tracking-wide
 }
 
 body {
@@ -64,151 +65,124 @@ input {
 input:focus {
     border-color: var(--focused-border-color);
 }
-*{
-  @apply tracking-wide
-}
 
 .ali {
-  .shadow-none .sb-text-shadow-sm{
+
+  .sb-text-shadow-sm {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Shadow Styles */
+  .shadow-none .sb-text-shadow-sm {
     text-shadow: none;
   }
 
+  [class*="shadow-"] .sb-text-shadow-sm::after,
+  [class*="shadow-"] .sb-text-shadow-sm::before {
+    -webkit-font-smoothing: antialiased;
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    color: var(--text-color);
+    white-space: nowrap;
+    text-align: inherit;
+  }
+
+  .shadow-s .sb-text-shadow-sm::after,
+  .shadow-s .sb-text-shadow-sm::before {
+    text-shadow: 0px 4.5px 5px #717171;
+  }
+
+  .shadow-m .sb-text-shadow-sm::after,
+  .shadow-m .sb-text-shadow-sm::before {
+    text-shadow: 0px 6px 8px #717171;
+  }
+
+  .shadow-l .sb-text-shadow-sm::after,
+  .shadow-l .sb-text-shadow-sm::before {
+    text-shadow: 0px 7px 12px #717171;
+  }
+
+  /* Stroke Styles */
+  [class*="stroke-"] .sb-text-shadow-sm::after,
+  [class*="stroke-"] .sb-text-shadow-sm::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    color: var(--stroke-color);
+    white-space: nowrap;
+    text-align: inherit;
+  }
+
+  .stroke-none {
+    -webkit-text-stroke: 0em var(--stroke-color);
+  }
+
+  .stroke-s .sb-text-shadow-sm::after,
+  .stroke-s .sb-text-shadow-sm::before {
+    -webkit-text-stroke: 0.05em var(--stroke-color);
+  }
+
+  .stroke-m .sb-text-shadow-sm::after,
+  .stroke-m .sb-text-shadow-sm::before {
+    -webkit-text-stroke: 0.1em var(--stroke-color);
+  }
+
+  .stroke-l .sb-text-shadow-sm::after,
+  .stroke-l .sb-text-shadow-sm::before {
+    -webkit-text-stroke: 0.15em var(--stroke-color);
+  }
+
+  /* Highlight Word Styles */
   .highlight-word {
     -webkit-text-stroke-color: var(--main-color) !important;
     color: var(--text-color) !important;
     opacity: 0.9 !important;
   }
 
+  /* Caption Styles */
   .caption-container {
     background-color: var(--main-color);
-    @apply rounded-full p-2 !px-8
+    @apply rounded-full p-2 !px-8;
   }
 
   .caption-word {
     opacity: 0.2;
   }
-
-  .shadow-s .sb-text-shadow-sm::after,
-  .shadow-s .sb-text-shadow-sm::before{
-    -webkit-font-smoothing: antialiased;
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--text-color);
-    white-space: nowrap;
-    text-align: inherit;
-    text-shadow: 0px 4.5px 5px #717171;
-  }
-
-  .shadow-m .sb-text-shadow-sm::after,
-  .shadow-m .sb-text-shadow-sm::before{
-    -webkit-font-smoothing: antialiased;
-
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--text-color);
-    white-space: nowrap;
-    text-align: inherit;
-    text-shadow: 0px 6px 8px #717171;
-  }
-
-  .shadow-l .sb-text-shadow-sm::after,
-  .shadow-l .sb-text-shadow-sm::before{
-    -webkit-font-smoothing: antialiased;
-
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--text-color);
-    white-space: nowrap;
-    text-align: inherit;
-    text-shadow: 0px 7px 12px #717171;
-  }
-
-  .stroke-s .sb-text-shadow-sm:after,
-  .stroke-s .sb-text-shadow-sm:before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--stroke-color);
-    -webkit-text-stroke: 0.05em var(--stroke-color);
-    white-space: nowrap;
-    text-align: inherit;
-  }
-  
-  .sb-text-shadow-sm {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .stroke-m .sb-text-shadow-sm:after,
-  .stroke-m .sb-text-shadow-sm:before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--stroke-color);
-    -webkit-text-stroke: 0.1em var(--stroke-color);
-    white-space: nowrap;
-    text-align: inherit;
-  }
-  
-  .stroke-l .sb-text-shadow-sm:after,
-  .stroke-l .sb-text-shadow-sm:before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--stroke-color);
-    -webkit-text-stroke: 0.15em var(--stroke-color);
-    white-space: nowrap;
-    text-align: inherit;
-  }
-
-  .stroke-none {
-    -webkit-text-stroke: 0em var(--stroke-color);
-  }
-
 }
+
 
 .leon {
 
   .highlight-word {
     background-color: var(--main-color);
     color: var(--second-color) !important;
-    @apply  !px-2 rounded-xl !mx-2 text-center !max-h-fit
+    @apply !px-2 rounded-xl !mx-2 text-center !max-h-fit;
   }
 
-  .shadow-none .sb-text-shadow-sm{
+  .sb-text-shadow-sm {
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* General Shadow Styles */
+  .shadow-none .sb-text-shadow-sm {
     text-shadow: none;
   }
-  .shadow-s .sb-text-shadow-sm::after,
-  .shadow-s .sb-text-shadow-sm::before{
-    -webkit-font-smoothing: antialiased;
 
+  [class*="shadow-"] .sb-text-shadow-sm::after,
+  [class*="shadow-"] .sb-text-shadow-sm::before {
+    -webkit-font-smoothing: antialiased;
     content: attr(data-text);
     position: absolute;
     top: 0;
@@ -219,46 +193,26 @@ input:focus {
     color: var(--text-color);
     white-space: nowrap;
     text-align: inherit;
+  }
+
+  .shadow-s .sb-text-shadow-sm::after,
+  .shadow-s .sb-text-shadow-sm::before {
     text-shadow: 0 1px 16px #222;
   }
 
   .shadow-m .sb-text-shadow-sm::after,
-  .shadow-m .sb-text-shadow-sm::before{
-    -webkit-font-smoothing: antialiased;
-
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--text-color);
-    white-space: nowrap;
-    text-align: inherit;
+  .shadow-m .sb-text-shadow-sm::before {
     text-shadow: 0 1px 26px #222;
   }
 
   .shadow-l .sb-text-shadow-sm::after,
-  .shadow-l .sb-text-shadow-sm::before{
-    -webkit-font-smoothing: antialiased;
-
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--text-color);
-    white-space: nowrap;
-    text-align: inherit;
+  .shadow-l .sb-text-shadow-sm::before {
     text-shadow: 0 1px 36px #222;
   }
-  
 
-  .stroke-s .sb-text-shadow-sm:after,
-  .stroke-s .sb-text-shadow-sm:before {
+  /* General Stroke Styles */
+  [class*="stroke-"] .sb-text-shadow-sm::after,
+  [class*="stroke-"] .sb-text-shadow-sm::before {
     content: attr(data-text);
     position: absolute;
     top: 0;
@@ -267,42 +221,6 @@ input:focus {
     bottom: 0;
     z-index: -1;
     color: var(--stroke-color);
-    -webkit-text-stroke: 0.1em var(--stroke-color);
-    white-space: nowrap;
-    text-align: inherit;
-  }
-  
-  .sb-text-shadow-sm {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .stroke-m .sb-text-shadow-sm:after,
-  .stroke-m .sb-text-shadow-sm:before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--stroke-color);
-    -webkit-text-stroke: 0.15em var(--stroke-color);
-    white-space: nowrap;
-    text-align: inherit;
-  }
-  
-  .stroke-l .sb-text-shadow-sm:after,
-  .stroke-l .sb-text-shadow-sm:before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    color: var(--stroke-color);
-    -webkit-text-stroke: 0.2em var(--stroke-color);
     white-space: nowrap;
     text-align: inherit;
   }
@@ -311,7 +229,18 @@ input:focus {
     -webkit-text-stroke: 0em var(--stroke-color);
   }
 
-  .sb-text-shadow-sm {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  .stroke-s .sb-text-shadow-sm::after,
+  .stroke-s .sb-text-shadow-sm::before {
+    -webkit-text-stroke: 0.1em var(--stroke-color);
+  }
+
+  .stroke-m .sb-text-shadow-sm::after,
+  .stroke-m .sb-text-shadow-sm::before {
+    -webkit-text-stroke: 0.15em var(--stroke-color);
+  }
+
+  .stroke-l .sb-text-shadow-sm::after,
+  .stroke-l .sb-text-shadow-sm::before {
+    -webkit-text-stroke: 0.2em var(--stroke-color);
   }
 }
