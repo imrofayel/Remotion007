@@ -124,7 +124,7 @@ input:focus {
   }
 
   .stroke-none {
-    -webkit-text-stroke: 0em var(--stroke-color);
+    -webkit-text-stroke: 0em transparent;
   }
 
   .stroke-s .sb-text-shadow-sm::after,
