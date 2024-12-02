@@ -25,11 +25,7 @@ body {
     --geist-font: "Inter";
 
     --geist-error: #e00;
-
-    --subtitle: #666;
-
     --main-color: #000;
-    --stroke-color: #fff;
 }
 
 * {
@@ -78,8 +74,12 @@ input:focus {
 
 .leon {
   .highlight-word {
-    @apply !text-white !p-1 !px-2 rounded-xl bg-[#ff5700] !mx-1 text-center
+    @apply !text-white !px-2 rounded-xl bg-[#ff5700] !mx-1 text-center
   }
+}
+
+*{
+  @apply tracking-wide
 }
 
 .ali {
@@ -89,43 +89,46 @@ input:focus {
   }
 
   .shadow-s {
-    text-shadow: 0 1px 4px #333;
+    text-shadow: 0 0.5px 3px #333;
   }
 
   .shadow-m {
-    text-shadow: 0 2px 4px #333;
+    text-shadow: 0 4px 4px black;
   }
 
   .shadow-l {
-    text-shadow: 0 3px 4px #333;
+    text-shadow: 0 5px 6px #333;
   }
-  
-  .stroke-s {
+
+  .stroke-s .sb-text-subtitle:after,
+  .stroke-s .sb-text-subtitle:before{
+    content: attr(data-text) ;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
     color: black;
-    text-shadow: none;
-    -webkit-text-stroke: 1px black;
+    -webkit-text-stroke: 0.1em black;
   }
   
   .stroke-m {
-    color: white;
-    text-shadow: 
-      -1px -1px 0 #000,  
-       1px -1px 0 #000,
-      -1px  1px 0 #000,
-       1px  1px 0 #000;
+    paint-order: stroke;
+    -webkit-text-stroke: 8px black;
   }
   
   .stroke-l {
-    color: white;
-    text-shadow: 
-      -2px -2px 0 #000,  
-       2px -2px 0 #000,
-      -2px  2px 0 #000,
-       2px  2px 0 #000;
+    paint-order: stroke;
+    -webkit-text-stroke: 20px black;
   }
 
   .stroke-none {
     -webkit-text-stroke: 0em black;
+  }
+
+  .stroke-l.shadow-l{
+    paint-order: stroke;
+    -webkit-text-stroke: 20px black;
+    text-shadow: 0 16px 20px #333;
   }
   
 }
@@ -147,10 +150,25 @@ input:focus {
     text-shadow: 0 3px 4px #333;
   }
   
-  .stroke-s {
-    color: black;
-    text-shadow: none;
-    -webkit-text-stroke: 1px black;
+
+  .stroke-s .sb-text-shadow-sm:after,
+  .stroke-s .sb-text-shadow-sm:before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; /* Aligns the pseudo-element to the top */
+    left: 0; /* Aligns it to the left */
+    right: 0; /* Ensures full width coverage */
+    bottom: 0; /* Ensures full height coverage */
+    z-index: -1;
+    color: var(--stroke-color);
+    -webkit-text-stroke: 0.1em black;
+    white-space: nowrap; /* Ensures no wrapping */
+    text-align: inherit; /* Inherit alignment from the parent */
+  }
+  
+  .sb-text-shadow-sm {
+    position: relative;
+    display: inline-block; /* Ensures pseudo-elements follow dimensions of text */
   }
   
   .stroke-m {
@@ -175,3 +193,111 @@ input:focus {
     -webkit-text-stroke: 0em black;
   }
 }
+
+.adam {
+  text-align: center;
+  position: relative;
+
+}
+
+.adam .subtitle {
+  font-family: "Inter", sans-serif;
+  transform: scale(1);
+  line-height: 1.1;
+  white-space: break-spaces;
+  padding-top: 2.4em;
+  padding-bottom: 2.4em;
+  letter-spacing: 0.2px;
+  display: inline-block;
+}
+
+.adam .row {
+  display: inline-block;
+  margin: 0.2em 0;
+}
+
+.adam .row-container {
+  display: inline-block;
+  padding: 1em 2em;
+  background-color: #eee;
+  border-radius: 4rem;
+  line-height: normal;
+}
+
+.adam .sb-text-shadow-sm {
+  position: relative;
+  color: var(--main-color);
+}
+
+.font-shadow-s {
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 1px 4px #333;
+}
+
+.font-shadow-m .sb-text-shadow-sm {
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 2px 4px #333;
+}
+
+.font-shadow-l .sb-text-shadow-sm,
+.font-shadow-m .sb-text-shadow-lg {
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 3px 4px #333;
+}
+
+.text-stroke-mode-s .sb-text-shadow-sm:after,
+.text-stroke-mode-s .sb-text-shadow-sm:before {
+  content: attr(data-text);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  color: var(--stroke-color);
+  -webkit-text-stroke: 0.1em var(--stroke-color);
+}
+
+.text-stroke-mode-m .sb-text-shadow-sm:after,
+.text-stroke-mode-m .sb-text-shadow-sm:before {
+  content: attr(data-text);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  color: var(--stroke-color);
+  -webkit-text-stroke: 0.15em var(--stroke-color);
+}
+
+.text-stroke-mode-l .sb-text-shadow-sm:after,
+.text-stroke-mode-l .sb-text-shadow-sm:before {
+  content: attr(data-text);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  color: var(--stroke-color);
+  -webkit-text-stroke: 0.2em var(--stroke-color);
+}
+
+.ali .captions-title {
+  font-size: 5rem;
+  line-height: 1.1em;
+  color: #fff;
+  font-weight: 700;
+}
+
+.adam .captions-title.caption-title-s { font-size: 4rem; }
+.adam .captions-title.caption-title-m { font-size: 6rem; }
+.adam .captions-title.caption-title-l { font-size: 7rem; }
+
+.adam .captions-title-backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+
