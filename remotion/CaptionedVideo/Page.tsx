@@ -105,7 +105,13 @@ export const Page: React.FC<Props> = ({
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-      }}
+
+        "--stroke-color": strokeColor,
+        "--main-color": mainHighlightColor,
+        "--second-color": secondHighlightColor,
+        "--text-color": color,
+
+      } as React.CSSProperties}
       className={className}
     >
       <div 

@@ -11,7 +11,7 @@
           "left": 20,
           "top": 57,
           "fontSize": 70,
-          "color": "#a9a9aa",
+          "color": "#1c1e1d",
           "fontFamily": "Inter",
           "fontWeight": 700,
           "fontUppercase": false,
@@ -32,9 +32,9 @@
           "punctuation": false
         },
         "highlight_style": {
-          "mainColor": "#1c1e1d",
-          "secondColor": "#fdfa14",
-          "thirdColor": "#f01916"
+          "mainColor": "#e7e5e7",
+          "secondColor": "#e7e5e7",
+          "thirdColor": "#e7e5e7"
         }
       }
     },
@@ -46,7 +46,6 @@
         "default": false,
         "categories": ["all", "minimal"],
         "style": {
-          "left": 20,
           "top": 57,
           "fontSize": 70,
           "color": "#ffffff",
@@ -60,14 +59,10 @@
         "subs": {
           "chunkSize": 3,
           "chunkLineMaxLength": 8,
-          "breakLine": true,
-          "emoji": "auto",
-          "emojiAnimation": false,
           "highLightKeywords": true,
           "animation": "updown",
           "isAnimationActive": true,
-          "isMotionBlurActive": false,
-          "punctuation": true
+          "isMotionBlurActive": false
         },
         "highlight_style": {
           "mainColor": "#ff5700",
