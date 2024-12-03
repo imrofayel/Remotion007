@@ -157,6 +157,7 @@ input:focus {
 
   .caption-word {
     opacity: 0.2;
+    @apply !transition-colors !duration-150 !ease-in
   }
 }
 
@@ -166,7 +167,8 @@ input:focus {
   .highlight-word {
     background-color: var(--main-color);
     color: var(--second-color) !important;
-    @apply !px-2 rounded-xl !mx-2 text-center !max-h-fit;
+    @apply !px-2 rounded-xl !mx-2 text-center;
+    z-index: -2;
   }
 
   .sb-text-shadow-sm {

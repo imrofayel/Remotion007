@@ -61,7 +61,7 @@
           "chunkLineMaxLength": 8,
           "highLightKeywords": true,
           "animation": "updown",
-          "isAnimationActive": true,
+          "isAnimationActive": false,
           "isMotionBlurActive": false
         },
         "highlight_style": {
