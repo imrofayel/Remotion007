@@ -21,6 +21,8 @@ import { Button } from "../components/ui/button";
 import {
   GalleryVerticalEndIcon,
   UploadCloud,
+  Download,
+  Upload,
 } from "lucide-react";
 import themesConfig from './themes.json';
 
@@ -64,6 +66,102 @@ const Home: NextPage = () => {
   const [thirdHighlightColor, setThirdHighlightColor] = useState<string>(defaultTheme.config.highlight_style.thirdColor);
 
   const [className, setClassName] = useState<string>(defaultTheme.config.className);
+
+  // Function to export current theme
+  const handleExportTheme = () => {
+    const currentTheme = {
+      themes: [
+        {
+          config: {
+            className: className,
+            name: activeTheme,
+            custom: true,
+            default: false,
+            categories: ["all", "custom"],
+            style: {
+              fontSize: fontSize,
+              color: fontColor,
+              fontFamily: fontFamily,
+              fontWeight: fontWeight,
+              fontUppercase: isUppercase,
+              fontShadow: fontShadow,
+              stroke: stroke,
+              strokeColor: strokeColor,
+            },
+            subs: {
+              chunkSize: wordsPerCaption,
+              animation: animation,
+              isAnimationActive: isAnimationActive,
+              isMotionBlurActive: isMotionBlurActive,
+            },
+            highlight_style: {
+              mainColor: mainHighlightColor,
+              secondColor: secondHighlightColor,
+              thirdColor: thirdHighlightColor,
+            }
+          }
+        }
+      ]
+    };
+
+    const blob = new Blob([JSON.stringify(currentTheme, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `theme-${activeTheme.toLowerCase()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Function to import theme
+  const handleImportTheme = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const importedTheme = JSON.parse(content);
+        
+        if (!importedTheme.themes?.[0]?.config) {
+          throw new Error('Invalid theme file format');
+        }
+
+        const themeConfig = importedTheme.themes[0].config;
+        setActiveTheme(themeConfig.name);
+        setClassName(themeConfig.className);
+        
+        // Import style settings
+        setFontSize(themeConfig.style.fontSize);
+        setFontColor(themeConfig.style.color);
+        setFontFamily(themeConfig.style.fontFamily);
+        setFontWeight(themeConfig.style.fontWeight);
+        setIsUppercase(themeConfig.style.fontUppercase);
+        setFontShadow(themeConfig.style.fontShadow as "none" | "s" | "m" | "l");
+        setStroke(themeConfig.style.stroke as "none" | "s" | "m" | "l");
+        setStrokeColor(themeConfig.style.strokeColor);
+        
+        // Import subs settings
+        setWordsPerCaption(themeConfig.subs.chunkSize);
+        setAnimation(themeConfig.subs.animation);
+        setIsAnimationActive(themeConfig.subs.isAnimationActive);
+        setIsMotionBlurActive(themeConfig.subs.isMotionBlurActive);
+        
+        // Import highlight settings
+        setMainHighlightColor(themeConfig.highlight_style.mainColor);
+        setSecondHighlightColor(themeConfig.highlight_style.secondColor);
+        setThirdHighlightColor(themeConfig.highlight_style.thirdColor);
+
+      } catch (error) {
+        console.error('Error importing theme:', error);
+        // You might want to show this error to the user in a more user-friendly way
+      }
+    };
+    reader.readAsText(file);
+  };
 
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(defaultTheme.config.subs.chunkSize);
   const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
@@ -657,6 +755,32 @@ const Home: NextPage = () => {
                     [&::-webkit-slider-thumb]:bg-gray-800"
                 />
               </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleExportTheme}
+                className="flex items-center gap-2"
+                variant="outline"
+              >
+                <Download className="w-4 h-4" />
+                Export Theme
+              </Button>
+
+              <Button
+                onClick={() => document.getElementById('theme-file-input')?.click()}
+                className="flex items-center gap-2"
+                variant="outline"
+              >
+                <Upload className="w-4 h-4" />
+                Import Theme
+              </Button>
+              <input
+                type="file"
+                id="theme-file-input"
+                accept=".json"
+                onChange={handleImportTheme}
+                style={{ display: 'none' }}
+              />
             </div>
           </div>
         </div>
