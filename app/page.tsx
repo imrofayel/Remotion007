@@ -67,6 +67,11 @@ const Home: NextPage = () => {
 
   const [className, setClassName] = useState<string>(defaultTheme.config.className);
 
+  const [customThemes, setCustomThemes] = useState<typeof themesConfig.themes>([]);
+  
+  // Combine default themes with custom themes
+  const allThemes = useMemo(() => [...themesConfig.themes, ...customThemes], [customThemes]);
+
   // Function to export current theme
   const handleExportTheme = () => {
     const currentTheme = {
@@ -115,7 +120,30 @@ const Home: NextPage = () => {
     URL.revokeObjectURL(url);
   };
 
-  // Function to import theme
+  // Modified handleThemeChange to work with custom themes
+  const handleThemeChange = (themeName: string) => {
+    const selectedTheme = allThemes.find(theme => theme.config.name === themeName);
+    if (!selectedTheme) return;
+
+    setActiveTheme(themeName);
+    setFontSize(selectedTheme.config.style.fontSize);
+    setFontColor(selectedTheme.config.style.color);
+    setStrokeColor(selectedTheme.config.style.strokeColor);
+    setStroke(selectedTheme.config.style.stroke as "none" | "s" | "m" | "l");
+    setFontShadow(selectedTheme.config.style.fontShadow as "none" | "s" | "m" | "l");
+    setFontFamily(selectedTheme.config.style.fontFamily);
+    setFontWeight(selectedTheme.config.style.fontWeight);
+    setIsUppercase(selectedTheme.config.style.fontUppercase);
+    setAnimation(selectedTheme.config.subs.animation);
+    setIsAnimationActive(selectedTheme.config.subs.isAnimationActive);
+    setIsMotionBlurActive(selectedTheme.config.subs.isMotionBlurActive);
+    setMainHighlightColor(selectedTheme.config.highlight_style.mainColor);
+    setSecondHighlightColor(selectedTheme.config.highlight_style.secondColor);
+    setThirdHighlightColor(selectedTheme.config.highlight_style.thirdColor);
+    setClassName(selectedTheme.config.className);
+  };
+
+  // Modified handleImportTheme to handle custom themes
   const handleImportTheme = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -131,10 +159,31 @@ const Home: NextPage = () => {
         }
 
         const themeConfig = importedTheme.themes[0].config;
-        setActiveTheme(themeConfig.name);
-        setClassName(themeConfig.className);
         
-        // Import style settings
+        // Create a unique name for the imported theme if it already exists
+        let uniqueName = themeConfig.name;
+        let counter = 1;
+        while (allThemes.some(theme => theme.config.name === uniqueName)) {
+          uniqueName = `${themeConfig.name} (${counter})`;
+          counter++;
+        }
+        
+        // Create the new theme with the unique name
+        const newTheme = {
+          config: {
+            ...themeConfig,
+            name: uniqueName,
+            custom: true,
+            default: false,
+          }
+        };
+
+        // Add to custom themes
+        setCustomThemes(prev => [...prev, newTheme]);
+        
+        // Apply the imported theme
+        setActiveTheme(uniqueName);
+        setClassName(themeConfig.className);
         setFontSize(themeConfig.style.fontSize);
         setFontColor(themeConfig.style.color);
         setFontFamily(themeConfig.style.fontFamily);
@@ -143,21 +192,16 @@ const Home: NextPage = () => {
         setFontShadow(themeConfig.style.fontShadow as "none" | "s" | "m" | "l");
         setStroke(themeConfig.style.stroke as "none" | "s" | "m" | "l");
         setStrokeColor(themeConfig.style.strokeColor);
-        
-        // Import subs settings
         setWordsPerCaption(themeConfig.subs.chunkSize);
         setAnimation(themeConfig.subs.animation);
         setIsAnimationActive(themeConfig.subs.isAnimationActive);
         setIsMotionBlurActive(themeConfig.subs.isMotionBlurActive);
-        
-        // Import highlight settings
         setMainHighlightColor(themeConfig.highlight_style.mainColor);
         setSecondHighlightColor(themeConfig.highlight_style.secondColor);
         setThirdHighlightColor(themeConfig.highlight_style.thirdColor);
 
       } catch (error) {
         console.error('Error importing theme:', error);
-        // You might want to show this error to the user in a more user-friendly way
       }
     };
     reader.readAsText(file);
@@ -290,29 +334,6 @@ const Home: NextPage = () => {
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  // Handle theme change
-  const handleThemeChange = (themeName: string) => {
-    const selectedTheme = themesConfig.themes.find(theme => theme.config.name === themeName);
-    if (!selectedTheme) return;
-
-    setActiveTheme(themeName);
-    setFontSize(selectedTheme.config.style.fontSize);
-    setFontColor(selectedTheme.config.style.color);
-    setStrokeColor(selectedTheme.config.style.strokeColor);
-    setStroke(selectedTheme.config.style.stroke as "none" | "s" | "m" | "l");
-    setFontShadow(selectedTheme.config.style.fontShadow as "none" | "s" | "m" | "l");
-    setFontFamily(selectedTheme.config.style.fontFamily);
-    setFontWeight(selectedTheme.config.style.fontWeight);
-    setIsUppercase(selectedTheme.config.style.fontUppercase);
-    setAnimation(selectedTheme.config.subs.animation);
-    setIsAnimationActive(selectedTheme.config.subs.isAnimationActive);
-    setIsMotionBlurActive(selectedTheme.config.subs.isMotionBlurActive);
-    setMainHighlightColor(selectedTheme.config.highlight_style.mainColor);
-    setSecondHighlightColor(selectedTheme.config.highlight_style.secondColor);
-    setThirdHighlightColor(selectedTheme.config.highlight_style.thirdColor);
-    setClassName(selectedTheme.config.className);
   };
 
   // Video props memoization
@@ -482,12 +503,14 @@ const Home: NextPage = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-full">
-                  {themesConfig.themes.map((theme) => (
+                  {allThemes.map((theme) => (
                     <DropdownMenuItem
                       key={theme.config.name}
                       onClick={() => handleThemeChange(theme.config.name)}
+                      className="flex items-center gap-2"
                     >
                       {theme.config.name}
+                      {theme.config.custom && " (Custom)"}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
