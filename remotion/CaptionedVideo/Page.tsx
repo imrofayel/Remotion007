@@ -61,7 +61,7 @@ export const Page: React.FC<Props> = ({
   const fittedText = fitText({
     fontFamily,
     text: page.text,
-    withinWidth: width * 0.9,
+    withinWidth: width - ((width * 1.2)- width),
     textTransform: "none",
   });
 
