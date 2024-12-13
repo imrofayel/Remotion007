@@ -1,5 +1,6 @@
 import "../styles/global.css";
 import { Metadata } from "next";
+import { Toaster } from "../components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Remotion and Next.js",
@@ -16,7 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

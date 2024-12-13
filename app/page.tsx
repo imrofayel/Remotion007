@@ -25,6 +25,15 @@ import {
   Upload,
 } from "lucide-react";
 import themesConfig from './themes.json';
+import { PhotoTransition, PhotoUploader } from '../components/PhotoTransition';
+import { useToast } from '../components/ui/use-toast';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 
 const ASPECT_RATIOS = {
   "16:9": { width: 1920, height: 1080, label: "Landscape (16:9)" },
@@ -36,13 +45,10 @@ const ASPECT_RATIOS = {
 const Home: NextPage = () => {
   // Video states
   const [videoSrc, setVideoSrc] = useState<string>("/sample-video.mp4");
-  // Change this too initiaally it get from sample-video TODO
   const [videoDuration, setVideoDuration] = useState<number>(DURATION_IN_FRAMES);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
-
   const [error, setError] = useState<string>("");
-
   const [isReady, setIsReady] = useState(true); // Initially true for sample video
   const [captionYPosition, setCaptionYPosition] = useState<number>(1280); // Default Y position
 
@@ -71,6 +77,22 @@ const Home: NextPage = () => {
   
   // Combine default themes with custom themes
   const allThemes = useMemo(() => [...themesConfig.themes, ...customThemes], [customThemes]);
+
+  const [wordsPerCaption, setWordsPerCaption] = useState<number>(defaultTheme.config.subs.chunkSize);
+  const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
+
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const { toast } = useToast();
+
+  const TRANSITIONS = [
+    { value: 'fade', label: 'Fade' },
+    { value: 'slide', label: 'Slide' },
+    { value: 'wipe', label: 'Wipe' },
+    { value: 'flip', label: 'Flip' },
+  ];
+
+  const [transition, setTransition] = useState('fade');
 
   // Function to export current theme
   const handleExportTheme = () => {
@@ -206,9 +228,6 @@ const Home: NextPage = () => {
     };
     reader.readAsText(file);
   };
-
-  const [wordsPerCaption, setWordsPerCaption] = useState<number>(defaultTheme.config.subs.chunkSize);
-  const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
 
   // Calculate container dimensions while maintaining aspect ratio
   const getContainerStyle = (ratio: keyof typeof ASPECT_RATIOS) => {
@@ -357,6 +376,9 @@ const Home: NextPage = () => {
       top: captionYPosition,
       chunkSize: wordsPerCaption,
       className: className,
+      photos,
+      aspectRatio,
+      durationInFrames: 60,
     }),
     [
       videoSrc,
@@ -376,9 +398,47 @@ const Home: NextPage = () => {
       thirdHighlightColor,
       captionYPosition,
       wordsPerCaption,
-      className
+      className,
+      photos,
+      aspectRatio
     ],
   );
+
+  const handlePhotosSelected = async (files: File[]) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append('photos', file);
+      });
+
+      const response = await fetch('/api/upload-photos', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to upload photos');
+      }
+
+      setPhotos(data.paths);
+      toast({
+        title: 'Success',
+        description: 'Photos uploaded successfully',
+      });
+    } catch (error) {
+      console.error('Error uploading photos:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to upload photos',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="p-6 items-center justify-center align-middle grid gap-6 text-gray-600">
@@ -454,6 +514,19 @@ const Home: NextPage = () => {
 
       <div className="w-full flex justify-center">
         <div className="w-full max-w-4xl">
+          {/* Photo Upload */}
+          <div className="mb-4">
+            <PhotoUploader
+              onPhotosSelected={handlePhotosSelected}
+              isUploading={isUploading}
+              className="w-full"
+            />
+            {photos.length > 0 && (
+              <div className="mt-2 text-sm text-gray-500">
+                {photos.length} photo{photos.length !== 1 ? 's' : ''} added
+              </div>
+            )}
+          </div>
           {/* Video Player */}
           {isReady ? (
             <div
@@ -461,7 +534,7 @@ const Home: NextPage = () => {
               style={getContainerStyle(aspectRatio)}
             >
               <Player
-                component={CaptionedVideo as any}
+                component={CaptionedVideo}
                 inputProps={captionedVideoProps}
                 durationInFrames={videoDuration}
                 fps={VIDEO_FPS}
@@ -807,6 +880,54 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="space-y-4 mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Photo Transitions</h2>
+          <div className="flex items-center gap-4">
+            <PhotoUploader
+              onPhotosSelected={handlePhotosSelected}
+              isUploading={isUploading}
+            />
+            <Select
+              value={transition}
+              onValueChange={(value) => setTransition(value)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select transition" />
+              </SelectTrigger>
+              <SelectContent>
+                {TRANSITIONS.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {photos.length > 0 && (
+          <div className="aspect-video w-full rounded-lg overflow-hidden border">
+            <Player
+              component={PhotoTransition}
+              inputProps={{
+                photos,
+                transitionType: transition,
+                durationInFrames: 60,
+              }}
+              durationInFrames={photos.length * 90}
+              fps={30}
+              compositionWidth={1920}
+              compositionHeight={1080}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

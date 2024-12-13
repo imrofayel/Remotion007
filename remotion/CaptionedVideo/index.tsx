@@ -13,6 +13,7 @@ import SubtitlePage from "./SubtitlePage";
 import { getVideoMetadata } from "@remotion/media-utils";
 import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
 import { DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
+import { PhotoTransition } from "../../components/PhotoTransition";
 
 export type SubtitleProp = {
   startInSeconds: number;
@@ -41,6 +42,8 @@ export const captionedVideoSchema = z.object({
   aspectRatio: z.string().optional(),
   className: z.string().optional(),
   chunkSize: z.number().optional(),
+  photos: z.array(z.string()).optional(),
+  durationInFrames: z.number().optional(),
 });
 
 export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
@@ -89,6 +92,8 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   chunkSize = 2,
   left = 0,
   className,
+  photos = [],
+  durationInFrames,
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
   const [handle] = useState(() => delayRender(
@@ -160,6 +165,20 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
           }}
         />
       </AbsoluteFill>
+
+      {/* Spider-Man style photo frames */}
+      {photos && photos.length > 0 && (
+        <PhotoTransition
+          photos={photos}
+          durationInFrames={durationInFrames || 400}
+          videoConfig={{
+            width: aspectRatio === "9:16" ? 1080 : 1920,
+            height: aspectRatio === "9:16" ? 1920 : 1080,
+          }}
+          className="z-10"
+        />
+      )}
+
       {pages.map((page, index) => {
         const nextPage = pages[index + 1] ?? null;
         const subtitleStartFrame = Math.floor((page.startMs / 1000) * fps);
