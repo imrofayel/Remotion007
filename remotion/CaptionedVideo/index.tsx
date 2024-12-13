@@ -44,6 +44,7 @@ export const captionedVideoSchema = z.object({
   chunkSize: z.number().optional(),
   photos: z.array(z.string()).optional(),
   durationInFrames: z.number().optional(),
+  fitMode: z.enum(['fill', 'fit']).optional(),
 });
 
 export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
@@ -94,6 +95,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   className,
   photos = [],
   durationInFrames,
+  fitMode,
 }) => {
   const [subtitles, setSubtitles] = useState<Caption[]>([]);
   const [handle] = useState(() => delayRender(
@@ -176,6 +178,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
             height: aspectRatio === "9:16" ? 1920 : 1080,
           }}
           className="z-10"
+          fitMode={fitMode}
         />
       )}
 

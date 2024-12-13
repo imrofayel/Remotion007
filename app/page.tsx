@@ -25,7 +25,8 @@ import {
   Upload,
 } from "lucide-react";
 import themesConfig from './themes.json';
-import { PhotoTransition, PhotoUploader } from '../components/PhotoTransition';
+import { PhotoTransition, type PhotoFitMode } from '../components/PhotoTransition';
+import { PhotoUploader } from '../components/PhotoUploader';
 import { useToast } from '../components/ui/use-toast';
 import {
   Select,
@@ -83,6 +84,7 @@ const Home: NextPage = () => {
 
   const [photos, setPhotos] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [fitMode, setFitMode] = useState<PhotoFitMode>('fit');
   const { toast } = useToast();
 
   const TRANSITIONS = [
@@ -378,7 +380,8 @@ const Home: NextPage = () => {
       className: className,
       photos,
       aspectRatio,
-      durationInFrames: 60,
+      durationInFrames: 400,
+      fitMode,
     }),
     [
       videoSrc,
@@ -400,7 +403,8 @@ const Home: NextPage = () => {
       wordsPerCaption,
       className,
       photos,
-      aspectRatio
+      aspectRatio,
+      fitMode,
     ],
   );
 
@@ -522,8 +526,22 @@ const Home: NextPage = () => {
               className="w-full"
             />
             {photos.length > 0 && (
-              <div className="mt-2 text-sm text-gray-500">
-                {photos.length} photo{photos.length !== 1 ? 's' : ''} added
+              <div className="mt-2 flex items-center gap-4">
+                <div className="text-sm text-gray-500">
+                  {photos.length} photo{photos.length !== 1 ? 's' : ''} added
+                </div>
+                <Select
+                  value={fitMode}
+                  onValueChange={(value: PhotoFitMode) => setFitMode(value)}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select fit mode" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fit">Fit</SelectItem>
+                    <SelectItem value="fill">Fill</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             )}
           </div>
