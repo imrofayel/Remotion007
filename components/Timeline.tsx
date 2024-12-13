@@ -57,58 +57,47 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="text-sm font-medium">Timeline</div>
-      <div className="space-y-4">
+      <div className="block font-medium text-lg text-gray-300 mb-2">Timeline</div>
+      <div className="space-y-3">
         {photos.map((photo, index) => (
           <div
             key={photo.id}
-            className="flex items-center gap-4 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg"
+            className="flex items-center gap-4 relative bg-gray-100/60 p-4 rounded-2xl"
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={photo.src}
               alt={`Photo ${index + 1}`}
-              className="w-16 h-16 object-cover rounded"
+              className="w-20 h-20 object-cover rounded-2xl border-white/80 border-4 drop-shadow-lg"
             />
-            <div className="flex-1 space-y-2">
+            <div className="flex-1 space-y-4 items-center">
               <div className="flex items-center gap-2">
-                <div className="text-sm">Start Time:</div>
+                <div className="text-gray-400 drop-shadow-sm text-lg font-medium">Start Time:</div>
                 <Input
                   type="number"
                   min={0}
                   max={totalFrames - photo.durationInFrames}
                   value={photo.startFrame}
                   onChange={(e) => handleStartFrameChange(photo.id, parseInt(e.target.value))}
-                  className="w-24"
+                  className="block w-24 rounded-2xl border-none bg-white/60 p-1 !text-lg font-medium text-gray-600 px-4"
                 />
-                <div className="text-xs text-gray-500">
+                <div className="text-gray-300 font-medium">
                   ({(photo.startFrame / VIDEO_FPS).toFixed(2)}s)
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-sm">Duration:</div>
-                <Input
+              <div className="text-gray-400 drop-shadow-sm text-lg font-medium">Duration:</div>
+              <Input
                   type="number"
                   min={1}
                   max={totalFrames - photo.startFrame}
                   value={photo.durationInFrames}
                   onChange={(e) => handleDurationChange(photo.id, parseInt(e.target.value))}
-                  className="w-24"
+                  className="block w-24 rounded-2xl border-none bg-white/60 p-1 !text-lg font-medium text-gray-600 px-4"
                 />
-                <div className="text-xs text-gray-500">
+                <div className="text-gray-300 font-medium">
                   ({(photo.durationInFrames / VIDEO_FPS).toFixed(2)}s)
                 </div>
-              </div>
-              <div className="w-full">
-                <Slider
-                  min={0}
-                  max={totalFrames}
-                  step={1}
-                  value={[photo.startFrame, photo.startFrame + photo.durationInFrames]}
-                  onValueChange={([start, end]) => {
-                    handleStartFrameChange(photo.id, start);
-                    handleDurationChange(photo.id, end - start);
-                  }}
-                />
               </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -117,6 +106,8 @@ export const Timeline: React.FC<TimelineProps> = ({
                 size="icon"
                 onClick={() => movePhoto(photo.id, 'up')}
                 disabled={index === 0}
+                className='[&_svg]:size-5'
+
               >
                 <ChevronUp className="w-4 h-4" />
               </Button>
@@ -125,6 +116,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 size="icon"
                 onClick={() => movePhoto(photo.id, 'down')}
                 disabled={index === photos.length - 1}
+                className='[&_svg]:size-5'
               >
                 <ChevronDown className="w-4 h-4" />
               </Button>
@@ -133,8 +125,9 @@ export const Timeline: React.FC<TimelineProps> = ({
               variant="destructive"
               size="icon"
               onClick={() => handleDelete(photo.id)}
+              className='[&_svg]:size-5 absolute -right-1 -top-2 shadow-none bg-red-700 text-white rounded-full'
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 />
             </Button>
           </div>
         ))}

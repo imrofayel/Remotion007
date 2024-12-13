@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './ui/button';
-import { UploadCloud } from 'lucide-react';
+import { Image, Mountain, UploadCloud, Waves, Zap } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface PhotoUploaderProps {
@@ -29,12 +29,15 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
     <div className={cn("flex items-center gap-2", className)}>
       <Button
         onClick={() => document.getElementById("photo-upload")?.click()}
-        variant="outline"
+        variant="ghost"
         disabled={isUploading}
-        className="flex items-center gap-2"
+        className="text-lg rounded-2xl p-3 bg-gray-100/60"
       >
-        <UploadCloud className="w-4 h-4" />
-        {isUploading ? "Uploading..." : "Upload Photos"}
+        <Zap            className="h-6 w-6 scale-[1.2] text-muted sm:mr-1" 
+ />
+
+<span className="capitalize">{isUploading ? "Uploading..." : "B-rolls"}</span>
+        
       </Button>
       <input
         type="file"

@@ -23,12 +23,22 @@ import {
   UploadCloud,
   Download,
   Upload,
+  Flame,
+  Mountain,
+  Package2,
+  PackagePlus,
+  PackageOpen,
+  Squircle,
 } from "lucide-react";
-import themesConfig from './themes.json';
-import { PhotoTransition, type PhotoFitMode, type TimelinePhoto } from '../components/PhotoTransition';
-import { PhotoUploader } from '../components/PhotoUploader';
-import { useToast } from '../components/ui/use-toast';
-import { Timeline } from '../components/Timeline';
+import themesConfig from "./themes.json";
+import {
+  PhotoTransition,
+  type PhotoFitMode,
+  type TimelinePhoto,
+} from "../components/PhotoTransition";
+import { PhotoUploader } from "../components/PhotoUploader";
+import { useToast } from "../components/ui/use-toast";
+import { Timeline } from "../components/Timeline";
 import {
   Select,
   SelectContent,
@@ -36,6 +46,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { GradientButton } from "../components/gradientButton";
+import { cn } from "../lib/utils";
 
 const ASPECT_RATIOS = {
   "16:9": { width: 1920, height: 1080, label: "Landscape (16:9)" },
@@ -47,7 +59,8 @@ const ASPECT_RATIOS = {
 const Home: NextPage = () => {
   // Video states
   const [videoSrc, setVideoSrc] = useState<string>("/sample-video.mp4");
-  const [videoDuration, setVideoDuration] = useState<number>(DURATION_IN_FRAMES);
+  const [videoDuration, setVideoDuration] =
+    useState<number>(DURATION_IN_FRAMES);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -56,46 +69,86 @@ const Home: NextPage = () => {
 
   // Caption styling states with default theme
   const [activeTheme, setActiveTheme] = useState<string>("default");
-  const defaultTheme = themesConfig.themes.find(theme => theme.config.default) || themesConfig.themes[0];
+  const defaultTheme =
+    themesConfig.themes.find((theme) => theme.config.default) ||
+    themesConfig.themes[0];
 
-  const [fontSize, setFontSize] = useState<number>(defaultTheme.config.style.fontSize);
-  const [fontColor, setFontColor] = useState<string>(defaultTheme.config.style.color);
-  const [strokeColor, setStrokeColor] = useState<string>(defaultTheme.config.style.strokeColor);
-  const [stroke, setStroke] = useState<"none" | "s" | "m" | "l">(defaultTheme.config.style.stroke as "none" | "s" | "m" | "l");
-  const [fontShadow, setFontShadow] = useState<"none" | "s" | "m" | "l">(defaultTheme.config.style.fontShadow as "none" | "s" | "m" | "l");
-  const [fontFamily, setFontFamily] = useState<string>(defaultTheme.config.style.fontFamily);
-  const [fontWeight, setFontWeight] = useState<number>(defaultTheme.config.style.fontWeight);
-  const [isUppercase, setIsUppercase] = useState<boolean>(defaultTheme.config.style.fontUppercase);
-  const [animation, setAnimation] = useState<string>(defaultTheme.config.subs.animation);
-  const [isAnimationActive, setIsAnimationActive] = useState<boolean>(defaultTheme.config.subs.isAnimationActive);
-  const [isMotionBlurActive, setIsMotionBlurActive] = useState<boolean>(defaultTheme.config.subs.isMotionBlurActive);
-  const [mainHighlightColor, setMainHighlightColor] = useState<string>(defaultTheme.config.highlight_style.mainColor);
-  const [secondHighlightColor, setSecondHighlightColor] = useState<string>(defaultTheme.config.highlight_style.secondColor);
-  const [thirdHighlightColor, setThirdHighlightColor] = useState<string>(defaultTheme.config.highlight_style.thirdColor);
+  const [fontSize, setFontSize] = useState<number>(
+    defaultTheme.config.style.fontSize,
+  );
+  const [fontColor, setFontColor] = useState<string>(
+    defaultTheme.config.style.color,
+  );
+  const [strokeColor, setStrokeColor] = useState<string>(
+    defaultTheme.config.style.strokeColor,
+  );
+  const [stroke, setStroke] = useState<"none" | "s" | "m" | "l">(
+    defaultTheme.config.style.stroke as "none" | "s" | "m" | "l",
+  );
+  const [fontShadow, setFontShadow] = useState<"none" | "s" | "m" | "l">(
+    defaultTheme.config.style.fontShadow as "none" | "s" | "m" | "l",
+  );
+  const [fontFamily, setFontFamily] = useState<string>(
+    defaultTheme.config.style.fontFamily,
+  );
+  const [fontWeight, setFontWeight] = useState<number>(
+    defaultTheme.config.style.fontWeight,
+  );
+  const [isUppercase, setIsUppercase] = useState<boolean>(
+    defaultTheme.config.style.fontUppercase,
+  );
+  const [animation, setAnimation] = useState<string>(
+    defaultTheme.config.subs.animation,
+  );
+  const [isAnimationActive, setIsAnimationActive] = useState<boolean>(
+    defaultTheme.config.subs.isAnimationActive,
+  );
+  const [isMotionBlurActive, setIsMotionBlurActive] = useState<boolean>(
+    defaultTheme.config.subs.isMotionBlurActive,
+  );
+  const [mainHighlightColor, setMainHighlightColor] = useState<string>(
+    defaultTheme.config.highlight_style.mainColor,
+  );
+  const [secondHighlightColor, setSecondHighlightColor] = useState<string>(
+    defaultTheme.config.highlight_style.secondColor,
+  );
+  const [thirdHighlightColor, setThirdHighlightColor] = useState<string>(
+    defaultTheme.config.highlight_style.thirdColor,
+  );
 
-  const [className, setClassName] = useState<string>(defaultTheme.config.className);
+  const [className, setClassName] = useState<string>(
+    defaultTheme.config.className,
+  );
 
-  const [customThemes, setCustomThemes] = useState<typeof themesConfig.themes>([]);
-  
+  const [customThemes, setCustomThemes] = useState<typeof themesConfig.themes>(
+    [],
+  );
+
   // Combine default themes with custom themes
-  const allThemes = useMemo(() => [...themesConfig.themes, ...customThemes], [customThemes]);
+  const allThemes = useMemo(
+    () => [...themesConfig.themes, ...customThemes],
+    [customThemes],
+  );
 
-  const [wordsPerCaption, setWordsPerCaption] = useState<number>(defaultTheme.config.subs.chunkSize);
-  const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
+  const [wordsPerCaption, setWordsPerCaption] = useState<number>(
+    defaultTheme.config.subs.chunkSize,
+  );
+  const [aspectRatio, setAspectRatio] =
+    useState<keyof typeof ASPECT_RATIOS>("9:16");
 
   const [photos, setPhotos] = useState<TimelinePhoto[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [fitMode, setFitMode] = useState<PhotoFitMode>('fit');
+  const [fitMode, setFitMode] = useState<PhotoFitMode>("fit");
   const { toast } = useToast();
 
   const TRANSITIONS = [
-    { value: 'fade', label: 'Fade' },
-    { value: 'slide', label: 'Slide' },
-    { value: 'wipe', label: 'Wipe' },
-    { value: 'flip', label: 'Flip' },
+    { value: "fade", label: "Fade" },
+    { value: "slide", label: "Slide" },
+    { value: "wipe", label: "Wipe" },
+    { value: "flip", label: "Flip" },
   ];
 
-  const [transition, setTransition] = useState('fade');
+  const [transition, setTransition] = useState("fade");
 
   // Function to export current theme
   const handleExportTheme = () => {
@@ -128,15 +181,17 @@ const Home: NextPage = () => {
               mainColor: mainHighlightColor,
               secondColor: secondHighlightColor,
               thirdColor: thirdHighlightColor,
-            }
-          }
-        }
-      ]
+            },
+          },
+        },
+      ],
     };
 
-    const blob = new Blob([JSON.stringify(currentTheme, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(currentTheme, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `theme-${activeTheme.toLowerCase()}.json`;
     document.body.appendChild(a);
@@ -147,7 +202,9 @@ const Home: NextPage = () => {
 
   // Modified handleThemeChange to work with custom themes
   const handleThemeChange = (themeName: string) => {
-    const selectedTheme = allThemes.find(theme => theme.config.name === themeName);
+    const selectedTheme = allThemes.find(
+      (theme) => theme.config.name === themeName,
+    );
     if (!selectedTheme) return;
 
     setActiveTheme(themeName);
@@ -155,7 +212,9 @@ const Home: NextPage = () => {
     setFontColor(selectedTheme.config.style.color);
     setStrokeColor(selectedTheme.config.style.strokeColor);
     setStroke(selectedTheme.config.style.stroke as "none" | "s" | "m" | "l");
-    setFontShadow(selectedTheme.config.style.fontShadow as "none" | "s" | "m" | "l");
+    setFontShadow(
+      selectedTheme.config.style.fontShadow as "none" | "s" | "m" | "l",
+    );
     setFontFamily(selectedTheme.config.style.fontFamily);
     setFontWeight(selectedTheme.config.style.fontWeight);
     setIsUppercase(selectedTheme.config.style.fontUppercase);
@@ -178,21 +237,21 @@ const Home: NextPage = () => {
       try {
         const content = e.target?.result as string;
         const importedTheme = JSON.parse(content);
-        
+
         if (!importedTheme.themes?.[0]?.config) {
-          throw new Error('Invalid theme file format');
+          throw new Error("Invalid theme file format");
         }
 
         const themeConfig = importedTheme.themes[0].config;
-        
+
         // Create a unique name for the imported theme if it already exists
         let uniqueName = themeConfig.name;
         let counter = 1;
-        while (allThemes.some(theme => theme.config.name === uniqueName)) {
+        while (allThemes.some((theme) => theme.config.name === uniqueName)) {
           uniqueName = `${themeConfig.name} (${counter})`;
           counter++;
         }
-        
+
         // Create the new theme with the unique name
         const newTheme = {
           config: {
@@ -200,12 +259,12 @@ const Home: NextPage = () => {
             name: uniqueName,
             custom: true,
             default: false,
-          }
+          },
         };
 
         // Add to custom themes
-        setCustomThemes(prev => [...prev, newTheme]);
-        
+        setCustomThemes((prev) => [...prev, newTheme]);
+
         // Apply the imported theme
         setActiveTheme(uniqueName);
         setClassName(themeConfig.className);
@@ -224,9 +283,8 @@ const Home: NextPage = () => {
         setMainHighlightColor(themeConfig.highlight_style.mainColor);
         setSecondHighlightColor(themeConfig.highlight_style.secondColor);
         setThirdHighlightColor(themeConfig.highlight_style.thirdColor);
-
       } catch (error) {
-        console.error('Error importing theme:', error);
+        console.error("Error importing theme:", error);
       }
     };
     reader.readAsText(file);
@@ -257,7 +315,9 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleAspectRatioChange = (newRatio: SetStateAction<"16:9" | "9:16" | "4:5" | "1:1">) => {
+  const handleAspectRatioChange = (
+    newRatio: SetStateAction<"16:9" | "9:16" | "4:5" | "1:1">,
+  ) => {
     setAspectRatio(newRatio);
     const height = getVideoHeight(newRatio as string);
     setCaptionYPosition(height / 2); // Set to middle by default
@@ -359,104 +419,107 @@ const Home: NextPage = () => {
   };
 
   // Video props memoization
-  const captionedVideoProps = useMemo(() => ({
-    src: videoSrc,
-    fontSize,
-    color: fontColor,
-    strokeColor,
-    stroke,
-    fontFamily,
-    fontWeight,
-    fontUppercase: isUppercase,
-    fontShadow,
-    animation,
-    isAnimationActive,
-    isMotionBlurActive,
-    highlightKeywords: false,
-    mainHighlightColor,
-    secondHighlightColor,
-    thirdHighlightColor,
-    top: captionYPosition,
-    aspectRatio,
-    chunkSize: wordsPerCaption,
-    left: 0,
-    className: className,
-    photos: photos.map((photo, index) => ({
-      id: `photo-${index}`,
-      src: photo.src,
-      startFrame: photo.startFrame,
-      durationInFrames: photo.durationInFrames,
-    })),
-    durationInFrames: videoDuration,
-    fitMode
-  }), [
-    videoSrc,
-    fontSize,
-    fontColor,
-    strokeColor,
-    stroke,
-    fontFamily,
-    fontWeight,
-    isUppercase,
-    fontShadow,
-    animation,
-    isAnimationActive,
-    isMotionBlurActive,
-    mainHighlightColor,
-    secondHighlightColor,
-    thirdHighlightColor,
-    captionYPosition,
-    aspectRatio,
-    wordsPerCaption,
-    className,
-    photos,
-    videoDuration,
-    fitMode
-  ]);
+  const captionedVideoProps = useMemo(
+    () => ({
+      src: videoSrc,
+      fontSize,
+      color: fontColor,
+      strokeColor,
+      stroke,
+      fontFamily,
+      fontWeight,
+      fontUppercase: isUppercase,
+      fontShadow,
+      animation,
+      isAnimationActive,
+      isMotionBlurActive,
+      highlightKeywords: false,
+      mainHighlightColor,
+      secondHighlightColor,
+      thirdHighlightColor,
+      top: captionYPosition,
+      aspectRatio,
+      chunkSize: wordsPerCaption,
+      left: 0,
+      className: className,
+      photos: photos.map((photo, index) => ({
+        id: `photo-${index}`,
+        src: photo.src,
+        startFrame: photo.startFrame,
+        durationInFrames: photo.durationInFrames,
+      })),
+      durationInFrames: videoDuration,
+      fitMode,
+    }),
+    [
+      videoSrc,
+      fontSize,
+      fontColor,
+      strokeColor,
+      stroke,
+      fontFamily,
+      fontWeight,
+      isUppercase,
+      fontShadow,
+      animation,
+      isAnimationActive,
+      isMotionBlurActive,
+      mainHighlightColor,
+      secondHighlightColor,
+      thirdHighlightColor,
+      captionYPosition,
+      aspectRatio,
+      wordsPerCaption,
+      className,
+      photos,
+      videoDuration,
+      fitMode,
+    ],
+  );
 
   const handlePhotosSelected = async (files: File[]) => {
     setIsUploading(true);
     try {
       const formData = new FormData();
       files.forEach((file) => {
-        formData.append('photos', file);
+        formData.append("photos", file);
       });
 
-      const response = await fetch('/api/upload-photos', {
-        method: 'POST',
+      const response = await fetch("/api/upload-photos", {
+        method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to upload photos');
+        throw new Error("Failed to upload photos");
       }
 
       const { paths } = await response.json();
-      
+
       // Add new photos to timeline at the end
       const lastPhoto = photos[photos.length - 1];
-      const startFrame = lastPhoto 
-        ? lastPhoto.startFrame + lastPhoto.durationInFrames 
+      const startFrame = lastPhoto
+        ? lastPhoto.startFrame + lastPhoto.durationInFrames
         : 0;
-      
+
       const newPhotos = paths.map((path: string, index: number) => ({
         id: crypto.randomUUID(),
         src: path,
-        startFrame: startFrame + (index * 120), // 4 seconds gap between photos
+        startFrame: startFrame + index * 120, // 4 seconds gap between photos
         durationInFrames: 120, // 4 seconds default duration
       }));
 
       setPhotos([...photos, ...newPhotos]);
       toast({
-        title: 'Success',
-        description: `${files.length} photo${files.length !== 1 ? 's' : ''} uploaded successfully`,
+        title: "Success",
+        description: `${files.length} photo${files.length !== 1 ? "s" : ""} uploaded successfully`,
       });
     } catch (error) {
-      console.error('Error uploading photos:', error);
+      console.error("Error uploading photos:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to upload photos',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to upload photos",
+        variant: "destructive",
       });
     } finally {
       setIsUploading(false);
@@ -537,40 +600,6 @@ const Home: NextPage = () => {
 
       <div className="w-full flex justify-center">
         <div className="w-full max-w-4xl">
-          {/* Photo Upload */}
-          <div className="mb-4">
-            <PhotoUploader
-              onPhotosSelected={handlePhotosSelected}
-              isUploading={isUploading}
-              className="w-full"
-            />
-            {photos.length > 0 && (
-              <div className="mt-4 space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="text-sm text-gray-500">
-                    {photos.length} photo{photos.length !== 1 ? 's' : ''} added
-                  </div>
-                  <Select
-                    value={fitMode}
-                    onValueChange={(value: PhotoFitMode) => setFitMode(value)}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select fit mode" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="fit">Fit</SelectItem>
-                      <SelectItem value="fill">Fill</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Timeline
-                  photos={photos}
-                  onPhotosChange={setPhotos}
-                  totalFrames={videoDuration}
-                />
-              </div>
-            )}
-          </div>
           {/* Video Player */}
           {isReady ? (
             <div
@@ -606,25 +635,74 @@ const Home: NextPage = () => {
         </div>
       </div>
 
+                {/* Photo Upload */}
+                <div className="mb-4">
+            {photos.length > 0 && (
+              <div className="mt-4 space-y-4">
+                <Timeline
+                  photos={photos}
+                  onPhotosChange={setPhotos}
+                  totalFrames={videoDuration}
+                />
+              </div>
+            )}
+          </div>
+
       {/* Controls Section */}
       <div>
-        <div className="bg-white  border-b-2 border-gray-200/60 rounded-3xl border p-6 sticky top-6">
+        <div className="bg-white  border-b-2 border-gray-200/60 rounded-3xl border p-3 sticky top-6">
           {/* Theme Selection */}
-          <div className="flex flex-col gap-4 p-4">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Theme</label>
+
+        <div className="flex space-x-2">         
+        <PhotoUploader
+              onPhotosSelected={handlePhotosSelected}
+              isUploading={isUploading}
+              className="mb-4"
+            />
+
+{photos.length > 0 && <div className="flex gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                  <Button
+              variant="ghost"
+              className="text-base rounded-2xl p-3 bg-gray-100/60"
+            >
+              <Squircle className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize">{fitMode}</span>
+            </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="rounded-2xl shadow-none text-gray-600 shadow-gray-100 border-gray-100">
+                    {["fit", "fill"].map((value) => (
+                      <DropdownMenuItem className="rounded-xl text-base"
+                        key={value}
+                        onClick={() => setFitMode(value as PhotoFitMode)}
+                      >
+                        {value}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu></div>}
+              </div>
+
+          <div className="flex flex-col gap-4 p-2">
+            <div className="gap-2">
+              <label className="block font-medium text-lg text-gray-300 mb-2">Theme</label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between">
-                    {activeTheme} <GalleryVerticalEndIcon className="ml-2 h-4 w-4" />
-                  </Button>
+                <Button
+              variant="ghost"
+              className="text-base rounded-2xl py-5 pl-4 pr-6 bg-gray-100/60"
+            >
+              <Package2 className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize">{activeTheme}</span>
+            </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full">
+                <DropdownMenuContent className="rounded-2xl text-gray-600 shadow-gray-100 border-gray-100">
                   {allThemes.map((theme) => (
                     <DropdownMenuItem
                       key={theme.config.name}
                       onClick={() => handleThemeChange(theme.config.name)}
-                      className="flex items-center gap-2"
+                      className="rounded-lg text-base"
                     >
                       {theme.config.name}
                       {theme.config.custom && " (Custom)"}
@@ -634,18 +712,21 @@ const Home: NextPage = () => {
               </DropdownMenu>
             </div>
 
-            {/* Stroke Controls */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Stroke Style</label>
+                        {/* Stroke Controls */}
+                        <div className="flex flex-col gap-2">
+              <label className="block font-medium text-lg text-gray-300 mb-2">Stroke Style</label>
               <div className="flex gap-2">
-                {(['none', 's', 'm', 'l'] as const).map((s) => (
+                {(["none", "s", "m", "l"] as const).map((s) => (
                   <Button
                     key={s}
-                    variant={stroke === s ? "default" : "outline"}
+                    variant="ghost"
+
                     onClick={() => setStroke(s)}
-                    className="flex-1"
-                  >
-                    {s.toUpperCase()}
+
+                    className={cn('text-base rounded-2xl p-3 px-6 bg-gray-100/60', stroke === s && 'bg-gray-100')}>
+
+<span className="capitalize"> {s.toUpperCase()}</span>
+                   
                   </Button>
                 ))}
               </div>
@@ -653,16 +734,18 @@ const Home: NextPage = () => {
 
             {/* Font Shadow Controls */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Font Shadow</label>
+              <label className="block font-medium text-lg text-gray-300 mb-2">Font Shadow</label>
               <div className="flex gap-2">
-                {(['none', 's', 'm', 'l'] as const).map((s) => (
+                {(["none", "s", "m", "l"] as const).map((s) => (
                   <Button
                     key={s}
-                    variant={fontShadow === s ? "default" : "outline"}
+                    variant="ghost"
+
                     onClick={() => setFontShadow(s)}
-                    className="flex-1"
-                  >
-                    {s.toUpperCase()}
+                    className={cn('text-base rounded-2xl p-3 px-6 bg-gray-100/60', fontShadow === s && 'bg-gray-100')}>
+
+<span className="capitalize"> {s.toUpperCase()}</span>
+                   
                   </Button>
                 ))}
               </div>
@@ -670,17 +753,21 @@ const Home: NextPage = () => {
 
             {/* Animation Controls */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Animation</label>
+              <label className="block font-medium text-lg text-gray-300 mb-2">Animation</label>
               <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="flex-1">
-                      {animation}
-                    </Button>
+                  <Button
+              variant="ghost"
+              className="text-base rounded-2xl p-3 bg-gray-100/60"
+            >
+              <Flame className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize">{animation}</span>
+            </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {['none', 'updown', 'bounce', 'shake'].map((anim) => (
-                      <DropdownMenuItem
+                  <DropdownMenuContent className="rounded-2xl text-gray-600 shadow-gray-100 border-gray-100">
+                    {["none", "updown", "bounce", "shake"].map((anim) => (
+                      <DropdownMenuItem className="rounded-lg text-base"
                         key={anim}
                         onClick={() => setAnimation(anim)}
                       >
@@ -689,98 +776,62 @@ const Home: NextPage = () => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Button
-                  variant={isAnimationActive ? "default" : "outline"}
-                  onClick={() => setIsAnimationActive(!isAnimationActive)}
-                  className="flex-1"
-                >
-                  {isAnimationActive ? "Active" : "Disabled"}
-                </Button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Font Size</label>
-                <input
-                  type="number"
-                  value={fontSize}
-                  onChange={(e) => setFontSize(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                />
-              </div>
+            <div className="grid grid-cols-2 gap-4 mt-3">
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Font Family</label>
+              <label className="block font-medium text-lg text-gray-300 mb-2">
+                  Font Family
+                </label>
                 <input
                   type="text"
                   value={fontFamily}
                   onChange={(e) => setFontFamily(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Main Highlight Color</label>
-                <input
-                  type="color"
-                  value={mainHighlightColor}
-                  onChange={(e) => setMainHighlightColor(e.target.value)}
-                  className="mt-1 block w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Second Highlight Color</label>
-                <input
-                  type="color"
-                  value={secondHighlightColor}
-                  onChange={(e) => setSecondHighlightColor(e.target.value)}
-                  className="mt-1 block w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Third Highlight Color</label>
-                <input
-                  type="color"
-                  value={thirdHighlightColor}
-                  onChange={(e) => setThirdHighlightColor(e.target.value)}
-                  className="mt-1 block w-full"
+                  className="mt-1 block w-full rounded-2xl border-none bg-gray-100/50 p-2 text-lg px-4"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center">
+            <div className="justify-between my-4 flex">
+              <div className="flex space-x-2 items-center">
                 <input
                   type="checkbox"
                   checked={isAnimationActive}
                   onChange={(e) => setIsAnimationActive(e.target.checked)}
                   className="rounded border-gray-300"
                 />
-                <label className="ml-2 text-sm text-gray-700">Enable Animation</label>
+                <label className="block font-medium text-lg text-gray-300 mb-2">
+                  Animation
+                </label>
               </div>
-              <div className="flex items-center">
+              <div className="flex space-x-2 items-center">
                 <input
                   type="checkbox"
                   checked={isMotionBlurActive}
                   onChange={(e) => setIsMotionBlurActive(e.target.checked)}
                   className="rounded border-gray-300"
                 />
-                <label className="ml-2 text-sm text-gray-700">Enable Motion Blur</label>
+                <label className="block font-medium text-lg text-gray-300 mb-2">
+                  Motion Blur
+                </label>
               </div>
-              <div className="flex items-center">
+              <div className="flex space-x-2 items-center">
                 <input
                   type="checkbox"
                   checked={isUppercase}
                   onChange={(e) => setIsUppercase(e.target.checked)}
                   className="rounded border-gray-300"
                 />
-                <label className="ml-2 text-sm text-gray-700">Uppercase Text</label>
+                <label className="block font-medium text-lg text-gray-300 mb-2">
+                  Uppercase
+                </label>
               </div>
             </div>
 
             {/* Words Per Caption Control */}
-            <div className="mb-6 space-y-4">
+            <div className="mb-3 space-y-4">
               <label className="block font-medium text-lg text-gray-300 mb-2">
                 Display Words
               </label>
@@ -808,10 +859,10 @@ const Home: NextPage = () => {
             </div>
 
             {/* Custom Controls */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
                 <label className="block font-medium text-lg text-gray-300 mb-2">
-                  Size {fontSize}px
+                  Font Size {fontSize}px
                 </label>
                 <div className="flex items-center gap-4">
                   <input
@@ -877,7 +928,33 @@ const Home: NextPage = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="flex space-x-2">
+                <div>
+                  <label className="block font-medium text-lg text-gray-300 mb-2">
+                    Second Color
+                  </label>
+                  <input
+                    type="color"
+                    value={secondHighlightColor}
+                    onChange={(e) => setSecondHighlightColor(e.target.value)}
+                    className="h-10 rounded border-none cursor-pointer bg-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-lg text-gray-300 mb-2">
+                    Third Color
+                  </label>
+                  <input
+                    type="color"
+                    value={thirdHighlightColor}
+                    onChange={(e) => setThirdHighlightColor(e.target.value)}
+                    className="h-10 rounded border-none cursor-pointer bg-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="w-full">
                 <label className="block font-medium text-lg text-gray-300 mb-2">
                   Position Y {captionYPosition}px
                 </label>
@@ -886,8 +963,10 @@ const Home: NextPage = () => {
                   min="0"
                   max={getVideoHeight(aspectRatio)}
                   value={captionYPosition}
-                  onChange={(e) => handleYPositionChange(Number(e.target.value))}
-                  className="flex-1 h-4 border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
+                  onChange={(e) =>
+                    handleYPositionChange(Number(e.target.value))
+                  }
+                  className=" h-4 w-full border-none bg-gray-100/60 rounded-lg appearance-none cursor-pointer
                     [&::-webkit-slider-thumb]:appearance-none
                     [&::-webkit-slider-thumb]:w-4
                     [&::-webkit-slider-thumb]:h-4
@@ -896,82 +975,40 @@ const Home: NextPage = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={handleExportTheme}
-                className="flex items-center gap-2"
-                variant="outline"
-              >
-                <Download className="w-4 h-4" />
-                Export Theme
-              </Button>
+            <div className="flex mt-6 gap-2">
 
-              <Button
-                onClick={() => document.getElementById('theme-file-input')?.click()}
-                className="flex items-center gap-2"
-                variant="outline"
-              >
-                <Upload className="w-4 h-4" />
-                Import Theme
-              </Button>
+<Button
+              variant="ghost"
+              className="text-lg rounded-2xl py-5 px-4 bg-gray-100/60"
+              onClick={handleExportTheme}
+
+            >
+              <PackagePlus className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize">Export</span>
+            </Button>
+
+<Button
+              variant="ghost"
+              className="text-lg rounded-2xl py-5 px-4 bg-gray-100/60"
+              onClick={() =>
+                document.getElementById("theme-file-input")?.click()
+              }
+
+            >
+              <PackageOpen className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize">Import</span>
+            </Button>
+
               <input
                 type="file"
                 id="theme-file-input"
                 accept=".json"
                 onChange={handleImportTheme}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="space-y-4 mt-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Photo Transitions</h2>
-          <div className="flex items-center gap-4">
-            <PhotoUploader
-              onPhotosSelected={handlePhotosSelected}
-              isUploading={isUploading}
-            />
-            <Select
-              value={transition}
-              onValueChange={(value) => setTransition(value)}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select transition" />
-              </SelectTrigger>
-              <SelectContent>
-                {TRANSITIONS.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {photos.length > 0 && (
-          <div className="aspect-video w-full rounded-lg overflow-hidden border">
-            <Player
-              component={PhotoTransition}
-              inputProps={{
-                photos,
-                transitionType: transition,
-                durationInFrames: 60,
-              }}
-              durationInFrames={photos.length * 90}
-              fps={30}
-              compositionWidth={1920}
-              compositionHeight={1080}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            />
-          </div>
-        )}
       </div>
     </div>
   );
