@@ -4,6 +4,7 @@ import {
   CalculateMetadataFunction,
   continueRender,
   delayRender,
+  random,
   Sequence,
   useVideoConfig,
   Video,
@@ -174,7 +175,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
           photos={Array.isArray(photos) ? photos.map((photo: TimelinePhoto | string) => {
             if (typeof photo === 'string') {
               return {
-                id: `photo-${Math.random()}`,
+                id: `photo-${random(1000)}`,
                 src: photo,
                 startFrame: 0,
                 durationInFrames: durationInFrames || DURATION_IN_FRAMES,
