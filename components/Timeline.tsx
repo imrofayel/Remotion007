@@ -5,7 +5,6 @@ import { Button } from './ui/button';
 import { Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { Input } from './ui/input';
 import { VIDEO_FPS } from '../types/constants';
-import { Slider } from './ui/slider';
 
 interface TimelineProps {
   photos: TimelinePhoto[];

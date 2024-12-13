@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './ui/button';
-import { Image, Mountain, UploadCloud, Waves, Zap } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface PhotoUploaderProps {

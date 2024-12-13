@@ -21,10 +21,7 @@ import { Button } from "../components/ui/button";
 import {
   GalleryVerticalEndIcon,
   UploadCloud,
-  Download,
-  Upload,
   Flame,
-  Mountain,
   Package2,
   PackagePlus,
   PackageOpen,
@@ -32,21 +29,12 @@ import {
 } from "lucide-react";
 import themesConfig from "./themes.json";
 import {
-  PhotoTransition,
   type PhotoFitMode,
   type TimelinePhoto,
 } from "../components/PhotoTransition";
 import { PhotoUploader } from "../components/PhotoUploader";
 import { useToast } from "../components/ui/use-toast";
 import { Timeline } from "../components/Timeline";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
-import { GradientButton } from "../components/gradientButton";
 import { cn } from "../lib/utils";
 
 const ASPECT_RATIOS = {
@@ -140,16 +128,6 @@ const Home: NextPage = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [fitMode, setFitMode] = useState<PhotoFitMode>("fit");
   const { toast } = useToast();
-
-  const TRANSITIONS = [
-    { value: "fade", label: "Fade" },
-    { value: "slide", label: "Slide" },
-    { value: "wipe", label: "Wipe" },
-    { value: "flip", label: "Flip" },
-  ];
-
-  const [transition, setTransition] = useState("fade");
-
   // Function to export current theme
   const handleExportTheme = () => {
     const currentTheme = {
@@ -691,7 +669,7 @@ const Home: NextPage = () => {
                 <DropdownMenuTrigger asChild>
                 <Button
               variant="ghost"
-              className="text-base rounded-2xl py-5 pl-4 pr-6 bg-gray-100/60"
+              className="text-lg rounded-2xl py-5 pl-4 pr-6 bg-gray-100/60"
             >
               <Package2 className="h-6 w-6 scale-[1.2] sm:mr-1" />
               <span className="capitalize">{activeTheme}</span>
@@ -723,7 +701,7 @@ const Home: NextPage = () => {
 
                     onClick={() => setStroke(s)}
 
-                    className={cn('text-base rounded-2xl p-3 px-6 bg-gray-100/60', stroke === s && 'bg-gray-100')}>
+                    className={cn('text-lg rounded-2xl p-3 px-6 bg-gray-100/60', stroke === s && 'bg-gray-100')}>
 
 <span className="capitalize"> {s.toUpperCase()}</span>
                    
@@ -742,7 +720,7 @@ const Home: NextPage = () => {
                     variant="ghost"
 
                     onClick={() => setFontShadow(s)}
-                    className={cn('text-base rounded-2xl p-3 px-6 bg-gray-100/60', fontShadow === s && 'bg-gray-100')}>
+                    className={cn('text-lg rounded-2xl p-3 px-6 bg-gray-100/60', fontShadow === s && 'bg-gray-100')}>
 
 <span className="capitalize"> {s.toUpperCase()}</span>
                    
@@ -759,9 +737,9 @@ const Home: NextPage = () => {
                   <DropdownMenuTrigger asChild>
                   <Button
               variant="ghost"
-              className="text-base rounded-2xl p-3 bg-gray-100/60"
+              className="text-lg rounded-2xl p-3 bg-gray-100/60"
             >
-              <Flame className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <Flame className="h-6 w-6 scale-[1.4] sm:mr-1" />
               <span className="capitalize">{animation}</span>
             </Button>
                   </DropdownMenuTrigger>
@@ -789,7 +767,7 @@ const Home: NextPage = () => {
                   type="text"
                   value={fontFamily}
                   onChange={(e) => setFontFamily(e.target.value)}
-                  className="mt-1 block w-full rounded-2xl border-none bg-gray-100/50 p-2 text-lg px-4"
+                  className="mt-1 block w-full rounded-2xl border-none bg-gray-100/50 p-2 text-[20px] font-medium px-4"
                 />
               </div>
             </div>
