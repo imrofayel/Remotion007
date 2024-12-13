@@ -57,7 +57,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="block font-medium text-lg text-gray-300 mb-2">Timeline</div>
+      <div className="block font-medium text-xl text-gray-300 mb-2">Timeline</div>
       <div className="space-y-3">
         {photos.map((photo, index) => (
           <div
