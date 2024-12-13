@@ -13,7 +13,7 @@ import SubtitlePage from "./SubtitlePage";
 import { getVideoMetadata } from "@remotion/media-utils";
 import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
 import { DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
-import { PhotoTransition } from "../../components/PhotoTransition";
+import { PhotoTransition, TimelinePhoto } from "../../components/PhotoTransition";
 
 export type SubtitleProp = {
   startInSeconds: number;
@@ -42,7 +42,7 @@ export const captionedVideoSchema = z.object({
   aspectRatio: z.string().optional(),
   className: z.string().optional(),
   chunkSize: z.number().optional(),
-  photos: z.array(z.string()).optional(),
+  photos: z.array(z.any()).optional(),
   durationInFrames: z.number().optional(),
   fitMode: z.enum(['fill', 'fit']).optional(),
 });
@@ -168,14 +168,23 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
         />
       </AbsoluteFill>
 
-      {/* Spider-Man style photo frames */}
+      {/* Photo frames with timeline support */}
       {photos && photos.length > 0 && (
         <PhotoTransition
-          photos={photos}
-          durationInFrames={durationInFrames || 400}
+          photos={Array.isArray(photos) ? photos.map((photo: TimelinePhoto | string) => {
+            if (typeof photo === 'string') {
+              return {
+                id: `photo-${Math.random()}`,
+                src: photo,
+                startFrame: 0,
+                durationInFrames: durationInFrames || DURATION_IN_FRAMES,
+              };
+            }
+            return photo;
+          }) : photos}
           videoConfig={{
-            width: aspectRatio === "9:16" ? 1080 : 1920,
-            height: aspectRatio === "9:16" ? 1920 : 1080,
+            width: aspectRatio === "9:16" ? 1080 : VIDEO_WIDTH,
+            height: aspectRatio === "9:16" ? 1920 : VIDEO_HEIGHT,
           }}
           className="z-10"
           fitMode={fitMode}

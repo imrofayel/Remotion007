@@ -4,9 +4,15 @@ import { cn } from '../lib/utils';
 
 export type PhotoFitMode = 'fill' | 'fit';
 
-export interface PhotoTransitionProps extends Record<string, unknown> {
-  photos: string[];
+export interface TimelinePhoto {
+  id: string;
+  src: string;
+  startFrame: number;
   durationInFrames: number;
+}
+
+export interface PhotoTransitionProps extends Record<string, unknown> {
+  photos: TimelinePhoto[];
   videoConfig?: {
     width: number;
     height: number;
@@ -17,7 +23,6 @@ export interface PhotoTransitionProps extends Record<string, unknown> {
 
 export const PhotoTransition: React.FC<PhotoTransitionProps> = ({
   photos,
-  durationInFrames,
   videoConfig,
   className,
   fitMode = 'fit',
@@ -27,11 +32,11 @@ export const PhotoTransition: React.FC<PhotoTransitionProps> = ({
 
   return (
     <AbsoluteFill className={className} {...props}>
-      {photos.map((photo, index) => (
+      {photos.map((photo) => (
         <Sequence
-          key={photo}
-          from={index * durationInFrames}
-          durationInFrames={durationInFrames}
+          key={photo.id}
+          from={photo.startFrame}
+          durationInFrames={photo.durationInFrames}
         >
           <AbsoluteFill
             style={{
@@ -43,7 +48,7 @@ export const PhotoTransition: React.FC<PhotoTransitionProps> = ({
             }}
           >
             <Img
-              src={photo}
+              src={photo.src}
               style={{
                 width: '100%',
                 height: '100%',

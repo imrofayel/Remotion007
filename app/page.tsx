@@ -25,9 +25,10 @@ import {
   Upload,
 } from "lucide-react";
 import themesConfig from './themes.json';
-import { PhotoTransition, type PhotoFitMode } from '../components/PhotoTransition';
+import { PhotoTransition, type PhotoFitMode, type TimelinePhoto } from '../components/PhotoTransition';
 import { PhotoUploader } from '../components/PhotoUploader';
 import { useToast } from '../components/ui/use-toast';
+import { Timeline } from '../components/Timeline';
 import {
   Select,
   SelectContent,
@@ -82,7 +83,7 @@ const Home: NextPage = () => {
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(defaultTheme.config.subs.chunkSize);
   const [aspectRatio, setAspectRatio] = useState<keyof typeof ASPECT_RATIOS>("9:16");
 
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<TimelinePhoto[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [fitMode, setFitMode] = useState<PhotoFitMode>('fit');
   const { toast } = useToast();
@@ -358,55 +359,60 @@ const Home: NextPage = () => {
   };
 
   // Video props memoization
-  const captionedVideoProps = useMemo(
-    () => ({
-      src: videoSrc,
-      fontSize,
-      color: fontColor,
-      strokeColor,
-      stroke,
-      fontShadow,
-      fontFamily,
-      fontWeight,
-      fontUppercase: isUppercase,
-      animation,
-      isAnimationActive,
-      isMotionBlurActive,
-      mainHighlightColor,
-      secondHighlightColor,
-      thirdHighlightColor,
-      top: captionYPosition,
-      chunkSize: wordsPerCaption,
-      className: className,
-      photos,
-      aspectRatio,
-      durationInFrames: 400,
-      fitMode,
-    }),
-    [
-      videoSrc,
-      fontSize,
-      fontColor,
-      strokeColor,
-      stroke,
-      fontShadow,
-      fontFamily,
-      fontWeight,
-      isUppercase,
-      animation,
-      isAnimationActive,
-      isMotionBlurActive,
-      mainHighlightColor,
-      secondHighlightColor,
-      thirdHighlightColor,
-      captionYPosition,
-      wordsPerCaption,
-      className,
-      photos,
-      aspectRatio,
-      fitMode,
-    ],
-  );
+  const captionedVideoProps = useMemo(() => ({
+    src: videoSrc,
+    fontSize,
+    color: fontColor,
+    strokeColor,
+    stroke,
+    fontFamily,
+    fontWeight,
+    fontUppercase: isUppercase,
+    fontShadow,
+    animation,
+    isAnimationActive,
+    isMotionBlurActive,
+    highlightKeywords: false,
+    mainHighlightColor,
+    secondHighlightColor,
+    thirdHighlightColor,
+    top: captionYPosition,
+    aspectRatio,
+    chunkSize: wordsPerCaption,
+    left: 0,
+    className: className,
+    photos: photos.map((photo, index) => ({
+      id: `photo-${index}`,
+      src: photo.src,
+      startFrame: photo.startFrame,
+      durationInFrames: photo.durationInFrames,
+    })),
+    durationInFrames: videoDuration,
+    fitMode
+  }), [
+    videoSrc,
+    fontSize,
+    fontColor,
+    strokeColor,
+    stroke,
+    fontFamily,
+    fontWeight,
+    isUppercase,
+    fontShadow,
+    animation,
+    isAnimationActive,
+    isMotionBlurActive,
+    mainHighlightColor,
+    secondHighlightColor,
+    thirdHighlightColor,
+    captionYPosition,
+    aspectRatio,
+    wordsPerCaption,
+    className,
+    photos,
+    videoDuration,
+    fitMode
+  ]);
 
   const handlePhotosSelected = async (files: File[]) => {
     setIsUploading(true);
@@ -421,22 +427,35 @@ const Home: NextPage = () => {
         body: formData,
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to upload photos');
+        throw new Error('Failed to upload photos');
       }
 
-      setPhotos(data.paths);
+      const { paths } = await response.json();
+      
+      // Add new photos to timeline at the end
+      const lastPhoto = photos[photos.length - 1];
+      const startFrame = lastPhoto 
+        ? lastPhoto.startFrame + lastPhoto.durationInFrames 
+        : 0;
+      
+      const newPhotos = paths.map((path: string, index: number) => ({
+        id: crypto.randomUUID(),
+        src: path,
+        startFrame: startFrame + (index * 120), // 4 seconds gap between photos
+        durationInFrames: 120, // 4 seconds default duration
+      }));
+
+      setPhotos([...photos, ...newPhotos]);
       toast({
         title: 'Success',
-        description: 'Photos uploaded successfully',
+        description: `${files.length} photo${files.length !== 1 ? 's' : ''} uploaded successfully`,
       });
     } catch (error) {
       console.error('Error uploading photos:', error);
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to upload photos',
+        description: 'Failed to upload photos',
         variant: 'destructive',
       });
     } finally {
@@ -526,22 +545,29 @@ const Home: NextPage = () => {
               className="w-full"
             />
             {photos.length > 0 && (
-              <div className="mt-2 flex items-center gap-4">
-                <div className="text-sm text-gray-500">
-                  {photos.length} photo{photos.length !== 1 ? 's' : ''} added
+              <div className="mt-4 space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="text-sm text-gray-500">
+                    {photos.length} photo{photos.length !== 1 ? 's' : ''} added
+                  </div>
+                  <Select
+                    value={fitMode}
+                    onValueChange={(value: PhotoFitMode) => setFitMode(value)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select fit mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fit">Fit</SelectItem>
+                      <SelectItem value="fill">Fill</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select
-                  value={fitMode}
-                  onValueChange={(value: PhotoFitMode) => setFitMode(value)}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select fit mode" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fit">Fit</SelectItem>
-                    <SelectItem value="fill">Fill</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Timeline
+                  photos={photos}
+                  onPhotosChange={setPhotos}
+                  totalFrames={videoDuration}
+                />
               </div>
             )}
           </div>
