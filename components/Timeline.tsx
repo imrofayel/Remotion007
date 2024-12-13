@@ -109,7 +109,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 className='[&_svg]:size-5'
 
               >
-                <ChevronUp className="w-4 h-4" />
+                <ChevronUp />
               </Button>
               <Button
                 variant="ghost"
@@ -118,7 +118,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 disabled={index === photos.length - 1}
                 className='[&_svg]:size-5'
               >
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown />
               </Button>
             </div>
             <Button
