@@ -118,10 +118,10 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
     return createTikTokStyleCaptions({
       combineTokensWithinMilliseconds: captionSwitchSpeedValue,
       captions: subtitles ?? [],
-      groupBy: {
-        type: "words",
-        numberOfWords: chunkSize,
-      }
+      // groupBy: {
+      //   type: "words",
+      //   numberOfWords: chunkSize,
+      // }
     });
   }, [subtitles, captionSwitchSpeedValue, chunkSize]);
 
