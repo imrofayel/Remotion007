@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AbsoluteFill,
   CalculateMetadataFunction,
@@ -10,42 +10,40 @@ import {
   Video,
 } from "remotion";
 import { z } from "zod";
-import SubtitlePage from "./SubtitlePage";
 import { getVideoMetadata } from "@remotion/media-utils";
-import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
 import { DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
 import { PhotoTransition, TimelinePhoto } from "../../components/PhotoTransition";
-
-export type SubtitleProp = {
-  startInSeconds: number;
-  text: string;
-};
+import { Caption } from "../../types/Caption";
+import { CaptionText } from "../../components/CaptionText";
 
 export const captionedVideoSchema = z.object({
   src: z.string(),
-  fontSize: z.number().optional(),
-  color: z.string().optional(),
-  strokeColor: z.string().optional(),
-  stroke: z.enum(["none", "s", "m", "l"]).optional(),
-  fontFamily: z.string().optional(),
-  fontWeight: z.number().optional(),
-  fontUppercase: z.boolean().optional(),
-  fontShadow: z.enum(["none", "s", "m", "l"]).optional(),
-  animation: z.string().optional(),
-  isAnimationActive: z.boolean().optional(),
-  isMotionBlurActive: z.boolean().optional(),
-  highlightKeywords: z.boolean().optional(),
-  mainHighlightColor: z.string().optional(),
-  secondHighlightColor: z.string().optional(),
-  thirdHighlightColor: z.string().optional(),
-  top: z.number().optional(),
-  left: z.number().optional(),
-  aspectRatio: z.string().optional(),
+  fontSize: z.number().default(120),
+  color: z.string().default("white"),
+  strokeColor: z.string().default("black"),
+  stroke: z.enum(["none", "s", "m", "l"]).default("m"),
+  fontFamily: z.string().default("Inter"),
+  fontWeight: z.number().default(700),
+  fontUppercase: z.boolean().default(false),
+  fontShadow: z.enum(["none", "s", "m", "l"]).default("s"),
+  animation: z.string().default("none"),
+  isAnimationActive: z.boolean().default(false),
+  isMotionBlurActive: z.boolean().default(false),
+  highlightKeywords: z.boolean().default(false),
+  mainHighlightColor: z.string().default("#39E508"),
+  secondHighlightColor: z.string().default("#fdfa14"),
+  thirdHighlightColor: z.string().default("#f01916"),
+  top: z.number().default(1000),
+  aspectRatio: z.enum(["16:9", "9:16", "4:5", "1:1"]).default("9:16"),
   className: z.string().optional(),
-  chunkSize: z.number().optional(),
-  photos: z.array(z.any()).optional(),
+  chunkSize: z.number().default(2),
+  photos: z.array(z.any()).default([]),
   durationInFrames: z.number().optional(),
-  fitMode: z.enum(['fill', 'fit']).optional(),
+  fitMode: z.enum(['fill', 'fit']).default('fit'),
+  captionsUrl: z.string().optional(),
+  onCaptionsLoad: z.function().args(z.array(z.custom<Caption>())).optional(),
+  captions: z.array(z.custom<Caption>()).default([]),
+  left: z.number().default(0)
 });
 
 export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
@@ -69,8 +67,6 @@ export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
     };
   }
 };
-
-const BASE_SWITCH_SPEED = 300;
 
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   src,
@@ -96,9 +92,12 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   className,
   photos = [],
   durationInFrames,
-  fitMode,
+  fitMode = "fit",
+  captionsUrl,
+  onCaptionsLoad,
+  captions: propCaptions = [],
 }) => {
-  const [subtitles, setSubtitles] = useState<Caption[]>([]);
+  const [captions, setCaptions] = useState<Caption[]>(propCaptions);
   const [handle] = useState(() => delayRender(
     `Loading video with src="${src}"`,
     {
@@ -107,51 +106,70 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   ));
   const { fps } = useVideoConfig();
 
-  const captionSwitchSpeedValue = useMemo(() =>
-    BASE_SWITCH_SPEED * chunkSize,
-    [chunkSize]
-  );
+  // Debug logs
+  console.log('CaptionedVideo props:', {
+    src,
+    captions: propCaptions,
+    fps,
+    durationInFrames,
+    fontSize,
+    color,
+    top
+  });
 
-  const subtitlesFile = src
-    .replace(/^\/uploads\//, '/subs/')
-    .replace(/\.(mp4|mkv|mov|webm)$/, '.json');
-
-  const fetchSubtitles = useCallback(async () => {
-    try {
-      console.log('Fetching subtitles from:', subtitlesFile);
-      const res = await fetch(subtitlesFile);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch subtitles: ${res.statusText}`);
-      }
-      const data = (await res.json()) as Caption[];
-      setSubtitles(data);
-      continueRender(handle);
-    } catch (e) {
-      console.error('Error fetching subtitles:', e);
-      continueRender(handle);
-    }
-  }, [handle, subtitlesFile]);
-
+  // Load captions from URL if provided
   useEffect(() => {
-    fetchSubtitles();
-  }, [fetchSubtitles]);
+    if (captionsUrl) {
+      const loadCaptions = async () => {
+        try {
+          const response = await fetch(captionsUrl);
+          if (!response.ok) {
+            throw new Error('Failed to load captions');
+          }
+          const data = await response.json();
+          const loadedCaptions: Caption[] = Array.isArray(data) ? data : data.captions;
+          console.log('Loaded captions from URL:', loadedCaptions);
+          setCaptions(loadedCaptions);
+          if (onCaptionsLoad) {
+            onCaptionsLoad(loadedCaptions);
+          }
+        } catch (error) {
+          console.error('Error loading captions:', error);
+        }
+      };
+      loadCaptions();
+    }
+  }, [captionsUrl, onCaptionsLoad]);
 
-  const { pages } = useMemo(() => {
-    return createTikTokStyleCaptions({
-      combineTokensWithinMilliseconds: captionSwitchSpeedValue,
-      captions: subtitles ?? [],
-    });
-  }, [subtitles, captionSwitchSpeedValue]);
+  // Update captions when props change
+  useEffect(() => {
+    console.log('propCaptions changed:', propCaptions);
+    if (propCaptions.length > 0) {
+      setCaptions(propCaptions);
+    }
+  }, [propCaptions]);
+
+  // Ensure video is loaded
+  useEffect(() => {
+    if (src) {
+      const videoElement = document.createElement('video');
+      videoElement.src = src;
+      videoElement.onloadeddata = () => {
+        continueRender(handle);
+      };
+      videoElement.onerror = () => {
+        console.error('Video failed to load:', src);
+        continueRender(handle);
+      };
+    }
+  }, [src, handle]);
+
+  console.log('Current captions state:', captions);
 
   return (
     <AbsoluteFill>
-      <AbsoluteFill style={{
-        backgroundColor: 'black',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-      }}>
+      {/* Video Layer */}
+      <AbsoluteFill>
         <Video
           src={src}
           style={{
@@ -159,17 +177,97 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
             height: '100%',
             objectFit: 'contain',
           }}
-          onError={(err) => {
-            console.error('Video playback error:', err);
-            continueRender(handle);
-          }}
-          onLoad={() => {
-            continueRender(handle);
-          }}
         />
       </AbsoluteFill>
 
-      {/* Photo frames with timeline support */}
+      {/* Captions Layer */}
+      <AbsoluteFill style={{ 
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingBottom: '50px',
+        zIndex: 1000
+      }}>
+        {captions.map((caption, index) => {
+          console.log('Rendering caption:', caption);
+
+          if (!caption.startMs || !caption.endMs) {
+            console.error('Invalid caption timing:', caption);
+            return null;
+          }
+
+          const startFrame = Math.floor((caption.startMs / 1000) * fps);
+          const duration = Math.floor(((caption.endMs - caption.startMs) / 1000) * fps);
+
+          console.log('Caption frames:', {
+            index,
+            text: caption.text,
+            startMs: caption.startMs,
+            endMs: caption.endMs,
+            startFrame,
+            duration,
+            fps
+          });
+
+          if (startFrame < 0 || duration <= 0) {
+            console.error('Invalid frame calculation:', { startFrame, duration });
+            return null;
+          }
+
+          return (
+            <Sequence
+              key={`caption-${index}-${startFrame}`}
+              from={startFrame}
+              durationInFrames={duration}
+              name={`Caption ${index}: ${caption.text}`}
+            >
+              <div style={{
+                position: 'absolute',
+                bottom: typeof top === 'number' ? `${top}px` : top,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                textAlign: 'center',
+                width: '100%',
+                maxWidth: '80%',
+                zIndex: 1000,
+                padding: '1rem',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                borderRadius: '8px',
+              }}>
+                <CaptionText
+                  text={caption.text}
+                  duration={duration}
+                  fontSize={fontSize}
+                  color={color}
+                  strokeColor={strokeColor}
+                  stroke={stroke}
+                  fontFamily={fontFamily}
+                  fontWeight={fontWeight}
+                  fontUppercase={fontUppercase}
+                  fontShadow={fontShadow}
+                  animation={animation}
+                  isAnimationActive={isAnimationActive}
+                  isMotionBlurActive={isMotionBlurActive}
+                  highlightKeywords={highlightKeywords}
+                  mainHighlightColor={mainHighlightColor}
+                  secondHighlightColor={secondHighlightColor}
+                  thirdHighlightColor={thirdHighlightColor}
+                  top={0}
+                  left={0}
+                />
+              </div>
+            </Sequence>
+          );
+        })}
+      </AbsoluteFill>
+
+      {/* Photos Layer */}
       {photos && photos.length > 0 && (
         <PhotoTransition
           photos={Array.isArray(photos) ? photos.map((photo: TimelinePhoto | string) => {
@@ -191,50 +289,6 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
           fitMode={fitMode}
         />
       )}
-
-      {pages.map((page, index) => {
-        const nextPage = pages[index + 1] ?? null;
-        const subtitleStartFrame = Math.floor((page.startMs / 1000) * fps);
-        const subtitleEndFrame = Math.min(
-          nextPage ? Math.floor((nextPage.startMs / 1000) * fps) : Infinity,
-          subtitleStartFrame + Math.floor((captionSwitchSpeedValue / 1000) * fps)
-        );
-        const durationInFrames = subtitleEndFrame - subtitleStartFrame;
-        if (durationInFrames <= 0) {
-          return null;
-        }
-
-        return (
-          <Sequence
-            key={index}
-            from={subtitleStartFrame}
-            durationInFrames={durationInFrames}
-          >
-            <SubtitlePage
-              key={index}
-              enterProgress={subtitleStartFrame / fps}
-              page={page}
-              fontSize={fontSize}
-              color={color}
-              strokeColor={strokeColor}
-              stroke={stroke}
-              fontFamily={fontFamily}
-              fontWeight={fontWeight}
-              fontUppercase={fontUppercase}
-              fontShadow={fontShadow}
-              animation={animation}
-              isAnimationActive={isAnimationActive}
-              isMotionBlurActive={isMotionBlurActive}
-              highlightKeywords={highlightKeywords}
-              mainHighlightColor={mainHighlightColor}
-              secondHighlightColor={secondHighlightColor}
-              thirdHighlightColor={thirdHighlightColor}
-              top={top}
-              className={className}
-            />
-          </Sequence>
-        );
-      })}
     </AbsoluteFill>
   );
 };

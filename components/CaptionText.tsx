@@ -1,9 +1,8 @@
 import React from 'react';
-import { spring, useVideoConfig } from 'remotion';
+import { spring, useVideoConfig, useCurrentFrame } from 'remotion';
 
 interface CaptionTextProps {
   text: string;
-  frame: number;
   duration: number;
   fontSize: number;
   color: string;
@@ -26,7 +25,6 @@ interface CaptionTextProps {
 
 export const CaptionText: React.FC<CaptionTextProps> = ({
   text,
-  frame,
   duration,
   fontSize,
   color,
@@ -46,8 +44,16 @@ export const CaptionText: React.FC<CaptionTextProps> = ({
   top,
   left,
 }) => {
+  const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  console.log('CaptionText rendering with:', { text, frame, duration }); // Debug log
+  
+  console.log('CaptionText rendering:', {
+    text,
+    frame,
+    duration,
+    fps,
+    currentTime: frame / fps
+  });
 
   const progress = spring({
     frame,
@@ -83,21 +89,57 @@ export const CaptionText: React.FC<CaptionTextProps> = ({
     }
   };
 
+  const getAnimationTransform = () => {
+    if (!isAnimationActive) return "";
+
+    switch (animation) {
+      case "updown": {
+        const progress = spring({
+          frame: frame % 30,
+          fps,
+          config: { damping: 10 }
+        });
+        return `translateY(${progress * -10}px)`;
+      }
+      case "bounce": {
+        const progress = spring({
+          frame: frame % 60,
+          fps,
+          config: { damping: 5 }
+        });
+        return `translateY(${progress * 20}px)`;
+      }
+      case "shake": {
+        const progress = spring({
+          frame: frame % 20,
+          fps,
+          config: { damping: 3 }
+        });
+        return `translateX(${progress * 5}px)`;
+      }
+      default:
+        return "";
+    }
+  };
+
   const style: React.CSSProperties = {
     fontFamily,
     fontSize,
     fontWeight,
     color,
     textTransform: fontUppercase ? 'uppercase' : 'none',
-    position: 'absolute',
+    position: 'relative',
     width: '100%',
     textAlign: 'center',
-    top,
-    left,
     WebkitTextStroke: `${getStrokeWidth()}px ${strokeColor}`,
     textShadow: getShadow(),
     opacity: isAnimationActive ? progress : 1,
-    zIndex: 20, // Make sure captions are above other elements
+    transform: getAnimationTransform(),
+    zIndex: 20,
+    pointerEvents: 'none',
+    padding: '10px',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word'
   };
 
   return (

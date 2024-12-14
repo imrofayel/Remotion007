@@ -3,7 +3,7 @@
 import { Player } from "@remotion/player";
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { NextPage } from "next";
-import React, { SetStateAction, useMemo, useState } from "react";
+import React, { SetStateAction, useMemo, useState, useEffect } from "react";
 import {
   DURATION_IN_FRAMES,
   VIDEO_FPS,
@@ -36,6 +36,8 @@ import { PhotoUploader } from "../components/PhotoUploader";
 import { useToast } from "../components/ui/use-toast";
 import { Timeline } from "../components/Timeline";
 import { cn } from "../lib/utils";
+import { CaptionControls } from '../components/CaptionControls';
+import { Caption, convertToRemotionCaption } from "@remotion/captions";
 
 const ASPECT_RATIOS = {
   "16:9": { width: 1920, height: 1080, label: "Landscape (16:9)" },
@@ -54,6 +56,10 @@ const Home: NextPage = () => {
   const [error, setError] = useState<string>("");
   const [isReady, setIsReady] = useState(true); // Initially true for sample video
   const [captionYPosition, setCaptionYPosition] = useState<number>(1280); // Default Y position
+
+  // Caption editing state
+  const [isEditing, setIsEditing] = useState(false);
+  const [captions, setCaptions] = useState<Caption[]>([]);
 
   // Caption styling states with default theme
   const [activeTheme, setActiveTheme] = useState<string>("default");
@@ -121,8 +127,7 @@ const Home: NextPage = () => {
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(
     defaultTheme.config.subs.chunkSize,
   );
-  const [aspectRatio, setAspectRatio] =
-    useState<keyof typeof ASPECT_RATIOS>("9:16");
+  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "4:5" | "1:1">("9:16");
 
   const [photos, setPhotos] = useState<TimelinePhoto[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -306,18 +311,13 @@ const Home: NextPage = () => {
     setCaptionYPosition(Math.max(0, Math.min(newPosition, height)));
   };
 
-  // Handle video upload
-  const handleVideoUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  // Handle video upload and metadata
+  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setIsProcessing(true);
-    setIsReady(false);
-    setError("");
-    setUploadedFileName(file.name);
-
+    setIsUploading(true);
     try {
       // Create form data
       const formData = new FormData();
@@ -329,32 +329,20 @@ const Home: NextPage = () => {
         body: formData,
       });
 
-      const uploadData = await uploadResponse.json();
-
       if (!uploadResponse.ok) {
-        throw new Error(uploadData.error || "Failed to upload video");
+        throw new Error("Failed to upload video");
       }
 
+      const uploadData = await uploadResponse.json();
       const { videoPath } = uploadData;
 
-      // Wait a bit for the file to be fully written
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      try {
-        // Get video metadata before setting the source
-        const metadata = await getVideoMetadata(videoPath);
-        if (metadata && metadata.durationInSeconds) {
-          setVideoDuration(Math.floor(metadata.durationInSeconds * VIDEO_FPS));
-          setVideoSrc(videoPath);
-        } else {
-          throw new Error("Could not read video metadata");
-        }
-      } catch (metadataError) {
-        console.error("Metadata error:", metadataError);
-        throw new Error("Failed to process video metadata. Please try again.");
-      }
-
       // Generate captions
+      toast({
+        title: "Processing",
+        description: "Preparing the video and generating captions...",
+        variant: "default",
+      });
+
       const captionResponse = await fetch("/api/generate-captions", {
         method: "POST",
         headers: {
@@ -363,71 +351,118 @@ const Home: NextPage = () => {
         body: JSON.stringify({ videoPath }),
       });
 
-      const captionData = await captionResponse.json();
-
       if (!captionResponse.ok) {
-        throw new Error(captionData.error || "Failed to generate captions");
+        throw new Error("Failed to generate captions");
       }
 
-      // Verify captions file exists and is valid
-      const captionsPath = videoPath
-        .replace(/.mp4$/, ".json")
-        .replace(/.mkv$/, ".json")
-        .replace(/.mov$/, ".json")
-        .replace(/.webm$/, ".json")
-        .replace("uploads", "subs");
+      // Wait for captions to be generated (poll the status)
+      const videoFileName = videoPath.split('/').pop()?.replace(/\.[^/.]+$/, "");
+      const captionsPath = `/subs/${videoFileName}.json`;
+      
+      let captionsReady = false;
+      let retries = 0;
+      const maxRetries = 30; // Maximum 30 seconds wait
+      
+      while (!captionsReady && retries < maxRetries) {
+        try {
+          const captionsResponse = await fetch(captionsPath);
+          if (captionsResponse.ok) {
+            captionsReady = true;
+            const loadedCaptions = await captionsResponse.json();
+            console.log('Loaded captions:', loadedCaptions);
 
-      const captionsResponse = await fetch(captionsPath);
-      if (!captionsResponse.ok) {
-        throw new Error("Failed to verify captions file");
+            // Convert timestamps to milliseconds
+            const processedCaptions: Caption[] = loadedCaptions.map((caption: any) => ({
+              text: caption.text,
+              startMs: caption.startMs || caption.start * 1000,
+              endMs: caption.endMs || caption.end * 1000
+            }));
+
+            console.log('Processed captions:', processedCaptions);
+            setCaptions(processedCaptions);
+
+            // Set video source and get metadata only after captions are ready
+            setVideoSrc(videoPath);
+            const video = document.createElement('video');
+            video.src = videoPath;
+            await new Promise((resolve, reject) => {
+              video.onloadedmetadata = () => {
+                const durationInSeconds = video.duration;
+                const frames = Math.floor(durationInSeconds * VIDEO_FPS);
+                setVideoDuration(frames);
+                resolve(frames);
+              };
+              video.onerror = () => reject(new Error('Failed to load video metadata'));
+            });
+
+            toast({
+              title: "Success",
+              description: "Video processed and captions generated successfully!",
+              variant: "default",
+            });
+            break;
+          }
+        } catch (error) {
+          console.log('Waiting for captions...', error);
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+        retries++;
       }
 
-      // Everything is ready
-      setIsReady(true);
-    } catch (error: any) {
-      console.error("Error processing video:", error);
-      setError(error.message || "Error processing video. Please try again.");
-      // Reset video source on error
+      if (!captionsReady) {
+        throw new Error("Timed out waiting for captions to be generated");
+      }
+
+    } catch (error) {
+      console.error('Error handling video upload:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to process video",
+        variant: "destructive",
+      });
+      // Reset to sample video on error
       setVideoSrc("/sample-video.mp4");
       setVideoDuration(DURATION_IN_FRAMES);
-      setIsReady(true); // Reset to show sample video
     } finally {
       setIsProcessing(false);
+      setIsUploading(false);
     }
   };
 
   // Video props memoization
   const captionedVideoProps = useMemo(
     () => ({
-      src: videoSrc,
-      fontSize,
-      color: fontColor,
-      strokeColor,
-      stroke,
-      fontFamily,
-      fontWeight,
-      fontUppercase: isUppercase,
-      fontShadow,
-      animation,
-      isAnimationActive,
-      isMotionBlurActive,
+      src: videoSrc || "",
+      fontSize: fontSize || 120,
+      color: fontColor || "white",
+      strokeColor: strokeColor || "black",
+      stroke: stroke || "m",
+      fontFamily: fontFamily || "Inter",
+      fontWeight: fontWeight || 700,
+      fontUppercase: isUppercase || false,
+      fontShadow: fontShadow || "s",
+      animation: animation || "none",
+      isAnimationActive: isAnimationActive || false,
+      isMotionBlurActive: isMotionBlurActive || false,
       highlightKeywords: false,
-      mainHighlightColor,
-      secondHighlightColor,
-      thirdHighlightColor,
-      top: captionYPosition,
-      aspectRatio,
-      chunkSize: wordsPerCaption,
+      mainHighlightColor: mainHighlightColor || "#39E508",
+      secondHighlightColor: secondHighlightColor || "#fdfa14",
+      thirdHighlightColor: thirdHighlightColor || "#f01916",
+      top: captionYPosition || 1000,
+      aspectRatio: aspectRatio as "16:9" | "9:16" | "4:5" | "1:1",
+      chunkSize: wordsPerCaption || 2,
       left: 0,
-      className: className,
+      className: className || "",
       photos: photos.map((photo, index) => ({
         id: `photo-${index}`,
         src: photo.src,
         startFrame: photo.startFrame,
         durationInFrames: photo.durationInFrames,
       })),
-      durationInFrames: videoDuration,
-      fitMode,
+      durationInFrames: videoDuration || DURATION_IN_FRAMES,
+      fitMode: fitMode || "fit",
+      captions: captions,
     }),
     [
       videoSrc,
@@ -452,6 +487,7 @@ const Home: NextPage = () => {
       photos,
       videoDuration,
       fitMode,
+      captions,
     ],
   );
 
@@ -503,6 +539,29 @@ const Home: NextPage = () => {
       setIsUploading(false);
     }
   };
+
+  // Load captions when video is loaded
+  useEffect(() => {
+    const loadCaptions = async () => {
+      try {
+        const response = await fetch(`/api/generate-captions?videoSrc=${encodeURIComponent(videoSrc)}`);
+        if (!response.ok) throw new Error('Failed to load captions');
+        const data = await response.json();
+        setCaptions(data.captions);
+      } catch (error) {
+        console.error('Error loading captions:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load captions. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    if (videoSrc && isReady) {
+      loadCaptions();
+    }
+  }, [videoSrc, isReady, toast]);
 
   return (
     <div className="p-6 items-center justify-center align-middle grid gap-6 text-gray-600">
@@ -613,32 +672,43 @@ const Home: NextPage = () => {
         </div>
       </div>
 
-                {/* Photo Upload */}
-                <div className="mb-4">
-            {photos.length > 0 && (
-              <div className="mt-4 space-y-4">
-                <Timeline
-                  photos={photos}
-                  onPhotosChange={setPhotos}
-                  totalFrames={videoDuration}
-                />
-              </div>
-            )}
+      {/* Add CaptionControls below the video player */}
+      <div className="mt-4">
+        <CaptionControls
+          captions={captions}
+          isEditing={isEditing}
+          onEditingChange={setIsEditing}
+          onCaptionsChange={setCaptions}
+          className="w-full"
+        />
+      </div>
+
+      {/* Photo Upload */}
+      <div className="mb-4">
+        {photos.length > 0 && (
+          <div className="mt-4 space-y-4">
+            <Timeline
+              photos={photos}
+              onPhotosChange={setPhotos}
+              totalFrames={videoDuration}
+            />
           </div>
+        )}
+      </div>
 
       {/* Controls Section */}
       <div>
         <div className="bg-white  border-b-2 border-gray-200/60 rounded-3xl border p-3 sticky top-6">
           {/* Theme Selection */}
 
-        <div className="flex space-x-2">         
-        <PhotoUploader
-              onPhotosSelected={handlePhotosSelected}
-              isUploading={isUploading}
-              className="mb-4"
-            />
+          <div className="flex space-x-2">         
+          <PhotoUploader
+                onPhotosSelected={handlePhotosSelected}
+                isUploading={isUploading}
+                className="mb-4"
+              />
 
-{photos.length > 0 && <div className="flex gap-2">
+          {photos.length > 0 && <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                   <Button
