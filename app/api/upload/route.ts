@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     
     // Save to public directory
     const videoPath = path.join(uploadsDir, filename);
-    await writeFile(videoPath, buffer);
+    await writeFile(videoPath, buffer as any);
     
     // Return the public URL path
     return NextResponse.json({ 

@@ -646,7 +646,7 @@ const Home: NextPage = () => {
               style={getContainerStyle(aspectRatio)}
             >
               <Player
-                component={CaptionedVideo}
+                component={CaptionedVideo as any}
                 inputProps={captionedVideoProps}
                 durationInFrames={videoDuration}
                 fps={VIDEO_FPS}

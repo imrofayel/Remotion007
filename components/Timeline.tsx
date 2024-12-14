@@ -56,7 +56,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="block font-medium text-xl text-gray-300 mb-2">Timeline</div>
+      <div className="block font-medium text-2xl text-gray-300 mb-4">Timeline</div>
       <div className="space-y-3">
         {photos.map((photo, index) => (
           <div
@@ -124,7 +124,7 @@ export const Timeline: React.FC<TimelineProps> = ({
               variant="destructive"
               size="icon"
               onClick={() => handleDelete(photo.id)}
-              className='[&_svg]:size-5 absolute -right-1 -top-2 shadow-none bg-red-700 text-white rounded-full'
+              className='[&_svg]:size-5 absolute -right-1 -top-2 shadow-none bg-red-500 text-white rounded-full'
             >
               <Trash2 />
             </Button>

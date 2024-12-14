@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 import { Caption } from '../types/Caption';
+import { GitMerge, Minus, Plus, Trash } from 'lucide-react';
 
 interface CaptionEditorProps {
   captions: Caption[];
@@ -93,25 +94,26 @@ export const CaptionEditor: React.FC<CaptionEditorProps> = ({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Caption Editor</h2>
+      <div className="flex justify-end items-center mb-4">
+
         <Button
-          variant="outline"
-          size="sm"
-          onClick={handleAddCaption}
-        >
-          Add Caption
-        </Button>
+              variant="ghost"
+              className="text-lg rounded-2xl py-5 px-3 bg-gray-100/60"
+              onClick={handleAddCaption}
+              >
+              <Plus className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize">Add</span>
+            </Button>
       </div>
-      <div className="grid gap-4 grid-cols-1">
+      <div className="grid gap-4 grid-cols-1 h-[500px] overflow-y-scroll scrollbar" id='style-1'>
         {captions.map((caption, index) => (
           <div
             key={index}
             className={cn(
-              "p-4 rounded-lg border transition-all hover:shadow-md",
+              "p-4 mr-2 rounded-2xl transition-all",
               selectedCaption === index
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-200 hover:border-blue-300"
+                ? "bg-gray-100/50"
+                : "border-gray-100/60 border-2"
             )}
             onClick={() => setSelectedCaption(index)}
           >
@@ -119,63 +121,65 @@ export const CaptionEditor: React.FC<CaptionEditorProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex gap-4 items-center">
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs text-gray-500">Start Time (ms)</label>
+                    <label className="text-[15px] drop-shadow-sm text-gray-300 mb-1 font-medium">Start Time (ms)</label>
                     <input
                       type="number"
                       value={caption.startMs}
                       onChange={(e) => handleTimeChange(index, 'startMs', Number(e.target.value))}
-                      className="w-24 px-2 py-1 rounded border-gray-200"
+                      className="w-24 px-2 py-1 bg-white/80 outline-none border-none  focus:ring-0 focus:border-none rounded-xl focus:outline-none outline-2 outline-gray-100/60"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs text-gray-500">End Time (ms)</label>
+                    <label className="text-[15px] drop-shadow-sm text-gray-300 mb-1 font-medium">End Time (ms)</label>
                     <input
                       type="number"
                       value={caption.endMs}
                       onChange={(e) => handleTimeChange(index, 'endMs', Number(e.target.value))}
-                      className="w-24 px-2 py-1 rounded border-gray-200"
+                      className="w-24 px-2 py-1 bg-white/80 outline-none border-none  focus:ring-0 focus:border-none rounded-xl focus:outline-none outline-2 outline-gray-100/60"
                     />
                   </div>
                 </div>
                 <div className="flex gap-2">
+
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLineBreak(index);
-                    }}
-                  >
-                    Split Line
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleMergeWithNext(index);
-                    }}
-                    disabled={index === captions.length - 1}
-                  >
-                    Merge Next
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteCaption(index);
-                    }}
-                  >
-                    Delete
-                  </Button>
+              variant="ghost"
+              className="text-sm rounded-2xl border-2 border-gray-100/60 p-3 bg-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLineBreak(index);
+              }}            >
+              <Plus className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize drop-shadow-sm">Add Line</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="text-sm rounded-2xl p-3 border-2 border-gray-100/60 bg-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMergeWithNext(index);
+              }}
+              disabled={index === captions.length - 1}         >
+              <GitMerge className="h-6 w-6 scale-[1.2] sm:mr-1" />
+              <span className="capitalize drop-shadow-sm">Merge Next</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="text-sm border-2 border-gray-100/60 rounded-2xl p-3 bg-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteCaption(index);
+              }}>
+              <Trash className="h-6 w-6 scale-[1.2]" />
+            </Button>
                 </div>
               </div>
               <textarea
                 value={caption.text}
                 onChange={(e) => handleTextChange(index, e.target.value)}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full p-3 rounded border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 min-h-[80px] resize-y"
+                className="w-full p-2 pl-0 border-none focus:border-none focus:ring-0 min-h-[20px] resize-none outline-none bg-transparent placeholder:text-[20px] font-medium text-lg placeholder:text-gray-300 drop-shadow-sm text-gray-500 placeholder:drop-shadow-none"
                 placeholder="Enter caption text..."
               />
             </div>
