@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AbsoluteFill,
-  CalculateMetadataFunction,
   continueRender,
   delayRender,
   random,
@@ -12,7 +11,7 @@ import {
 import { z } from "zod";
 import SubtitlePage from "./SubtitlePage";
 import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
-import { DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
+import { DURATION_IN_FRAMES, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
 import { PhotoTransition, TimelinePhoto } from "../../components/PhotoTransition";
 
 const BASE_SWITCH_SPEED = 300;
@@ -123,7 +122,7 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
       //   numberOfWords: chunkSize,
       // }
     });
-  }, [subtitles, captionSwitchSpeedValue, chunkSize]);
+  }, [subtitles, captionSwitchSpeedValue]);
 
   return (
     <AbsoluteFill>

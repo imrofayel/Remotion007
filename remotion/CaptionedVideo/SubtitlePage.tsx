@@ -169,7 +169,7 @@ const SubtitlePage: React.FC<Props> = ({
             return (
               <span key={index} className="relative">
                 <span
-                  className={cn("caption-word sb-text-shadow-sm", active && 'highlight-word')}
+                  className={cn("caption-word px-1.5 sb-text-shadow-sm", active && 'highlight-word')}
                   style={{
                     transform: animationTransform,
                     color: active && highlightKeywords ? mainHighlightColor : color,
