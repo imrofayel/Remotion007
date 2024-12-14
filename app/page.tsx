@@ -26,6 +26,7 @@ import {
   PackagePlus,
   PackageOpen,
   Squircle,
+  CodeSquare,
 } from "lucide-react";
 import themesConfig from "./themes.json";
 import {
@@ -37,7 +38,7 @@ import { useToast } from "../components/ui/use-toast";
 import { Timeline } from "../components/Timeline";
 import { cn } from "../lib/utils";
 import { CaptionControls } from '../components/CaptionControls';
-import { Caption, convertToRemotionCaption } from "@remotion/captions";
+import { Caption } from "@remotion/captions";
 
 const ASPECT_RATIOS = {
   "16:9": { width: 1920, height: 1080, label: "Landscape (16:9)" },
@@ -548,6 +549,7 @@ const Home: NextPage = () => {
         if (!response.ok) throw new Error('Failed to load captions');
         const data = await response.json();
         setCaptions(data.captions);
+        console.log(data.captions);
       } catch (error) {
         console.error('Error loading captions:', error);
         toast({

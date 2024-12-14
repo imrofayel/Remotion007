@@ -152,11 +152,11 @@ const SubtitlePage: React.FC<Props> = ({
         <div 
           className="caption-box" 
           style={{
-            whiteSpace: "pre-wrap",
+            whiteSpace: "nowrap",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            flexDirection: "column",
+            gap: "0.35em"
           }}
         >
           {page.tokens.map((token, index) => {
@@ -169,7 +169,7 @@ const SubtitlePage: React.FC<Props> = ({
             return (
               <span key={index} className="relative">
                 <span
-                  className={cn("caption-word px-2 sb-text-shadow-sm", active && 'highlight-word')}
+                  className={cn("caption-word sb-text-shadow-sm", active && 'highlight-word')}
                   style={{
                     transform: animationTransform,
                     color: active && highlightKeywords ? mainHighlightColor : color,
@@ -179,7 +179,6 @@ const SubtitlePage: React.FC<Props> = ({
                     textTransform: fontUppercase ? "uppercase" : "none",
                     filter: motionBlurFilter,
                     WebkitTextStrokeColor: strokeColor,
-                    WebkitTextStrokeWidth: stroke === 'none' ? 0 : '1px',
                     display: 'inline-block',
                   }}
                   data-text={token.text}

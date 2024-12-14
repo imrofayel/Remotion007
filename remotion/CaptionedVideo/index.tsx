@@ -11,64 +11,45 @@ import {
 } from "remotion";
 import { z } from "zod";
 import SubtitlePage from "./SubtitlePage";
-import { getVideoMetadata } from "@remotion/media-utils";
 import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
 import { DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
 import { PhotoTransition, TimelinePhoto } from "../../components/PhotoTransition";
 
+const BASE_SWITCH_SPEED = 300;
+
 export const captionedVideoSchema = z.object({
   src: z.string(),
-  fontSize: z.number().default(120),
-  color: z.string().default("white"),
-  strokeColor: z.string().default("black"),
-  stroke: z.enum(["none", "s", "m", "l"]).default("m"),
-  fontFamily: z.string().default("Inter"),
-  fontWeight: z.number().default(700),
-  fontUppercase: z.boolean().default(false),
-  fontShadow: z.enum(["none", "s", "m", "l"]).default("s"),
-  animation: z.string().default("none"),
-  isAnimationActive: z.boolean().default(false),
-  isMotionBlurActive: z.boolean().default(false),
-  highlightKeywords: z.boolean().default(false),
-  mainHighlightColor: z.string().default("#39E508"),
-  secondHighlightColor: z.string().default("#fdfa14"),
-  thirdHighlightColor: z.string().default("#f01916"),
-  top: z.number().default(1000),
-  aspectRatio: z.enum(["16:9", "9:16", "4:5", "1:1"]).default("9:16"),
+  fontSize: z.number().optional(),
+  color: z.string().optional(),
+  strokeColor: z.string().optional(),
+  stroke: z.enum(["none", "s", "m", "l"]).optional(),
+  fontFamily: z.string().optional(),
+  fontWeight: z.number().optional(),
+  fontUppercase: z.boolean().optional(),
+  fontShadow: z.enum(["none", "s", "m", "l"]).optional(),
+  animation: z.string().optional(),
+  isAnimationActive: z.boolean().optional(),
+  isMotionBlurActive: z.boolean().optional(),
+  highlightKeywords: z.boolean().optional(),
+  mainHighlightColor: z.string().optional(),
+  secondHighlightColor: z.string().optional(),
+  thirdHighlightColor: z.string().optional(),
+  top: z.number().optional(),
+  left: z.number().optional(),
+  aspectRatio: z.string().optional(),
   className: z.string().optional(),
-  chunkSize: z.number().default(2),
-  photos: z.array(z.any()).default([]),
+  chunkSize: z.number().optional(),
+  photos: z.array(z.any()).optional(),
   durationInFrames: z.number().optional(),
-  fitMode: z.enum(['fill', 'fit']).default('fit'),
-  captionsUrl: z.string().optional(),
-  onCaptionsLoad: z.function().args(z.array(z.custom<Caption>())).optional(),
-  captions: z.array(z.custom<Caption>()).default([]),
-  left: z.number().default(0)
+  fitMode: z.enum(['fill', 'fit']).optional(),
+  captions: z.array(z.object({
+    text: z.string(),
+    startMs: z.number(),
+    endMs: z.number(),
+    timestampMs: z.number(),
+    confidence: z.number(),
+  })).optional(),
 });
-
-export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
-  z.infer<typeof captionedVideoSchema>
-> = async ({ props }) => {
-  try {
-    const metadata = await getVideoMetadata(props.src);
-    return {
-      fps: VIDEO_FPS,
-      durationInFrames: Math.floor(metadata.durationInSeconds * VIDEO_FPS),
-      width: VIDEO_WIDTH,
-      height: VIDEO_HEIGHT,
-    };
-  } catch (error) {
-    console.error('Error calculating metadata:', error);
-    return {
-      fps: VIDEO_FPS,
-      durationInFrames: DURATION_IN_FRAMES,
-      width: VIDEO_WIDTH,
-      height: VIDEO_HEIGHT,
-    };
-  }
-};
-
-const BASE_SWITCH_SPEED = 300;
 
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   src,
@@ -94,12 +75,10 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   className,
   photos = [],
   durationInFrames,
-  fitMode = "fit",
-  captionsUrl,
-  onCaptionsLoad,
-  captions: propCaptions = [],
+  fitMode,
+  captions = [],
 }) => {
-  const [captions, setCaptions] = useState<Caption[]>(propCaptions);
+  const [subtitles, setSubtitles] = useState<Caption[]>(captions);
   const [handle] = useState(() => delayRender(
     `Loading video with src="${src}"`,
     {
@@ -113,37 +92,12 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
     [chunkSize]
   );
 
-  // Load captions from URL if provided
+  // Update subtitles when captions prop changes
   useEffect(() => {
-    if (captionsUrl) {
-      const loadCaptions = async () => {
-        try {
-          const response = await fetch(captionsUrl);
-          if (!response.ok) {
-            throw new Error('Failed to load captions');
-          }
-          const data = await response.json();
-          const loadedCaptions: Caption[] = Array.isArray(data) ? data : data.captions;
-          console.log('Loaded captions from URL:', loadedCaptions);
-          setCaptions(loadedCaptions);
-          if (onCaptionsLoad) {
-            onCaptionsLoad(loadedCaptions);
-          }
-        } catch (error) {
-          console.error('Error loading captions:', error);
-        }
-      };
-      loadCaptions();
+    if (captions.length > 0) {
+      setSubtitles(captions);
     }
-  }, [captionsUrl, onCaptionsLoad]);
-
-  // Update captions when props change
-  useEffect(() => {
-    console.log('propCaptions changed:', propCaptions);
-    if (propCaptions.length > 0) {
-      setCaptions(propCaptions);
-    }
-  }, [propCaptions]);
+  }, [captions]);
 
   // Ensure video is loaded
   useEffect(() => {
@@ -163,9 +117,13 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   const { pages } = useMemo(() => {
     return createTikTokStyleCaptions({
       combineTokensWithinMilliseconds: captionSwitchSpeedValue,
-      captions: captions ?? [],
+      captions: subtitles ?? [],
+      groupBy: {
+        type: "words",
+        numberOfWords: chunkSize,
+      }
     });
-  }, [captions, captionSwitchSpeedValue]);
+  }, [subtitles, captionSwitchSpeedValue, chunkSize]);
 
   return (
     <AbsoluteFill>
