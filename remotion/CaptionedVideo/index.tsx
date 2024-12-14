@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AbsoluteFill,
   CalculateMetadataFunction,
@@ -10,11 +10,11 @@ import {
   Video,
 } from "remotion";
 import { z } from "zod";
+import SubtitlePage from "./SubtitlePage";
 import { getVideoMetadata } from "@remotion/media-utils";
+import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
 import { DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
 import { PhotoTransition, TimelinePhoto } from "../../components/PhotoTransition";
-import { Caption } from "../../types/Caption";
-import { CaptionText } from "../../components/CaptionText";
 
 export const captionedVideoSchema = z.object({
   src: z.string(),
@@ -68,6 +68,8 @@ export const calculateCaptionedVideoMetadata: CalculateMetadataFunction<
   }
 };
 
+const BASE_SWITCH_SPEED = 300;
+
 export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   src,
   fontSize = 120,
@@ -106,16 +108,10 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
   ));
   const { fps } = useVideoConfig();
 
-  // Debug logs
-  console.log('CaptionedVideo props:', {
-    src,
-    captions: propCaptions,
-    fps,
-    durationInFrames,
-    fontSize,
-    color,
-    top
-  });
+  const captionSwitchSpeedValue = useMemo(() =>
+    BASE_SWITCH_SPEED * chunkSize,
+    [chunkSize]
+  );
 
   // Load captions from URL if provided
   useEffect(() => {
@@ -164,12 +160,23 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
     }
   }, [src, handle]);
 
-  console.log('Current captions state:', captions);
+  const { pages } = useMemo(() => {
+    return createTikTokStyleCaptions({
+      combineTokensWithinMilliseconds: captionSwitchSpeedValue,
+      captions: captions ?? [],
+    });
+  }, [captions, captionSwitchSpeedValue]);
 
   return (
     <AbsoluteFill>
       {/* Video Layer */}
-      <AbsoluteFill>
+      <AbsoluteFill style={{
+        backgroundColor: 'black',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+      }}>
         <Video
           src={src}
           style={{
@@ -181,91 +188,50 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
       </AbsoluteFill>
 
       {/* Captions Layer */}
-      <AbsoluteFill style={{ 
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        paddingBottom: '50px',
-        zIndex: 1000
-      }}>
-        {captions.map((caption, index) => {
-          console.log('Rendering caption:', caption);
+      {pages.map((page, index) => {
+        const nextPage = pages[index + 1] ?? null;
+        const subtitleStartFrame = Math.floor((page.startMs / 1000) * fps);
+        const subtitleEndFrame = Math.min(
+          nextPage ? Math.floor((nextPage.startMs / 1000) * fps) : Infinity,
+          subtitleStartFrame + Math.floor((captionSwitchSpeedValue / 1000) * fps)
+        );
+        const durationInFrames = subtitleEndFrame - subtitleStartFrame;
+        if (durationInFrames <= 0) {
+          return null;
+        }
 
-          if (!caption.startMs || !caption.endMs) {
-            console.error('Invalid caption timing:', caption);
-            return null;
-          }
-
-          const startFrame = Math.floor((caption.startMs / 1000) * fps);
-          const duration = Math.floor(((caption.endMs - caption.startMs) / 1000) * fps);
-
-          console.log('Caption frames:', {
-            index,
-            text: caption.text,
-            startMs: caption.startMs,
-            endMs: caption.endMs,
-            startFrame,
-            duration,
-            fps
-          });
-
-          if (startFrame < 0 || duration <= 0) {
-            console.error('Invalid frame calculation:', { startFrame, duration });
-            return null;
-          }
-
-          return (
-            <Sequence
-              key={`caption-${index}-${startFrame}`}
-              from={startFrame}
-              durationInFrames={duration}
-              name={`Caption ${index}: ${caption.text}`}
-            >
-              <div style={{
-                position: 'absolute',
-                bottom: typeof top === 'number' ? `${top}px` : top,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                textAlign: 'center',
-                width: '100%',
-                maxWidth: '80%',
-                zIndex: 1000,
-                padding: '1rem',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                borderRadius: '8px',
-              }}>
-                <CaptionText
-                  text={caption.text}
-                  duration={duration}
-                  fontSize={fontSize}
-                  color={color}
-                  strokeColor={strokeColor}
-                  stroke={stroke}
-                  fontFamily={fontFamily}
-                  fontWeight={fontWeight}
-                  fontUppercase={fontUppercase}
-                  fontShadow={fontShadow}
-                  animation={animation}
-                  isAnimationActive={isAnimationActive}
-                  isMotionBlurActive={isMotionBlurActive}
-                  highlightKeywords={highlightKeywords}
-                  mainHighlightColor={mainHighlightColor}
-                  secondHighlightColor={secondHighlightColor}
-                  thirdHighlightColor={thirdHighlightColor}
-                  top={0}
-                  left={0}
-                />
-              </div>
-            </Sequence>
-          );
-        })}
-      </AbsoluteFill>
+        return (
+          <Sequence
+            key={index}
+            from={subtitleStartFrame}
+            durationInFrames={durationInFrames}
+          >
+            <SubtitlePage
+              key={index}
+              enterProgress={subtitleStartFrame / fps}
+              page={page}
+              fontSize={fontSize}
+              color={color}
+              strokeColor={strokeColor}
+              stroke={stroke}
+              fontFamily={fontFamily}
+              fontWeight={fontWeight}
+              fontUppercase={fontUppercase}
+              fontShadow={fontShadow}
+              animation={animation}
+              isAnimationActive={isAnimationActive}
+              isMotionBlurActive={isMotionBlurActive}
+              highlightKeywords={highlightKeywords}
+              mainHighlightColor={mainHighlightColor}
+              secondHighlightColor={secondHighlightColor}
+              thirdHighlightColor={thirdHighlightColor}
+              top={top}
+              left={left}
+              className={className}
+            />
+          </Sequence>
+        );
+      })}
 
       {/* Photos Layer */}
       {photos && photos.length > 0 && (
