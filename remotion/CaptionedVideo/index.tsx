@@ -11,7 +11,7 @@ import {
 import { z } from "zod";
 import SubtitlePage from "./SubtitlePage";
 import { Caption, createTikTokStyleCaptions } from "@remotion/captions";
-import { DURATION_IN_FRAMES, VIDEO_HEIGHT, VIDEO_WIDTH } from "../../types/constants";
+import { DURATION_IN_FRAMES } from "../../types/constants";
 import { PhotoTransition, TimelinePhoto } from "../../components/PhotoTransition";
 
 const BASE_SWITCH_SPEED = 300;
@@ -117,10 +117,6 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
     return createTikTokStyleCaptions({
       combineTokensWithinMilliseconds: captionSwitchSpeedValue,
       captions: subtitles ?? [],
-      // groupBy: {
-      //   type: "words",
-      //   numberOfWords: chunkSize,
-      // }
     });
   }, [subtitles, captionSwitchSpeedValue]);
 
@@ -204,10 +200,6 @@ export const CaptionedVideo: React.FC<z.infer<typeof captionedVideoSchema>> = ({
             }
             return photo;
           }) : photos}
-          videoConfig={{
-            width: aspectRatio === "9:16" ? 1080 : VIDEO_WIDTH,
-            height: aspectRatio === "9:16" ? 1920 : VIDEO_HEIGHT,
-          }}
           className="z-10"
           fitMode={fitMode}
         />

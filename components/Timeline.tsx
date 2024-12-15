@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { Input } from './ui/input';
 import { VIDEO_FPS } from '../types/constants';
+import Image from 'next/image';
 
 interface TimelineProps {
   photos: TimelinePhoto[];
@@ -19,6 +20,7 @@ export const Timeline: React.FC<TimelineProps> = ({
   className,
   totalFrames,
 }) => {
+
   const handleStartFrameChange = (id: string, value: number) => {
     onPhotosChange(
       photos.map((photo) =>
@@ -41,6 +43,8 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   const movePhoto = (id: string, direction: 'up' | 'down') => {
     const index = photos.findIndex((photo) => photo.id === id);
+
+    // for the last & first images
     if (
       (direction === 'up' && index === 0) ||
       (direction === 'down' && index === photos.length - 1)
@@ -50,6 +54,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
     const newPhotos = [...photos];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    // swapping
     [newPhotos[index], newPhotos[targetIndex]] = [newPhotos[targetIndex], newPhotos[index]];
     onPhotosChange(newPhotos);
   };
@@ -63,10 +68,11 @@ export const Timeline: React.FC<TimelineProps> = ({
             key={photo.id}
             className="flex items-center gap-4 relative bg-gray-100/60 p-4 rounded-2xl"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={photo.src}
               alt={`Photo ${index + 1}`}
+              height={1000}
+              width={1000}
               className="w-20 h-20 object-cover rounded-2xl border-white/80 border-4 drop-shadow-lg"
             />
             <div className="flex-1 space-y-4 items-center">

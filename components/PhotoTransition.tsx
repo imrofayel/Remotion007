@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, Img, Sequence, staticFile } from 'remotion';
+import { AbsoluteFill, Img, Sequence } from 'remotion';
 import { cn } from '../lib/utils';
 
 export type PhotoFitMode = 'fill' | 'fit';
@@ -9,21 +9,17 @@ export interface TimelinePhoto {
   src: string;
   startFrame: number;
   durationInFrames: number;
+  // TODO:: FIT MODE SHOULD BE IMAGE PROPERTY
 }
 
 export interface PhotoTransitionProps extends Record<string, unknown> {
   photos: TimelinePhoto[];
-  videoConfig?: {
-    width: number;
-    height: number;
-  };
   className?: string;
   fitMode?: PhotoFitMode;
 }
 
 export const PhotoTransition: React.FC<PhotoTransitionProps> = ({
   photos,
-  videoConfig,
   className,
   fitMode = 'fit',
   ...props
@@ -31,6 +27,7 @@ export const PhotoTransition: React.FC<PhotoTransitionProps> = ({
   if (!photos.length) return null;
 
   return (
+    // TODO:: We can add spring animations (transitions) into it using trasnform.
     <AbsoluteFill className={className} {...props}>
       {photos.map((photo) => (
         <Sequence
@@ -39,21 +36,11 @@ export const PhotoTransition: React.FC<PhotoTransitionProps> = ({
           durationInFrames={photo.durationInFrames}
         >
           <AbsoluteFill
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-              height: '100%',
-            }}
+            className='flex justify-center items-center w-full h-full'
           >
             <Img
               src={photo.src}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: fitMode === 'fill' ? 'cover' : 'contain',
-              }}
+              className={cn('w-full h-full', fitMode === 'fill' ? 'object-cover' : 'object-contain')}
             />
           </AbsoluteFill>
         </Sequence>

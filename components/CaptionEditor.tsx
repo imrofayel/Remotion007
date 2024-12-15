@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 import { Caption } from '../types/Caption';
-import { GitMerge, Minus, Plus, Trash } from 'lucide-react';
+import { GitMerge, Plus, Trash } from 'lucide-react';
 
 interface CaptionEditorProps {
   captions: Caption[];

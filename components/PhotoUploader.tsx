@@ -1,23 +1,21 @@
-import React from 'react';
-import { Button } from './ui/button';
-import { Zap } from 'lucide-react';
-import { cn } from '../lib/utils';
+import React from "react";
+import { Button } from "./ui/button";
+import { Zap } from "lucide-react";
+import { cn } from "../lib/utils";
 
 interface PhotoUploaderProps {
+  // TODO:: how these files being accessed in page.tsx?
   onPhotosSelected: (files: File[]) => void;
   isUploading?: boolean;
   className?: string;
-  accept?: string;
-  multiple?: boolean;
 }
 
 export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
   onPhotosSelected,
   isUploading = false,
   className,
-  accept = "image/*",
-  multiple = true,
 }) => {
+  // TODO:: React.ChangeEvent<HTMLInputElement> ??
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
@@ -33,17 +31,17 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
         disabled={isUploading}
         className="text-lg rounded-2xl p-3 bg-gray-100/60"
       >
-        <Zap            className="h-6 w-6 scale-[1.2] text-muted sm:mr-1" 
- />
+        <Zap className="h-6 w-6 scale-[1.2] text-muted sm:mr-1" />
 
-<span className="capitalize">{isUploading ? "Uploading..." : "B-rolls"}</span>
-        
+        <span className="capitalize">
+          {isUploading ? "Uploading..." : "B-rolls"}
+        </span>
       </Button>
       <input
         type="file"
         id="photo-upload"
-        accept={accept}
-        multiple={multiple}
+        accept="image/*"
+        multiple={true}
         onChange={handleFileChange}
         className="hidden"
       />

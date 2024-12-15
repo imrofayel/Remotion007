@@ -1,15 +1,9 @@
-"use client"; // Enable client-side rendering for Next.js
+"use client";
 
 import { Player } from "@remotion/player";
-import { getVideoMetadata } from "@remotion/media-utils";
-import type { NextPage } from "next";
+// TODO:: What are these hooks?
 import React, { SetStateAction, useMemo, useState, useEffect } from "react";
-import {
-  DURATION_IN_FRAMES,
-  VIDEO_FPS,
-  // VIDEO_HEIGHT,
-  // VIDEO_WIDTH,
-} from "../types/constants";
+import { DURATION_IN_FRAMES, VIDEO_FPS } from "../types/constants";
 import { CaptionedVideo } from "../remotion/CaptionedVideo";
 import {
   DropdownMenu,
@@ -26,7 +20,6 @@ import {
   PackagePlus,
   PackageOpen,
   Squircle,
-  CodeSquare,
 } from "lucide-react";
 import themesConfig from "./themes.json";
 import {
@@ -37,76 +30,87 @@ import { PhotoUploader } from "../components/PhotoUploader";
 import { useToast } from "../components/ui/use-toast";
 import { Timeline } from "../components/Timeline";
 import { cn } from "../lib/utils";
-import { CaptionControls } from '../components/CaptionControls';
+import { CaptionControls } from "../components/CaptionControls";
 import { Caption } from "@remotion/captions";
+import { ASPECT_RATIOS, VIDEO_HEIGHT } from "../types/constants";
 
-const ASPECT_RATIOS = {
-  "16:9": { width: 1920, height: 1080, label: "Landscape (16:9)" },
-  "9:16": { width: 1080, height: 1920, label: "Portrait (9:16)" },
-  "4:5": { width: 1080, height: 1350, label: "Instagram (4:5)" },
-  "1:1": { width: 1080, height: 1080, label: "Square (1:1)" },
-};
+const Home = () => {
+  const { toast } = useToast();
 
-const Home: NextPage = () => {
-  // Video states
+  // Sample video
   const [videoSrc, setVideoSrc] = useState<string>("/sample-video.mp4");
   const [videoDuration, setVideoDuration] =
     useState<number>(DURATION_IN_FRAMES);
+
+  // While video is being uploaded
   const [isProcessing, setIsProcessing] = useState(false);
-  const [uploadedFileName, setUploadedFileName] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [isReady, setIsReady] = useState(true); // Initially true for sample video
-  const [captionYPosition, setCaptionYPosition] = useState<number>(1280); // Default Y position
+
+  const [captionYPosition, setCaptionYPosition] =
+    useState<number>(VIDEO_HEIGHT); // Default Y position
 
   // Caption editing state
   const [isEditing, setIsEditing] = useState(false);
   const [captions, setCaptions] = useState<Caption[]>([]);
 
-  // Caption styling states with default theme
-  const [activeTheme, setActiveTheme] = useState<string>("default");
   const defaultTheme =
     themesConfig.themes.find((theme) => theme.config.default) ||
     themesConfig.themes[0];
 
+  // Editing Controls
+  const [activeTheme, setActiveTheme] = useState<string>("default");
+
   const [fontSize, setFontSize] = useState<number>(
     defaultTheme.config.style.fontSize,
   );
+
   const [fontColor, setFontColor] = useState<string>(
     defaultTheme.config.style.color,
   );
+
   const [strokeColor, setStrokeColor] = useState<string>(
     defaultTheme.config.style.strokeColor,
   );
+
   const [stroke, setStroke] = useState<"none" | "s" | "m" | "l">(
     defaultTheme.config.style.stroke as "none" | "s" | "m" | "l",
   );
+
   const [fontShadow, setFontShadow] = useState<"none" | "s" | "m" | "l">(
     defaultTheme.config.style.fontShadow as "none" | "s" | "m" | "l",
   );
+
   const [fontFamily, setFontFamily] = useState<string>(
     defaultTheme.config.style.fontFamily,
   );
+
   const [fontWeight, setFontWeight] = useState<number>(
     defaultTheme.config.style.fontWeight,
   );
+
   const [isUppercase, setIsUppercase] = useState<boolean>(
     defaultTheme.config.style.fontUppercase,
   );
+
   const [animation, setAnimation] = useState<string>(
     defaultTheme.config.subs.animation,
   );
+
   const [isAnimationActive, setIsAnimationActive] = useState<boolean>(
     defaultTheme.config.subs.isAnimationActive,
   );
+
   const [isMotionBlurActive, setIsMotionBlurActive] = useState<boolean>(
     defaultTheme.config.subs.isMotionBlurActive,
   );
+
   const [mainHighlightColor, setMainHighlightColor] = useState<string>(
     defaultTheme.config.highlight_style.mainColor,
   );
+
   const [secondHighlightColor, setSecondHighlightColor] = useState<string>(
     defaultTheme.config.highlight_style.secondColor,
   );
+
   const [thirdHighlightColor, setThirdHighlightColor] = useState<string>(
     defaultTheme.config.highlight_style.thirdColor,
   );
@@ -128,12 +132,18 @@ const Home: NextPage = () => {
   const [wordsPerCaption, setWordsPerCaption] = useState<number>(
     defaultTheme.config.subs.chunkSize,
   );
-  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "4:5" | "1:1">("9:16");
 
+  const [aspectRatio, setAspectRatio] = useState<
+    "16:9" | "9:16" | "4:5" | "1:1"
+  >("9:16");
+
+  // B-rolls
   const [photos, setPhotos] = useState<TimelinePhoto[]>([]);
+
   const [isUploading, setIsUploading] = useState(false);
+
   const [fitMode, setFitMode] = useState<PhotoFitMode>("fit");
-  const { toast } = useToast();
+
   // Function to export current theme
   const handleExportTheme = () => {
     const currentTheme = {
@@ -184,7 +194,6 @@ const Home: NextPage = () => {
     URL.revokeObjectURL(url);
   };
 
-  // Modified handleThemeChange to work with custom themes
   const handleThemeChange = (themeName: string) => {
     const selectedTheme = allThemes.find(
       (theme) => theme.config.name === themeName,
@@ -211,7 +220,6 @@ const Home: NextPage = () => {
     setClassName(selectedTheme.config.className);
   };
 
-  // Modified handleImportTheme to handle custom themes
   const handleImportTheme = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -304,7 +312,8 @@ const Home: NextPage = () => {
   ) => {
     setAspectRatio(newRatio);
     const height = getVideoHeight(newRatio as string);
-    setCaptionYPosition(height / 2); // Set to middle by default
+    // Set to middle by default
+    setCaptionYPosition(height / 2);
   };
 
   const handleYPositionChange = (newPosition: number) => {
@@ -313,7 +322,9 @@ const Home: NextPage = () => {
   };
 
   // Handle video upload and metadata
-  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -337,13 +348,6 @@ const Home: NextPage = () => {
       const uploadData = await uploadResponse.json();
       const { videoPath } = uploadData;
 
-      // Generate captions
-      toast({
-        title: "Processing",
-        description: "Preparing the video and generating captions...",
-        variant: "default",
-      });
-
       const captionResponse = await fetch("/api/generate-captions", {
         method: "POST",
         headers: {
@@ -356,35 +360,39 @@ const Home: NextPage = () => {
         throw new Error("Failed to generate captions");
       }
 
-      // Wait for captions to be generated (poll the status)
-      const videoFileName = videoPath.split('/').pop()?.replace(/\.[^/.]+$/, "");
+      // Wait for captions to be generated
+      const videoFileName = videoPath
+        .split("/")
+        .pop()
+        ?.replace(/\.[^/.]+$/, "");
       const captionsPath = `/subs/${videoFileName}.json`;
-      
+
       let captionsReady = false;
       let retries = 0;
       const maxRetries = 30; // Maximum 30 seconds wait
-      
+
       while (!captionsReady && retries < maxRetries) {
         try {
           const captionsResponse = await fetch(captionsPath);
           if (captionsResponse.ok) {
             captionsReady = true;
             const loadedCaptions = await captionsResponse.json();
-            console.log('Loaded captions:', loadedCaptions);
 
-            // Convert timestamps to milliseconds
-            const processedCaptions: Caption[] = loadedCaptions.map((caption: any) => ({
-              text: caption.text,
-              startMs: caption.startMs || caption.start * 1000,
-              endMs: caption.endMs || caption.end * 1000
-            }));
+            // IDEA:: Here we can add our own properties like highlighted keywords etc...
+            const processedCaptions: Caption[] = loadedCaptions.map(
+              (caption: any) => ({
+                text: caption.text,
+                startMs: caption.startMs,
+                endMs: caption.endMs,
+                // || caption.end * 1000
+              }),
+            );
 
-            console.log('Processed captions:', processedCaptions);
             setCaptions(processedCaptions);
 
             // Set video source and get metadata only after captions are ready
             setVideoSrc(videoPath);
-            const video = document.createElement('video');
+            const video = document.createElement("video");
             video.src = videoPath;
             await new Promise((resolve, reject) => {
               video.onloadedmetadata = () => {
@@ -393,36 +401,26 @@ const Home: NextPage = () => {
                 setVideoDuration(frames);
                 resolve(frames);
               };
-              video.onerror = () => reject(new Error('Failed to load video metadata'));
+              video.onerror = () =>
+                reject(new Error("Failed to load video metadata"));
             });
 
-            toast({
-              title: "Success",
-              description: "Video processed and captions generated successfully!",
-              variant: "default",
-            });
             break;
           }
         } catch (error) {
-          console.log('Waiting for captions...', error);
+          console.log("Waiting for captions...", error);
         }
-        
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         retries++;
       }
 
       if (!captionsReady) {
         throw new Error("Timed out waiting for captions to be generated");
       }
-
     } catch (error) {
-      console.error('Error handling video upload:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to process video",
-        variant: "destructive",
-      });
-      // Reset to sample video on error
+      console.error("Error handling video upload:", error);
+
       setVideoSrc("/sample-video.mp4");
       setVideoDuration(DURATION_IN_FRAMES);
     } finally {
@@ -431,7 +429,6 @@ const Home: NextPage = () => {
     }
   };
 
-  // Video props memoization
   const captionedVideoProps = useMemo(
     () => ({
       src: videoSrc || "",
@@ -525,10 +522,6 @@ const Home: NextPage = () => {
       }));
 
       setPhotos([...photos, ...newPhotos]);
-      toast({
-        title: "Success",
-        description: `${files.length} photo${files.length !== 1 ? "s" : ""} uploaded successfully`,
-      });
     } catch (error) {
       console.error("Error uploading photos:", error);
       toast({
@@ -545,25 +538,22 @@ const Home: NextPage = () => {
   useEffect(() => {
     const loadCaptions = async () => {
       try {
-        const response = await fetch(`/api/generate-captions?videoSrc=${encodeURIComponent(videoSrc)}`);
-        if (!response.ok) throw new Error('Failed to load captions');
+        const response = await fetch(
+          `/api/generate-captions?videoSrc=${encodeURIComponent(videoSrc)}`,
+        );
+        if (!response.ok) throw new Error("Failed to load captions");
         const data = await response.json();
         setCaptions(data.captions);
         console.log(data.captions);
       } catch (error) {
-        console.error('Error loading captions:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load captions. Please try again.",
-          variant: "destructive",
-        });
+        console.error("Error loading captions:", error);
       }
     };
 
-    if (videoSrc && isReady) {
+    if (videoSrc) {
       loadCaptions();
     }
-  }, [videoSrc, isReady, toast]);
+  }, [videoSrc, toast]);
 
   return (
     <div className="p-6 items-center justify-center align-middle grid gap-6 text-gray-600">
@@ -575,6 +565,7 @@ const Home: NextPage = () => {
             onClick={() => document.getElementById("video-upload")?.click()}
           />
         </div>
+
         {/* Aspect Ratio Selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -622,15 +613,6 @@ const Home: NextPage = () => {
           handleVideoUpload(e);
           if (isProcessing) {
             console.log("Processing video and generating captions...");
-            console.log(
-              "This may take a few moments depending on the video length.",
-            );
-          }
-          if (error) {
-            console.error(error);
-          }
-          if (uploadedFileName && !isProcessing) {
-            console.log("Selected:", uploadedFileName);
           }
         }}
         disabled={isProcessing}
@@ -640,7 +622,7 @@ const Home: NextPage = () => {
       <div className="w-full flex justify-center">
         <div className="w-full max-w-4xl">
           {/* Video Player */}
-          {isReady ? (
+          {!isProcessing ? (
             <div
               className="relative mx-auto"
               style={getContainerStyle(aspectRatio)}
@@ -656,7 +638,7 @@ const Home: NextPage = () => {
                   width: "100%",
                   height: "100%",
                 }}
-                className="drop-shadow-2xl object-contain"
+                className="drop-shadow-2xl object-contain h-full w-full"
                 controls
                 autoPlay
                 loop
@@ -703,27 +685,29 @@ const Home: NextPage = () => {
         <div className="bg-white  border-b-2 border-gray-200/60 rounded-3xl border p-3 sticky top-6">
           {/* Theme Selection */}
 
-          <div className="flex space-x-2">         
-          <PhotoUploader
-                onPhotosSelected={handlePhotosSelected}
-                isUploading={isUploading}
-                className="mb-4"
-              />
+          <div className="flex space-x-2">
+            <PhotoUploader
+              onPhotosSelected={handlePhotosSelected}
+              isUploading={isUploading}
+              className="mb-4"
+            />
 
-          {photos.length > 0 && <div className="flex gap-2">
+            {photos.length > 0 && (
+              <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                  <Button
-              variant="ghost"
-              className="text-base rounded-2xl p-3 bg-gray-100/60"
-            >
-              <Squircle className="h-6 w-6 scale-[1.2] sm:mr-1" />
-              <span className="capitalize">{fitMode}</span>
-            </Button>
+                    <Button
+                      variant="ghost"
+                      className="text-base rounded-2xl p-3 bg-gray-100/60"
+                    >
+                      <Squircle className="h-6 w-6 scale-[1.2] sm:mr-1" />
+                      <span className="capitalize">{fitMode}</span>
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="rounded-2xl shadow-none text-gray-600 shadow-gray-100 border-gray-100">
                     {["fit", "fill"].map((value) => (
-                      <DropdownMenuItem className="rounded-xl text-base"
+                      <DropdownMenuItem
+                        className="rounded-xl text-base"
                         key={value}
                         onClick={() => setFitMode(value as PhotoFitMode)}
                       >
@@ -731,21 +715,25 @@ const Home: NextPage = () => {
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
-                </DropdownMenu></div>}
+                </DropdownMenu>
               </div>
+            )}
+          </div>
 
           <div className="flex flex-col gap-4 p-2">
             <div className="gap-2">
-              <label className="block font-medium text-lg text-gray-300 mb-2">Theme</label>
+              <label className="block font-medium text-lg text-gray-300 mb-2">
+                Theme
+              </label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                <Button
-              variant="ghost"
-              className="text-lg rounded-2xl py-5 pl-4 pr-6 bg-gray-100/60"
-            >
-              <Package2 className="h-6 w-6 scale-[1.2] sm:mr-1" />
-              <span className="capitalize">{activeTheme}</span>
-            </Button>
+                  <Button
+                    variant="ghost"
+                    className="text-lg rounded-2xl py-5 pl-4 pr-6 bg-gray-100/60"
+                  >
+                    <Package2 className="h-6 w-6 scale-[1.2] sm:mr-1" />
+                    <span className="capitalize">{activeTheme}</span>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="rounded-2xl text-gray-600 shadow-gray-100 border-gray-100">
                   {allThemes.map((theme) => (
@@ -762,21 +750,23 @@ const Home: NextPage = () => {
               </DropdownMenu>
             </div>
 
-                        {/* Stroke Controls */}
-                        <div className="flex flex-col gap-2">
-              <label className="block font-medium text-lg text-gray-300 mb-2">Stroke Style</label>
+            {/* Stroke Controls */}
+            <div className="flex flex-col gap-2">
+              <label className="block font-medium text-lg text-gray-300 mb-2">
+                Stroke Style
+              </label>
               <div className="flex gap-2">
                 {(["none", "s", "m", "l"] as const).map((s) => (
                   <Button
                     key={s}
                     variant="ghost"
-
                     onClick={() => setStroke(s)}
-
-                    className={cn('text-lg rounded-2xl p-3 px-6 bg-gray-100/60', stroke === s && 'bg-gray-100')}>
-
-<span className="capitalize"> {s.toUpperCase()}</span>
-                   
+                    className={cn(
+                      "text-lg rounded-2xl p-3 px-6 bg-gray-100/60",
+                      stroke === s && "bg-gray-100",
+                    )}
+                  >
+                    <span className="capitalize"> {s.toUpperCase()}</span>
                   </Button>
                 ))}
               </div>
@@ -784,18 +774,21 @@ const Home: NextPage = () => {
 
             {/* Font Shadow Controls */}
             <div className="flex flex-col gap-2">
-              <label className="block font-medium text-lg text-gray-300 mb-2">Font Shadow</label>
+              <label className="block font-medium text-lg text-gray-300 mb-2">
+                Font Shadow
+              </label>
               <div className="flex gap-2">
                 {(["none", "s", "m", "l"] as const).map((s) => (
                   <Button
                     key={s}
                     variant="ghost"
-
                     onClick={() => setFontShadow(s)}
-                    className={cn('text-lg rounded-2xl p-3 px-6 bg-gray-100/60', fontShadow === s && 'bg-gray-100')}>
-
-<span className="capitalize"> {s.toUpperCase()}</span>
-                   
+                    className={cn(
+                      "text-lg rounded-2xl p-3 px-6 bg-gray-100/60",
+                      fontShadow === s && "bg-gray-100",
+                    )}
+                  >
+                    <span className="capitalize"> {s.toUpperCase()}</span>
                   </Button>
                 ))}
               </div>
@@ -803,21 +796,24 @@ const Home: NextPage = () => {
 
             {/* Animation Controls */}
             <div className="flex flex-col gap-2">
-              <label className="block font-medium text-lg text-gray-300 mb-2">Animation</label>
+              <label className="block font-medium text-lg text-gray-300 mb-2">
+                Animation
+              </label>
               <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                  <Button
-              variant="ghost"
-              className="text-lg rounded-2xl p-3 bg-gray-100/60"
-            >
-              <Flame className="h-6 w-6 scale-[1.4] sm:mr-1" />
-              <span className="capitalize">{animation}</span>
-            </Button>
+                    <Button
+                      variant="ghost"
+                      className="text-lg rounded-2xl p-3 bg-gray-100/60"
+                    >
+                      <Flame className="h-6 w-6 scale-[1.4] sm:mr-1" />
+                      <span className="capitalize">{animation}</span>
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="rounded-2xl text-gray-600 shadow-gray-100 border-gray-100">
                     {["none", "updown", "bounce", "shake"].map((anim) => (
-                      <DropdownMenuItem className="rounded-lg text-base"
+                      <DropdownMenuItem
+                        className="rounded-lg text-base"
                         key={anim}
                         onClick={() => setAnimation(anim)}
                       >
@@ -830,9 +826,8 @@ const Home: NextPage = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-3">
-
               <div>
-              <label className="block font-medium text-lg text-gray-300 mb-2">
+                <label className="block font-medium text-lg text-gray-300 mb-2">
                   Font Family
                 </label>
                 <input
@@ -1026,28 +1021,25 @@ const Home: NextPage = () => {
               </div>
             </div>
             <div className="flex mt-6 gap-2">
+              <Button
+                variant="ghost"
+                className="text-lg rounded-2xl py-5 px-4 bg-gray-100/60"
+                onClick={handleExportTheme}
+              >
+                <PackagePlus className="h-6 w-6 scale-[1.2] sm:mr-1" />
+                <span className="capitalize">Export</span>
+              </Button>
 
-<Button
-              variant="ghost"
-              className="text-lg rounded-2xl py-5 px-4 bg-gray-100/60"
-              onClick={handleExportTheme}
-
-            >
-              <PackagePlus className="h-6 w-6 scale-[1.2] sm:mr-1" />
-              <span className="capitalize">Export</span>
-            </Button>
-
-<Button
-              variant="ghost"
-              className="text-lg rounded-2xl py-5 px-4 bg-gray-100/60"
-              onClick={() =>
-                document.getElementById("theme-file-input")?.click()
-              }
-
-            >
-              <PackageOpen className="h-6 w-6 scale-[1.2] sm:mr-1" />
-              <span className="capitalize">Import</span>
-            </Button>
+              <Button
+                variant="ghost"
+                className="text-lg rounded-2xl py-5 px-4 bg-gray-100/60"
+                onClick={() =>
+                  document.getElementById("theme-file-input")?.click()
+                }
+              >
+                <PackageOpen className="h-6 w-6 scale-[1.2] sm:mr-1" />
+                <span className="capitalize">Import</span>
+              </Button>
 
               <input
                 type="file"
